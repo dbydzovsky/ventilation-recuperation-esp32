@@ -1,0 +1,6 @@
+fe/node_modules
+.idea
+fe/build
+server-mock/node_modules
+sketch/main/data
+sketch/venv

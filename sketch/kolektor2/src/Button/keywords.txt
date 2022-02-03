@@ -1,0 +1,3 @@
+Button  KEYWORD1
+isPressed   KEYWORD2
+act KEYWORD2

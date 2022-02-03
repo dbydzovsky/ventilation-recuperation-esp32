@@ -1,0 +1,15 @@
+{
+  "short_name": "Pi Server",
+  "name": "Raspberry Pi Home Server",
+  "icons": [
+    {
+      "src": "favicon16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

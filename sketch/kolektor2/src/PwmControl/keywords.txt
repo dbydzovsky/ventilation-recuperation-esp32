@@ -1,0 +1,2 @@
+PwmControl  KEYWORD1
+setDutyCycle    KEYWORD2

@@ -1,0 +1,14 @@
+{
+  "name": "server-mock",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "json-server index.js --port 5000 --routes routes.json --middlewares ./crossorigin.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "json-server": "^0.16.3"
+  }
+}
