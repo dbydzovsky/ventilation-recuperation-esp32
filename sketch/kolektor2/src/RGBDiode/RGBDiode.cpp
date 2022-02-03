@@ -60,27 +60,30 @@ void RGBDiode::tick() {
   }
 }
 
-void RGBDiode::configure(byte tickingName, byte tickingSize, const byte ticking[8]) {
+void RGBDiode::configure(void (*configuration)(TickingConfiguration *out)) {
   if (this->_mode == RGBDIODE_PRIORITY_MODE) {
     return;
   }
   this->_mode = RGBDIODE_CLASSICAL_MODE;
-  this->set(tickingName, tickingSize, ticking);
-}
-void RGBDiode::important(byte tickingName, byte tickingSize, const byte ticking[8]) {
-  this->_mode = RGBDIODE_PRIORITY_MODE;
-  this->set(tickingName, tickingSize, ticking);
+  this->set(configuration);
 }
 
-void RGBDiode::set(byte tickingName, byte tickingSize, const byte ticking[8]) {
-  if (tickingName != this->_tickingName) {
+void RGBDiode::important(void (*configuration)(TickingConfiguration *out)) {
+  this->_mode = RGBDIODE_PRIORITY_MODE;
+  this->set(configuration);
+}
+
+void RGBDiode::set(void (*configuration)(TickingConfiguration *out)) {
+  if (configuration != this->_configuration) {
     this->detach();
-    this->_tickingName = tickingName;
-    for (byte i = 0; i < tickingSize; i++) {
-      this->_tickingConf[i] = ticking[i];
+    this->_configuration = configuration;
+    TickingConfiguration conf;
+    configuration(&conf);
+    for (byte i = 0; i < conf.size; i++) {
+      this->_tickingConf[i] = conf.ticking[i];
     }
     this->_tickingIndex = 0;
-    this->_tickingSize = (tickingSize - 1) + ticking[0];
+    this->_tickingSize = (conf.size - 1) + conf.ticking[0];
     ticker.attach_ms(100, &RGBDiode::staticTickerCallbackLed, this);
   }
 }
@@ -91,4 +94,19 @@ void RGBDiode::detach() {
 void RGBDiode::staticTickerCallbackLed(RGBDiode *pThis)
 {
     pThis->tick();
+}
+
+void tickingDeviceDisabledWifiOn(TickingConfiguration *out) {
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_RED_COLOR;
+  out->ticking[2] = DIODE_NONE_COLOR;
+  out->ticking[3] = DIODE_RED_COLOR;
+  out->size = 4; 
+}
+void tickingDeviceDisabledWifiOff(TickingConfiguration *out) {
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_NONE_COLOR;
+  out->ticking[2] = DIODE_NONE_COLOR;
+  out->ticking[3] = DIODE_RED_COLOR;
+    out->size = 4;
 }

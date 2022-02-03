@@ -50,7 +50,7 @@ void Button::act() {
   }
 
   if (!pressed && !isnan(this->_btn_unpressed_time) && (aNow - this->_btn_unpressed_time > BUTTON_COOLDOWN_MS)) {
-    this->_handler->handleClick(this->_clicks);
+    this->_handler->handleClick((byte) this->_clicks);
     this->resetState();
   }
   this->_last_value = pressed;

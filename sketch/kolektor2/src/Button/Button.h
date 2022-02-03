@@ -18,10 +18,9 @@
 #endif
 
 class ButtonHandler {
-public:
-    virtual boolean handleHold(int durationMillis, boolean finished) = 0;
-    virtual int handleClick(byte clicks) = 0;
-    virtual ~ButtonHandler() {};
+  public:
+    virtual bool handleHold(int durationMillis, bool finished) = 0;
+    virtual bool handleClick(byte times) = 0;
 };
 
 
