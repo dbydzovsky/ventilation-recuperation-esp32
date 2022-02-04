@@ -4,6 +4,7 @@
 #define temporaryDisabledProgrammeDuration 3600000 // 1hour
 #define manual100ProgrammeDuration 900000 // 15 minutes
 
+#define averageValuesCount 7
 #define enablementTresholdMs 4000 // 4 seconds
 
 #define POWER_OUTPUT_MODE_NONE 0

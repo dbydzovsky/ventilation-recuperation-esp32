@@ -3,7 +3,7 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
-
+#include "../Constants/Constants.h"
 
 class SummerProgramme: public Programme {
   private:
@@ -16,6 +16,7 @@ class SummerProgramme: public Programme {
     }
   public:
     void onStart() {
+      if (IS_DEBUG) Serial.println("Starting Summer Programme");
     }
     byte getCode() {
       if (this->error != 0) {
@@ -64,13 +65,13 @@ class SummerProgramme: public Programme {
     void getPower(ProgrammeContext *context, PowerOutput *out) {
       out->mode = POWER_OUTPUT_MODE_VENTILATION;
       
-      context->forecast.act();
-      if (!context->forecast.hasValidForecast()) {
+      context->forecast->act();
+      if (!context->forecast->hasValidForecast()) {
         this->error = 115;
         return;
       }
 
-      if (!context->forecast.shouldICool()) { 
+      if (!context->forecast->shouldCoolInsides()) { 
         return;
       }
       

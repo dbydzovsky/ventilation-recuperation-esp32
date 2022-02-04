@@ -4,7 +4,7 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include <TimeLib.h>
-
+#include "../Constants/Constants.h"
 class AutoProgramme: public Programme {
   private:
     byte error = 0;
@@ -59,7 +59,7 @@ class AutoProgramme: public Programme {
       this->factory = factory;
     }
     void onStart() {
-      
+      if (IS_DEBUG) Serial.println("Starting AUTO programme");
     }
     byte getCode() {
       if (this->error != 0) {
@@ -95,7 +95,7 @@ class AutoProgramme: public Programme {
 
     void getPower(ProgrammeContext* context, PowerOutput * out) {
       if (!context->isTimeSet) {
-        context->forecast.act();
+        context->forecast->act();
         this->error = 133;
         return;
       }

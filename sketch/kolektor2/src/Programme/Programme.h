@@ -6,12 +6,8 @@
 #include "../Constants/Constants.h"
 #define temperatureDownTolerationProgramme 2
 #define warmingUpTime 40000
+#include "../Weather/Weather.h"
 
-typedef struct {
-  bool (*hasValidForecast)();
-  void (*act)();
-  bool (*shouldICool)();
-} WeatherForecast;
 
 typedef struct {
   ConfigurationData* data;
@@ -19,7 +15,7 @@ typedef struct {
   float tempOutside;
   float humidityOutside;
   float dewPoint;
-  WeatherForecast forecast;
+  WeatherForecast * forecast;
   bool isTimeSet;
 } ProgrammeContext;
 

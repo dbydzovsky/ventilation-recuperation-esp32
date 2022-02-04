@@ -12,6 +12,8 @@
 #include "../Ventilator/Ventilator.h"
 #include "../Recuperation/Recuperation.h"
 #include "../RGBDiode/RGBDiode.h"
+#include "../Average/Average.h"
+#include "../Weather/Weather.h"
 
 struct OrchestratorDependencies {
   Ventilator * ventilation;
@@ -19,8 +21,12 @@ struct OrchestratorDependencies {
   Lock * lock;
   ProgrammeFactory * factory;
   RGBDiode * diode;
-  ConfigurationData * data;
   Configuration * conf;
+  Average * outsideTemp;
+  Average * outsideHum;
+  Average * insideTemp;
+  Average * co2Inside;
+  WeatherForecast * forecast;
 };
 
 class Orchestrator  {

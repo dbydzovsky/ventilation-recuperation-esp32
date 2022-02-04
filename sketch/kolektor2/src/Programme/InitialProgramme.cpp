@@ -3,7 +3,7 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
-
+#include "../Constants/Constants.h"
 
 class InitialWarmingUpProgramme: public Programme {
   private:
@@ -25,6 +25,7 @@ class InitialWarmingUpProgramme: public Programme {
       }
     }
     void onStart() {
+      if (IS_DEBUG) Serial.println("Starting Initial Programme");
       this->startedWaiting = millis();
     }
     bool handleClick(byte times) {

@@ -1,3 +1,4 @@
+#include "SPIFFS.h"
 #include "src/Button/Button.h"
 #include "src/PwmControl/PwmControl.h"
 #include "src/Relay/Relay.h"
@@ -9,6 +10,8 @@
 #include "src/Ventilator/Ventilator.h"
 #include "src/Programme/Programme.h"
 #include "src/Orchestrator/Orchestrator.h"
+#include "src/Average/Average.h"
+#include "src/Sensors/Sensors.h"
 
 // PINS
 #define PWM_1_CHANNEL 1
@@ -21,7 +24,7 @@
 #define GREEN_DIODE_PIN 13
 #define BLUE_DIODE_PIN 12
 
-Relay * relay = new Relay(RELAY_PIN);
+
 DewPoint * dewPoint = new DewPoint();
 PwmControl * pwmVent = new PwmControl(PWM_1_CHANNEL, PWM_1_PIN);
 PwmControl * pwmRecuperation = new PwmControl(PWM_2_CHANNEL, PWM_2_PIN);
@@ -30,39 +33,57 @@ Lock * httpsLock = new Lock();
 Lock * confLock = new Lock();
 Configuration * configuration = new Configuration();
 ProgrammeFactory * factory = new ProgrammeFactory();
-Ventilator * ventilation = new Ventilator(pwmVent);
-Recuperation * recuperation = new Recuperation(pwmRecuperation);
+Ventilator * ventilator = new Ventilator(pwmVent);
+Relay * relay = new Relay(RELAY_PIN);
+Recuperation * recuperation = new Recuperation(relay, pwmRecuperation);
 
-OrchestratorDependencies deps = {ventilation, recuperation, confLock, factory, diode, configuration->getData(), configuration};
+
+Sensors * sensors = new Sensors();
+Average * outsideTemp = new Average(sensors->outsideTemp);
+Average * outsideHum = new Average(sensors->outsideHum);
+Average * insideTemp = new Average(sensors->insideTemp);
+Average * co2Inside = new Average(sensors->co2Inside);
+
+OrchestratorDependencies deps = {
+  ventilator, recuperation, confLock, factory,
+  diode, configuration,
+  outsideTemp, outsideHum, insideTemp, co2Inside
+};
 Orchestrator * orchestrator = new Orchestrator(&deps);
 
 Button * button = new Button(BTN_PIN, orchestrator);
-
 void setup()
 {
-  Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+  Serial.begin(9600);
+  SPIFFS.begin();
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
   configuration->setup();
-  orchestrator->assignProgramme();
 }
 
+unsigned long last_sensor_reading = millis();
+#define averageReadingInterval 2000
+
 void loop() {
-  Serial.println("hi");
-  digitalWrite(LED_BUILTIN, HIGH);
-  dewPoint->compute(NAN, NAN);
-  button->act();
-  relay->enable();
-  relay->act();
-  relay->disable();
-  delay(500);
-  Programme * disabled = factory->Disabled;
-  Programme * summer = factory->Summer;
-  Programme * winter = factory->Winter;
-  Programme * error = factory->Error;
-  ConfigurableProgramme * trial = factory->Trial;
-  Programme * inital = factory->Initial;
-  Programme * autoProgramme = factory->Auto;
+  Serial.println("loop start");
   digitalWrite(LED_BUILTIN, LOW);
+  if (millis() - last_sensor_reading > averageReadingInterval) {
+    last_sensor_reading = millis();
+    outsideTemp->doReading();
+    outsideHum->doReading();
+    co2Inside->doReading();
+    insideTemp->doReading();
+    dewPoint->compute(outsideHum->getValue(), outsideTemp->getValue());
+  }
+  button->act();
+  ventilator->act();
+  recuperation->act();
+  relay->act();
+  delay(500);
+  digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
   orchestrator->act();
+  Serial.println(ESP.getFreeHeap());
 }

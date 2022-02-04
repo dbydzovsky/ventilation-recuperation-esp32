@@ -3,6 +3,8 @@
 #include "../Configuration/Configuration.h"
 #include "../Constants/Constants.h"
 #include "../Button/Button.h"
+
+#include "../Weather/Weather.h"
 int translateCode(byte code, char dest[50]) {
   if (code == 51) {
     strcpy(dest, "Nevalidní hodnota z venkovního čidla teploty");
@@ -18,6 +20,7 @@ int translateCode(byte code, char dest[50]) {
 
 Orchestrator::Orchestrator(OrchestratorDependencies * deps) {
   this->deps = deps;
+  this->actual = deps->factory->Initial;
 }
 
 void Orchestrator::getProgrammeName(char dest[80]) {
@@ -32,23 +35,32 @@ void Orchestrator::setProgramme(Programme * programme) {
   this->actual = programme;
 }
 void Orchestrator::assignProgramme() {
+  if (IS_DEBUG) Serial.println("Assinging Programme");
   Programme * candidate = this->deps->factory->Disabled;
+  if (IS_DEBUG) Serial.println("Disabled assigned for any case");
   if (this->deps->lock->readLock()) {
-    byte mode = this->deps->data->mode;
+    if (IS_DEBUG) Serial.println("Conf locked");
     if (!this->deps->conf->dataSet) {
+      if (IS_DEBUG) Serial.println("Data not set");
       candidate = this->deps->factory->Error;
-    } else if (mode == WINTER_MODE) {
+    } else if (this->deps->conf->getData()->mode == WINTER_MODE) {
+      if (IS_DEBUG) Serial.println("Assigning winter");
       candidate = this->deps->factory->Winter;
-    } else if (mode == SUMMER_MODE) {
+    } else if (this->deps->conf->getData()->mode == SUMMER_MODE) {
+      if (IS_DEBUG) Serial.println("Assinging Summer");
       candidate = this->deps->factory->Summer;
-    } else if (mode == AUTO_MODE) {
+    } else if (this->deps->conf->getData()->mode == AUTO_MODE) {
+      if (IS_DEBUG) Serial.println("Assinging Auto");  
       candidate = this->deps->factory->Auto;
     } else {
+      if (IS_DEBUG) Serial.println("Assinging Disabled");  
       candidate = this->deps->factory->Disabled;
     }
+    if (IS_DEBUG) Serial.println("Unlocking");
     this->deps->lock->readUnlock();
   }
   if (this->actual != candidate) {
+    if (IS_DEBUG) Serial.println("Actual programme has changed");
     this->actual = candidate;
     this->actual->onStart();
   }
@@ -103,7 +115,7 @@ void Orchestrator::act() {
   if (!this->deps->lock->readLock()) {
     return;
   }
-  ConfigurationData * data = this->deps->data;
+  ConfigurationData * data = this->deps->conf->getData();
   if (!this->actual->isValid(data)) {
     this->assignProgramme();
   }
@@ -114,6 +126,7 @@ void Orchestrator::act() {
   context.tempOutside = 60;
   context.isTimeSet = false;
   context.data = data;
+  context.forecast = this->deps->forecast;
 
   PowerOutput out;
   int programCode;
@@ -125,7 +138,9 @@ void Orchestrator::act() {
     // todo programCode = validateCommonSense(data);
     if (programCode == 0) {
       this->actual->configureTicking(this->deps->diode);
+      if (IS_DEBUG) Serial.println("Getting power");
       this->actual->getPower(&context, &out);
+      if (IS_DEBUG) Serial.println("Getting code");
       programCode = this->actual->getCode();
     } else {
       this->deps->diode->configure(tickingError);

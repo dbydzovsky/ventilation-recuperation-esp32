@@ -2,10 +2,11 @@
 #include "Recuperation.h"
 #include "../PwmControl/PwmControl.h"
 #include "../Constants/Constants.h"
-
-Recuperation::Recuperation(PwmControl *control)
+#include "../Relay/Relay.h"
+Recuperation::Recuperation(Relay * relay, PwmControl *control)
 {
   _control = control;
+  _relay = relay;
   _mode = RECUPERATION_MODE_RECYCLE;
   _power = 0;
 }

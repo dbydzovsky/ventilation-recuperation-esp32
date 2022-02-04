@@ -4,13 +4,15 @@
 #include "ArduinoJson.h"
 #include <FS.h>
 #include "SPIFFS.h"
+#include "../Constants/Constants.h"
 
 void Configuration::setInactiveMode() {
   this->changeProperty("mo", INACTIVE_MODE);
 }
 
 bool Configuration::changeProperty(const char* name, short value) {
-  DynamicJsonDocument doc(1024);
+  if (IS_DEBUG) Serial.println("Changing property.");
+  DynamicJsonDocument doc(2048);
   if (this->loadJson(&doc)) {
     doc[name] = value;
     return this->saveJson(doc);
@@ -36,13 +38,17 @@ bool Configuration::isOverlapping(short a, short b, short c, short d) {
 }
 
 void Configuration::setup() {
-  DynamicJsonDocument doc(1024);
+  if (IS_DEBUG) Serial.println("Goding to allocate doc..");
+  DynamicJsonDocument doc(2048);
+  if (IS_DEBUG) Serial.println("Loading json..");
   if (this->loadJson(&doc)) {
+    if (IS_DEBUG) Serial.println("Json Loaded, validating..");
     ConfigurationData * data = new ConfigurationData();
     if (!this->validate(doc, data)) {
       Serial.println("Cannot load config.json");
       return;
     }
+    if (IS_DEBUG) Serial.println("Json validated, saving..");
     this->data = data;
     this->dataSet = true;
   }
@@ -91,11 +97,13 @@ bool Configuration::saveJson(DynamicJsonDocument doc) {
 }
 
 bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
+  if (IS_DEBUG) Serial.println("Parsing name");
   const char* name = c["n"].as<const char*>();
   if (strlen(name) > 29) {
     return false;
   }
   strncpy(out->name, name, 30);
+  if (IS_DEBUG) Serial.println("Parsing mode");
   out->mode = c["mo"].as<byte>();
   out->autoWinterStart = c["aws"].as<short>();
   if (out->autoWinterStart < 0 || out->autoWinterStart > 365) {
@@ -126,6 +134,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (out->summerMinInsideTemp < 0 || out->summerMinInsideTemp > 1000) {
     return false;
   }
+  if (IS_DEBUG) Serial.println("Parsing monitoring");
   Monitoring * monitoring = new Monitoring();
   out->monitoring = monitoring;
   const char* apikey = c["m"]["k"].as<const char*>();
@@ -142,7 +151,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (winterOnRulesSize > 5) {
     return false;
   }
-
+  if (IS_DEBUG) Serial.println("Parsing weather key");
   const char* weatherApiKey = c["w"].as<const char*>();
   if (strlen(weatherApiKey) > 33) {
     return false;
@@ -160,7 +169,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     return false;
   }
   strncpy(out->lon, lon, 6);
-
+  if (IS_DEBUG) Serial.println("Parsing winter rules.");
   Rules * onRules = new Rules();
   onRules->count = byte(winterOnRulesSize);
   out->winterOnRules = onRules;
@@ -182,6 +191,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
       }
     }
   }
+  if (IS_DEBUG) Serial.println("Parsing summer rules");
   int summerOnRulesSize = c["sor"].size();
   if (summerOnRulesSize > 5) {
     return false;

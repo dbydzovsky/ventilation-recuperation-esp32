@@ -8,10 +8,10 @@
 #define Recuperation_h
 #include "Arduino.h"
 #include "../PwmControl/PwmControl.h"
-
+#include "../Relay/Relay.h"
 class Recuperation {
   public:
-    Recuperation(PwmControl *control);
+    Recuperation(Relay * relay, PwmControl *control);
     /**
      * @brief Set the Power object
      * 
@@ -22,6 +22,7 @@ class Recuperation {
     void act();
   private:
     PwmControl * _control;
+    Relay * _relay;
     byte _power;
     byte _mode;
 };

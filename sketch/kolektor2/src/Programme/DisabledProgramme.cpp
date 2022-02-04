@@ -3,6 +3,7 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
+#include "../Constants/Constants.h"
 
 class DisabledProgramme: public Programme {
   public:
@@ -17,6 +18,7 @@ class DisabledProgramme: public Programme {
       return 13;
     }
     void onStart() {
+      if (IS_DEBUG) Serial.println("Starting Disabled Programme");
     }
     bool handleClick(byte times) {
       

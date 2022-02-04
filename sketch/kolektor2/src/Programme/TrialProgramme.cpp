@@ -3,7 +3,7 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
-
+#include "../Constants/Constants.h"
 class TrialProgramme: public ConfigurableProgramme {
   private:
     bool valid = false;
@@ -19,6 +19,7 @@ class TrialProgramme: public ConfigurableProgramme {
     }
 
     void onStart() {
+      if (IS_DEBUG)Serial.println("Starting Trial programme");
       this->valid = true;
       this->started = millis();
     }

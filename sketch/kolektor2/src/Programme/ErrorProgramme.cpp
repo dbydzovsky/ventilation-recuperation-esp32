@@ -3,11 +3,11 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
-
+#include "../Constants/Constants.h"
 class ErrorProgramme: public Programme {
   public:
     void onStart() {
-      
+      if (IS_DEBUG) Serial.println("Starting Error Programme");
     }
     int getDescription(char dest[80]) {
       strcpy(dest, "Chybná konfigurace");
