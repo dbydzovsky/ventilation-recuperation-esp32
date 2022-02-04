@@ -96,6 +96,90 @@ void RGBDiode::staticTickerCallbackLed(RGBDiode *pThis)
     pThis->tick();
 }
 
+void tickingWiFiConnecting(TickingConfiguration *out) {
+  out->ticking[0] = 1;
+  out->ticking[1] = DIODE_GREEN_COLOR;
+  out->ticking[2] = DIODE_RED_COLOR;
+  out->ticking[3] = DIODE_BLUE_COLOR;
+  out->size = 4;
+}
+void tickingWarmingUp(TickingConfiguration *out) {
+  out->ticking[0] = 2;
+  out->ticking[1] = DIODE_BLUE_COLOR;
+  out->ticking[2] = DIODE_BLUE_COLOR;
+  out->ticking[3] = DIODE_NONE_COLOR;
+  out->ticking[4] = DIODE_BLUE_COLOR;
+  out->size = 5;
+}
+void tickingTrial(TickingConfiguration *out) {
+  out->ticking[0] = 2;
+  out->ticking[1] = DIODE_GREEN_COLOR;
+  out->ticking[2] = DIODE_NONE_COLOR;
+  out->ticking[3] = DIODE_NONE_COLOR;
+  out->ticking[4] = DIODE_BLUE_COLOR;
+  out->size = 5;
+}
+void tickingDeviceEnabledWifiOn(TickingConfiguration *out) {
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_NONE_COLOR;
+  out->ticking[2] = DIODE_GREEN_COLOR;
+  out->ticking[3] = DIODE_NONE_COLOR;
+  out->ticking[4] = DIODE_GREEN_COLOR;
+  out->size = 5;
+}
+void tickingDeviceEnabledWifiOff(TickingConfiguration *out) {
+  out->ticking[0] = 37;
+  out->ticking[1] = DIODE_NONE_COLOR;
+  out->ticking[2] = DIODE_GREEN_COLOR;
+  out->size = 3;
+}
+void tickingError(TickingConfiguration *out) {
+  out->ticking[0] = 1;
+  out->ticking[1] = DIODE_RED_COLOR;
+  out->size = 2;
+}
+void tickingEnablementRed(TickingConfiguration *out) {
+  out->ticking[0] = 1;
+  out->ticking[1] = DIODE_RED_COLOR;
+  out->size = 2;
+}
+void tickingCritical(TickingConfiguration *out) {
+  out->ticking[0] = 8;
+  out->ticking[1] = DIODE_RED_COLOR;
+  out->ticking[2] = DIODE_RED_COLOR;
+  out->ticking[3] = DIODE_RED_COLOR;
+  out->ticking[4] = DIODE_RED_COLOR;
+  out->size = 5;
+}
+void tickingConditionsMet(TickingConfiguration *out) {
+  out->ticking[0] = 25;
+  out->ticking[1] = DIODE_GREEN_COLOR;
+  out->ticking[2] = DIODE_GREEN_COLOR;
+  out->ticking[3] = DIODE_BLUE_COLOR;
+  out->ticking[4] = DIODE_BLUE_COLOR;
+  out->size = 5;
+}
+void tickingSummerDeviceEnabledWifiOn(TickingConfiguration *out) {
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_NONE_COLOR;
+  out->ticking[2] = DIODE_BLUE_COLOR;
+  out->ticking[3] = DIODE_NONE_COLOR;
+  out->ticking[4] = DIODE_BLUE_COLOR;
+  out->size = 5;
+}
+void tickingSummerDeviceEnabledWifiOff(TickingConfiguration *out) {
+  out->ticking[0] = 37;
+  out->ticking[1] = DIODE_NONE_COLOR;
+  out->ticking[2] = DIODE_BLUE_COLOR;
+  out->size = 3;
+}
+void tickingAutoProgrammeOn(TickingConfiguration *out) {
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_GREEN_COLOR;
+  out->ticking[2] = DIODE_RED_COLOR;
+  out->ticking[3] = DIODE_BLUE_COLOR;
+  out->size = 4;
+}
 void tickingDeviceDisabledWifiOn(TickingConfiguration *out) {
   out->ticking[0] = 35;
   out->ticking[1] = DIODE_RED_COLOR;

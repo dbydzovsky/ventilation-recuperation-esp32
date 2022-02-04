@@ -58,7 +58,7 @@ bool Orchestrator::handleClick(byte times) {
   if (times == 2) {
     ConfigurableProgramme * trialProgramme = this->deps->factory->Trial;
     PowerOutput output;
-    trialProgramme->setPower(output, temporaryDisabledProgrammeDuration);
+    trialProgramme->setPower(output, (int) temporaryDisabledProgrammeDuration);
     this->setProgramme(dynamic_cast<Programme*>(trialProgramme));
     return true;
   }
@@ -73,23 +73,24 @@ bool Orchestrator::handleClick(byte times) {
     this->setProgramme(dynamic_cast<Programme*>(trialProgramme));
     return true;
   }
-  return this->actual->handleClick(times);
+  return this->actual->handleClick((byte)times);
 }
 
 bool Orchestrator::handleHold(int duration_ms, bool finished) {
-  this->actual->handleHold(duration_ms, finished);
+  if (this->actual->handleHold(duration_ms, finished)) {
+    return true;
+  }
   if (duration_ms > 10000) {
     // todo restart();
   }
   if (finished) {
-    // todo diode->setPriority(0);
+    this->deps->diode->detach();
     if (duration_ms > enablementTresholdMs) {
       if (this->deps->conf->dataSet) {
-        // todo configuration->changeProperty("mo", INACTIVE_MODE);
+        this->deps->conf->setInactiveMode();
         this->assignProgramme();
       }
     }
-
   } else {
     if (duration_ms > enablementTresholdMs) {
       this->deps->diode->configure(tickingEnablementRed);

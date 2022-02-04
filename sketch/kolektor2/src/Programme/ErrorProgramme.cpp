@@ -16,14 +16,14 @@ class ErrorProgramme: public Programme {
     byte getCode() {
       return 80;
     }
-    boolean canForce() {
+    bool canForce() {
       return false;
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       return false;
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
     void configureTicking(RGBDiode * diode) {
       diode->configure(tickingCritical);
@@ -31,7 +31,7 @@ class ErrorProgramme: public Programme {
     void getPower(ProgrammeContext* context, PowerOutput *out) {
       return;
     }
-    boolean isValid(ConfigurationData * data) {
+    bool isValid(ConfigurationData * data) {
       return true;
     }
 };

@@ -22,10 +22,10 @@ class WinterProgramme: public Programme {
       }
       return 120;
     }
-    boolean canForce() {
+    bool canForce() {
       return false;
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       return false;
     }
     int getDescription(char dest[80]) {
@@ -46,8 +46,8 @@ class WinterProgramme: public Programme {
         return 15;
       }
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
     void configureTicking(RGBDiode * diode) {
       if (this->error != 0) {
@@ -92,7 +92,7 @@ class WinterProgramme: public Programme {
       this->error = 0;
       return;
     }
-    boolean isValid(ConfigurationData *data) {
+    bool isValid(ConfigurationData *data) {
       return data->mode == WINTER_MODE;
     }
 };

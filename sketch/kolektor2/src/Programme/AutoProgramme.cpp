@@ -12,7 +12,7 @@ class AutoProgramme: public Programme {
     bool candidateSet = false;
     ProgrammeFactory * factory;
 
-    boolean isInInterval(int days, int intervalStart, int intervalEnd) {
+    bool isInInterval(int days, int intervalStart, int intervalEnd) {
       if (intervalStart < intervalEnd) {
         return (intervalStart <= days) && (days < intervalEnd);
       } else {
@@ -44,8 +44,8 @@ class AutoProgramme: public Programme {
         return;
       }
       int elapsedDays = this->daysSinceYearStart();
-      boolean isInWinter = this->isInInterval(elapsedDays, context->data->autoWinterStart, context->data->autoWinterEnd);
-      boolean isInSummer = this->isInInterval(elapsedDays, context->data->autoSummerStart, context->data->autoSummerEnd);
+      bool isInWinter = this->isInInterval(elapsedDays, context->data->autoWinterStart, context->data->autoWinterEnd);
+      bool isInSummer = this->isInInterval(elapsedDays, context->data->autoSummerStart, context->data->autoSummerEnd);
       if (isInWinter) {
         this->actual = factory->Winter;  
       } else if (isInSummer) {
@@ -70,10 +70,10 @@ class AutoProgramme: public Programme {
       }
       return 130;
     }
-    boolean canForce() {
+    bool canForce() {
       return false;
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       return false;
     }
     int getDescription(char dest[80]) {
@@ -88,6 +88,7 @@ class AutoProgramme: public Programme {
         return 80;
       }
     }
+    
     void configureTicking(RGBDiode * diode) {
       diode->configure(tickingAutoProgrammeOn);
     }
@@ -102,10 +103,10 @@ class AutoProgramme: public Programme {
       this->error = 0;
       this->actual->getPower(context, out);
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
-    boolean isValid(ConfigurationData * data) {
+    bool isValid(ConfigurationData * data) {
       return data->mode == AUTO_MODE;
     }
 };

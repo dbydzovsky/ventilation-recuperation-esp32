@@ -7,7 +7,7 @@
 #ifndef Button_h
 #define Button_h
 #include "Arduino.h"
-
+#include "../Orchestrator/Orchestrator.h"
 
 #ifndef BUTTON_COOLDOWN_MS
 #define BUTTON_COOLDOWN_MS 1000
@@ -17,23 +17,16 @@
 #define BUTTON_HOLD_THRESHOLD 3000
 #endif
 
-class ButtonHandler {
-  public:
-    virtual bool handleHold(int durationMillis, bool finished) = 0;
-    virtual bool handleClick(byte times) = 0;
-};
-
-
 class Button {
   public:
-    Button(int pin, ButtonHandler *handler);
-    boolean isPressed();
+    Button(int pin, Orchestrator *orchestrator);
+    bool isPressed();
     void act();
   private:
     void resetState();
-    ButtonHandler *_handler;
+    Orchestrator *_handler;
     int _pin;
-    boolean _last_value = false;
+    bool _last_value = false;
     unsigned long _btn_pressed_time = 0;
     unsigned long _btn_unpressed_time = 0;
     byte _clicks = 0;

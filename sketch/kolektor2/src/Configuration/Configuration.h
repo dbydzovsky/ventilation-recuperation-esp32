@@ -54,15 +54,15 @@ class Configuration {
     void setup();
     void setInactiveMode();
     ConfigurationData* getData();
-    boolean save(JsonVariant &json);
-    boolean dataSet = false;
+    bool save(JsonVariant &json);
+    bool dataSet = false;
   private:
     ConfigurationData * data = {};
-    boolean isOverlapping(short a, short b, short c, short d);
-    boolean changeProperty(const char* name, short value);
-    boolean validate(DynamicJsonDocument doc, ConfigurationData *out);
-    boolean saveJson(DynamicJsonDocument doc);
-    boolean loadJson(DynamicJsonDocument *doc);
+    bool isOverlapping(short a, short b, short c, short d);
+    bool changeProperty(const char* name, short value);
+    bool validate(DynamicJsonDocument doc, ConfigurationData *out);
+    bool saveJson(DynamicJsonDocument doc);
+    bool loadJson(DynamicJsonDocument *doc);
 };
 
 #endif

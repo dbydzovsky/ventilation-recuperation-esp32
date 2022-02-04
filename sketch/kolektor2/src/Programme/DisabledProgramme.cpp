@@ -9,7 +9,7 @@ class DisabledProgramme: public Programme {
     byte getCode() {
       return 90;
     }
-    boolean canForce() {
+    bool canForce() {
       return false;
     }
     int getDescription(char dest[80]) {
@@ -18,11 +18,11 @@ class DisabledProgramme: public Programme {
     }
     void onStart() {
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
     void configureTicking(RGBDiode *diode) {
       if (WiFi.status() == WL_CONNECTED) {
@@ -30,11 +30,11 @@ class DisabledProgramme: public Programme {
       } else {
         diode->configure(&tickingDeviceDisabledWifiOff);
       }
-    }
+    } 
     void getPower(ProgrammeContext * context, PowerOutput *out) {
       return;
     }
-    boolean isValid(ConfigurationData* data) {
+    bool isValid(ConfigurationData* data) {
       return data->mode == INACTIVE_MODE;
     }
 };

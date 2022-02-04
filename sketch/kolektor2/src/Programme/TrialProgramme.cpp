@@ -6,7 +6,7 @@
 
 class TrialProgramme: public ConfigurableProgramme {
   private:
-    boolean valid = false;
+    bool valid = false;
     unsigned long started = 0;
     int durationMillis = 60000;
     PowerOutput output;
@@ -14,7 +14,7 @@ class TrialProgramme: public ConfigurableProgramme {
     byte getCode() {
       return 100;
     }
-    boolean canForce() {
+    bool canForce() {
       return true;
     }
 
@@ -33,7 +33,7 @@ class TrialProgramme: public ConfigurableProgramme {
       this->valid = false;
     }
 
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       this->valid = false;
       return false;
     }
@@ -44,8 +44,8 @@ class TrialProgramme: public ConfigurableProgramme {
       return sprintf(dest, "Manuální provoz. Zbývá %d sekund", remaining);
     }
 
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
     void configureTicking(RGBDiode * diode) {
       diode->configure(tickingTrial);
@@ -62,7 +62,7 @@ class TrialProgramme: public ConfigurableProgramme {
       return this->durationMillis;
     }
 
-    boolean isValid(ConfigurationData * data) {
+    bool isValid(ConfigurationData * data) {
       if (!this->valid) {
         return false;
       }

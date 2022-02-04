@@ -23,10 +23,10 @@ class SummerProgramme: public Programme {
       }
       return 110;
     }
-    boolean canForce() {
+    bool canForce() {
       return false;
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       return false;
     }
     int getDescription(char dest[80]) {
@@ -111,10 +111,10 @@ class SummerProgramme: public Programme {
       this->error = 0;
       return;
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
-    boolean isValid(ConfigurationData * data) {
+    bool isValid(ConfigurationData * data) {
       return data->mode == SUMMER_MODE;
     }
 };

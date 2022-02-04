@@ -12,7 +12,7 @@ class InitialWarmingUpProgramme: public Programme {
     byte getCode() {
       return 70;
     }
-    boolean canForce() {
+    bool canForce() {
       return true;
     }
     int getDescription(char dest[80]) {
@@ -27,11 +27,11 @@ class InitialWarmingUpProgramme: public Programme {
     void onStart() {
       this->startedWaiting = millis();
     }
-    boolean handleClick(short times) {
+    bool handleClick(byte times) {
       return false;
     }
-    void handleHold(int duration_ms, boolean finished) {
-
+    bool handleHold(int duration_ms, bool finished) {
+      return false;
     }
     void configureTicking(RGBDiode *diode) {
       diode->configure(tickingWarmingUp);
@@ -39,12 +39,11 @@ class InitialWarmingUpProgramme: public Programme {
     void getPower(ProgrammeContext * context, PowerOutput * out) {
       return;
     }
-
-    boolean isValid(ConfigurationData * data) {
+    bool isValid(ConfigurationData * data) {
       if (isnan(this->startedWaiting)) {
         return false;
       }
-      boolean valid = millis() - this->startedWaiting < warmingUpTime;
+      bool valid = millis() - this->startedWaiting < warmingUpTime;
       if (!valid) {
         this->startedWaiting = NAN;
       }

@@ -10,15 +10,15 @@
 
 class Lock {
   public:
-    boolean readLock();
+    bool readLock();
     void readUnlock();
-    boolean writeLock();
-    boolean writeLock(unsigned long timeoutMs);
+    bool writeLock();
+    bool writeLock(unsigned long timeoutMs);
     void writeLockInfinite();
     void writeUnlock();
   private:
     byte _reads = 0;
-    boolean _writing = 0;
+    bool _writing = 0;
 };
 
 #endif

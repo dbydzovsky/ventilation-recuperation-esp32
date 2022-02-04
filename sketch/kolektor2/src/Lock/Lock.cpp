@@ -2,7 +2,7 @@
 #include "Lock.h"
 
 
-boolean Lock::readLock() {
+bool Lock::readLock() {
   this->_reads++;
   if (this->_writing) {
     this->_reads--;
@@ -19,7 +19,7 @@ void Lock::writeUnlock() {
   this->_writing = false;
 }
 
-boolean Lock::writeLock() {
+bool Lock::writeLock() {
   if (!this->_writing) {
     this->_writing = true;
     while (this->_reads > 0) {
@@ -34,7 +34,7 @@ void Lock::writeLockInfinite() {
   while(!this->writeLock()) {}
 }
 
-boolean Lock::writeLock(unsigned long timeoutMs) {
+bool Lock::writeLock(unsigned long timeoutMs) {
   
   unsigned long started = millis();
   while (millis() - started < timeoutMs) {

@@ -1,13 +1,14 @@
 #include "Arduino.h"
 #include "Button.h"
+#include "../Orchestrator/Orchestrator.h"
 
-Button::Button(int pin, ButtonHandler *handler) {
+Button::Button(int pin, Orchestrator *handler) {
   this->_pin = pin;
   this->_handler = handler;
   pinMode(pin, INPUT);
 }
 
-boolean Button::isPressed() {
+bool Button::isPressed() {
   return this->_last_value;
 }
 
@@ -18,7 +19,7 @@ void Button::resetState() {
 }
 
 void Button::act() {
-  boolean pressed = digitalRead(this->_pin);
+  bool pressed = digitalRead(this->_pin);
   if (!pressed && this->_btn_pressed_time == 0) {
     return;
   }

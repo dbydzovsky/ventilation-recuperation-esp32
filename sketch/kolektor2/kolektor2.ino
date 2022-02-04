@@ -35,25 +35,19 @@ Recuperation * recuperation = new Recuperation(pwmRecuperation);
 
 OrchestratorDependencies deps = {ventilation, recuperation, confLock, factory, diode, configuration->getData(), configuration};
 Orchestrator * orchestrator = new Orchestrator(&deps);
-class ButtonAdapter: public ButtonHandler {
-  public:
-    bool handleHold(int durationMillis, bool finished) {
-        return orchestrator->handleHold(durationMillis, finished);
-    }
-    bool handleClick(byte times) {
-        return orchestrator->handleClick(times);
-    }
-};
-ButtonAdapter * adapter = new ButtonAdapter();
-Button * button = new Button(BTN_PIN, adapter);
+
+Button * button = new Button(BTN_PIN, orchestrator);
 
 void setup()
 {
+  Serial.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);
   configuration->setup();
-
+  orchestrator->assignProgramme();
 }
 
 void loop() {
+  Serial.println("hi");
   digitalWrite(LED_BUILTIN, HIGH);
   dewPoint->compute(NAN, NAN);
   button->act();
@@ -70,4 +64,5 @@ void loop() {
   Programme * autoProgramme = factory->Auto;
   digitalWrite(LED_BUILTIN, LOW);
   delay(500);
+  orchestrator->act();
 }

@@ -44,17 +44,12 @@ class RGBDiode {
 
 
 void tickingWiFiConnecting(TickingConfiguration *out);
-void tickingAboutToChangeEnablementRed(TickingConfiguration *out);
-void tickingAboutToChangeEnablementGreen(TickingConfiguration *out);
 void tickingWarmingUp(TickingConfiguration *out);
 void tickingTrial(TickingConfiguration *out);
 void tickingDeviceEnabledWifiOn(TickingConfiguration *out);
 void tickingDeviceEnabledWifiOff(TickingConfiguration *out);
-void tickingTempDeviceDisabled(TickingConfiguration *out);
-void tickingManual100(TickingConfiguration *out);
 void tickingError(TickingConfiguration *out);
 void tickingEnablementRed(TickingConfiguration *out);
-void tickingEnablementGreen(TickingConfiguration *out);
 void tickingCritical(TickingConfiguration *out);
 void tickingConditionsMet(TickingConfiguration *out);
 void tickingSummerDeviceEnabledWifiOn(TickingConfiguration *out);

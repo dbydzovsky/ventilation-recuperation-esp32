@@ -9,7 +9,7 @@ void Configuration::setInactiveMode() {
   this->changeProperty("mo", INACTIVE_MODE);
 }
 
-boolean Configuration::changeProperty(const char* name, short value) {
+bool Configuration::changeProperty(const char* name, short value) {
   DynamicJsonDocument doc(1024);
   if (this->loadJson(&doc)) {
     doc[name] = value;
@@ -18,11 +18,11 @@ boolean Configuration::changeProperty(const char* name, short value) {
   return false;
 }
 
-boolean Configuration::save(JsonVariant &json) {
+bool Configuration::save(JsonVariant &json) {
   return this->saveJson(json);
 }
 
-boolean Configuration::isOverlapping(short a, short b, short c, short d) {
+bool Configuration::isOverlapping(short a, short b, short c, short d) {
     if (a < b && c < d) {
         return a < d && c < b;
     }
@@ -52,7 +52,7 @@ ConfigurationData* Configuration::getData() {
   return this->data;
 }
 
-boolean Configuration::loadJson(DynamicJsonDocument *doc) {
+bool Configuration::loadJson(DynamicJsonDocument *doc) {
   File configFile = SPIFFS.open("/config.json", "r");
   if (!configFile) {
     return false;
@@ -62,7 +62,7 @@ boolean Configuration::loadJson(DynamicJsonDocument *doc) {
   return true;
 }
 
-boolean Configuration::saveJson(DynamicJsonDocument doc) {
+bool Configuration::saveJson(DynamicJsonDocument doc) {
   ConfigurationData * newData = new ConfigurationData();
   if (!this->validate(doc, newData)) {
     return false;
@@ -74,7 +74,7 @@ boolean Configuration::saveJson(DynamicJsonDocument doc) {
   serializeJson(doc, configFile);
   configFile.close();
   ConfigurationData * oldData = this->data;
-  boolean hasBeenSet = this->dataSet;
+  bool hasBeenSet = this->dataSet;
   this->data = newData;
   this->dataSet = true;
   if (hasBeenSet) {
@@ -90,7 +90,7 @@ boolean Configuration::saveJson(DynamicJsonDocument doc) {
   return true;
 }
 
-boolean Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
+bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   const char* name = c["n"].as<const char*>();
   if (strlen(name) > 29) {
     return false;
