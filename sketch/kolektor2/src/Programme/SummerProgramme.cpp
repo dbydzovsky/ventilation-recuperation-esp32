@@ -65,7 +65,7 @@ class SummerProgramme: public Programme {
     void getPower(ProgrammeContext *context, PowerOutput *out) {
       out->mode = POWER_OUTPUT_MODE_VENTILATION;
       
-      context->forecast->act();
+      context->forecast->act(context->weatherDeps);
       if (!context->forecast->hasValidForecast()) {
         this->error = 115;
         return;

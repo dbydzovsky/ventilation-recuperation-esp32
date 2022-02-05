@@ -1,5 +1,5 @@
 #include "SPIFFS.h"
-#include "src/Button/Button.h"
+#include <HTTPClient.h>
 #include "src/PwmControl/PwmControl.h"
 #include "src/Relay/Relay.h"
 #include "src/DewPoint/DewPoint.h"
@@ -12,6 +12,12 @@
 #include "src/Orchestrator/Orchestrator.h"
 #include "src/Average/Average.h"
 #include "src/Sensors/Sensors.h"
+#include "src/Dependencies/Dependencies.h"
+#include "src/Weather/Weather.h"
+#include "src/TimeProvider/TimeProvider.h"
+#include "src/Button/Button.h"
+
+HTTPClient httpClient;
 
 // PINS
 #define PWM_1_CHANNEL 1
@@ -37,6 +43,8 @@ Ventilator * ventilator = new Ventilator(pwmVent);
 Relay * relay = new Relay(RELAY_PIN);
 Recuperation * recuperation = new Recuperation(relay, pwmRecuperation);
 
+TimeProvider * timeProvider = new TimeProvider();
+WeatherForecast * forecast = new WeatherForecast();
 
 Sensors * sensors = new Sensors();
 Average * outsideTemp = new Average(sensors->outsideTemp);
@@ -44,12 +52,14 @@ Average * outsideHum = new Average(sensors->outsideHum);
 Average * insideTemp = new Average(sensors->insideTemp);
 Average * co2Inside = new Average(sensors->co2Inside);
 
-OrchestratorDependencies deps = {
-  ventilator, recuperation, confLock, factory,
-  diode, configuration,
-  outsideTemp, outsideHum, insideTemp, co2Inside
+Dependencies deps = { 
+  ventilator, recuperation, confLock, httpsLock,
+  factory, diode, configuration, 
+  outsideTemp, outsideHum, insideTemp, co2Inside,
+  forecast, timeProvider, &httpClient 
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
+
 
 Button * button = new Button(BTN_PIN, orchestrator);
 void setup()
@@ -59,6 +69,7 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(500);
+  httpClient.setReuse(true);
   digitalWrite(LED_BUILTIN, LOW);
   configuration->setup();
 }

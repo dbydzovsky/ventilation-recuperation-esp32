@@ -4,10 +4,11 @@
 #include "../Configuration/Configuration.h"
 #include "../RGBDiode/RGBDiode.h"
 #include "../Constants/Constants.h"
+#include "../Weather/Weather.h"
+#include <WiFiClientSecure.h>
+
 #define temperatureDownTolerationProgramme 2
 #define warmingUpTime 40000
-#include "../Weather/Weather.h"
-
 
 typedef struct {
   ConfigurationData* data;
@@ -16,6 +17,7 @@ typedef struct {
   float humidityOutside;
   float dewPoint;
   WeatherForecast * forecast;
+  WeatherDeps * weatherDeps;
   bool isTimeSet;
 } ProgrammeContext;
 

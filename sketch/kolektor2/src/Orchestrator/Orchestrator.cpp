@@ -3,8 +3,9 @@
 #include "../Configuration/Configuration.h"
 #include "../Constants/Constants.h"
 #include "../Button/Button.h"
-
+#include "../Dependencies/Dependencies.h"
 #include "../Weather/Weather.h"
+
 int translateCode(byte code, char dest[50]) {
   if (code == 51) {
     strcpy(dest, "Nevalidní hodnota z venkovního čidla teploty");
@@ -18,9 +19,13 @@ int translateCode(byte code, char dest[50]) {
   }
 };
 
-Orchestrator::Orchestrator(OrchestratorDependencies * deps) {
+Orchestrator::Orchestrator(Dependencies * deps) {
   this->deps = deps;
-  this->actual = deps->factory->Initial;
+  if (IS_DEBUG) {
+    this->actual = deps->factory->Disabled;  
+  } else {
+    this->actual = deps->factory->Initial;  
+  }
 }
 
 void Orchestrator::getProgrammeName(char dest[80]) {
@@ -38,7 +43,7 @@ void Orchestrator::assignProgramme() {
   if (IS_DEBUG) Serial.println("Assinging Programme");
   Programme * candidate = this->deps->factory->Disabled;
   if (IS_DEBUG) Serial.println("Disabled assigned for any case");
-  if (this->deps->lock->readLock()) {
+  if (this->deps->confLock->readLock()) {
     if (IS_DEBUG) Serial.println("Conf locked");
     if (!this->deps->conf->dataSet) {
       if (IS_DEBUG) Serial.println("Data not set");
@@ -57,7 +62,7 @@ void Orchestrator::assignProgramme() {
       candidate = this->deps->factory->Disabled;
     }
     if (IS_DEBUG) Serial.println("Unlocking");
-    this->deps->lock->readUnlock();
+    this->deps->confLock->readUnlock();
   }
   if (this->actual != candidate) {
     if (IS_DEBUG) Serial.println("Actual programme has changed");
@@ -112,7 +117,7 @@ bool Orchestrator::handleHold(int duration_ms, bool finished) {
 }
 
 void Orchestrator::act() {
-  if (!this->deps->lock->readLock()) {
+  if (!this->deps->confLock->readLock()) {
     return;
   }
   ConfigurationData * data = this->deps->conf->getData();
@@ -124,10 +129,11 @@ void Orchestrator::act() {
   context.humidityOutside = 60;
   context.tempInside = 20;
   context.tempOutside = 60;
-  context.isTimeSet = false;
+  context.isTimeSet = this->deps->timeProvider->isTimeSet();
   context.data = data;
   context.forecast = this->deps->forecast;
-
+  WeatherDeps weatherDeps = {data, this->deps->timeProvider, this->deps->httpClient, this->deps->httpLock};
+  context.weatherDeps = &weatherDeps;
   PowerOutput out;
   int programCode;
   if (this->actual->canForce()) {
@@ -146,7 +152,7 @@ void Orchestrator::act() {
       this->deps->diode->configure(tickingError);
     }
   }
-  this->deps->lock->readUnlock();
+  this->deps->confLock->readUnlock();
   if (out.mode == POWER_OUTPUT_MODE_VENTILATION || out.mode == POWER_OUTPUT_MODE_BOTH) {
     this->deps->ventilation->setPower(out.ventilatorPower);
   }

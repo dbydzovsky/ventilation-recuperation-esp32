@@ -95,7 +95,8 @@ class AutoProgramme: public Programme {
 
     void getPower(ProgrammeContext* context, PowerOutput * out) {
       if (!context->isTimeSet) {
-        context->forecast->act();
+        if (IS_DEBUG) Serial.println("Time is not set, getting forecast");
+        context->forecast->act(context->weatherDeps);
         this->error = 133;
         return;
       }

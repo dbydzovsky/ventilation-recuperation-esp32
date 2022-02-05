@@ -1,11 +1,14 @@
 
-#define IS_DEBUG 1
+#define IS_DEBUG true
 
 #define temporaryDisabledProgrammeDuration 3600000 // 1hour
 #define manual100ProgrammeDuration 900000 // 15 minutes
 
 #define averageValuesCount 7
 #define enablementTresholdMs 4000 // 4 seconds
+
+#define syncForecastTolerateLastSuccessFor 172800000 // 2 days
+#define syncForecastInterval 43200000 // 12 hours
 
 #define POWER_OUTPUT_MODE_NONE 0
 #define POWER_OUTPUT_MODE_VENTILATION 1
