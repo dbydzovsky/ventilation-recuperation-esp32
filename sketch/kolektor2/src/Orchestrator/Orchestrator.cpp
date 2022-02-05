@@ -66,6 +66,7 @@ void Orchestrator::assignProgramme() {
   }
   if (this->actual != candidate) {
     if (IS_DEBUG) Serial.println("Actual programme has changed");
+    this->actual->invalidate();
     this->actual = candidate;
     this->actual->onStart();
   }
@@ -110,7 +111,7 @@ bool Orchestrator::handleHold(int duration_ms, bool finished) {
     }
   } else {
     if (duration_ms > enablementTresholdMs) {
-      this->deps->diode->configure(tickingEnablementRed);
+      this->deps->diode->configure(&tickingEnablementRed);
     }
   }
   return finished;
@@ -125,10 +126,11 @@ void Orchestrator::act() {
     this->assignProgramme();
   }
   ProgrammeContext context;
-  context.dewPoint = 5;
-  context.humidityOutside = 60;
-  context.tempInside = 20;
-  context.tempOutside = 60;
+  context.dewPoint = this->deps->dewPoint->getDewPoint();
+  context.humidityOutside = this->deps->outsideHum->getAverage();
+  context.tempInside = this->deps->insideTemp->getAverage();
+  context.tempOutside = this->deps->outsideTemp->getAverage();
+  context.co2 = this->deps->co2Inside->getAverage();
   context.isTimeSet = this->deps->timeProvider->isTimeSet();
   context.data = data;
   context.forecast = this->deps->forecast;
@@ -144,19 +146,13 @@ void Orchestrator::act() {
     // todo programCode = validateCommonSense(data);
     if (programCode == 0) {
       this->actual->configureTicking(this->deps->diode);
-      if (IS_DEBUG) Serial.println("Getting power");
       this->actual->getPower(&context, &out);
-      if (IS_DEBUG) Serial.println("Getting code");
       programCode = this->actual->getCode();
     } else {
-      this->deps->diode->configure(tickingError);
+      this->deps->diode->configure(&tickingError);
     }
   }
   this->deps->confLock->readUnlock();
-  if (out.mode == POWER_OUTPUT_MODE_VENTILATION || out.mode == POWER_OUTPUT_MODE_BOTH) {
-    this->deps->ventilation->setPower(out.ventilatorPower);
-  }
-  if (out.mode == POWER_OUTPUT_MODE_RECUPERATION || out.mode == POWER_OUTPUT_MODE_BOTH) {
-    this->deps->recuperation->setPower(out.recuperationPower, out.recuperationMode);
-  }
+  this->deps->ventilation->setPower(out.ventilatorPower);
+  this->deps->recuperation->setPower(out.recuperationPower, out.recuperationMode);
 }

@@ -11,7 +11,7 @@ class AutoProgramme: public Programme {
     Programme * actual;
     bool candidateSet = false;
     ProgrammeFactory * factory;
-
+    Programme * _recuperation;
     bool isInInterval(int days, int intervalStart, int intervalEnd) {
       if (intervalStart < intervalEnd) {
         return (intervalStart <= days) && (days < intervalEnd);
@@ -51,12 +51,13 @@ class AutoProgramme: public Programme {
       } else if (isInSummer) {
         this->actual = factory->Summer;
       } else {
-        this->actual = factory->Disabled;
+        this->actual = factory->Recuperation;
       }
     }
   public:
     AutoProgramme(ProgrammeFactory * factory) {
       this->factory = factory;
+      this->_recuperation = factory->Recuperation;
     }
     void onStart() {
       if (IS_DEBUG) Serial.println("Starting AUTO programme");
@@ -90,7 +91,7 @@ class AutoProgramme: public Programme {
     }
     
     void configureTicking(RGBDiode * diode) {
-      diode->configure(tickingAutoProgrammeOn);
+      diode->configure(&tickingAutoProgrammeOn);
     }
 
     void getPower(ProgrammeContext* context, PowerOutput * out) {
@@ -98,11 +99,15 @@ class AutoProgramme: public Programme {
         if (IS_DEBUG) Serial.println("Time is not set, getting forecast");
         context->forecast->act(context->weatherDeps);
         this->error = 133;
+        this->_recuperation->getPower(context, out);
         return;
       }
       this->assignCandidate(context);
       this->error = 0;
       this->actual->getPower(context, out);
+    }
+    void invalidate() {
+      
     }
     bool handleHold(int duration_ms, bool finished) {
       return false;

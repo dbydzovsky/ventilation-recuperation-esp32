@@ -61,5 +61,6 @@ void WeatherForecast::act(WeatherDeps * deps) {
   }
 }
 bool WeatherForecast::shouldCoolInsides(){
+  // todo
   return true;
 }

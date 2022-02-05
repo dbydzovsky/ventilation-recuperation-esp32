@@ -45,7 +45,7 @@ export const summerOrderValidation = (previous: Rule, actual: Rule) => {
 export const weatherKeys = [
     {key: "lat", label: "Zeměpisná šírka (např. 50.25)", max: 5},
     {key: "lon", label: "Zeměpisná délka (např. 15.39)", max: 5},
-    {key: "w", label: "API klíč (max. 32 znaků)", max: 32}
+    {key: "weatherApiKey", label: "API klíč (max. 32 znaků)", max: 32}
 ]
 
 export function temperatureValidator(input: string | number) {
@@ -101,24 +101,22 @@ export function ConfigurationPage() {
         dispatch(getConfiguration);
     }, [reloadCounter]);
     let initial: Configuration = {
-        ass: 100,
-        ase: 200,
-        aws: 250,
-        awe: 50,
-        c: 0,
-        n: "aName",
-        mo: 0,
-        td: 90,
-        wmit: 240,
-        smit: 180,
-        wor: [],
-        sor: [],
-        w: "",
+        autoSummerStart: 100,
+        autoSummerEnd: 200,
+        autoWinterStart: 250,
+        autoWinterEnd: 50,
+        name: "aName",
+        mode: 0,
+        winterMaxInsideTemp: 24.0,
+        summerMinInsideTemp: 18.0,
+        winterOnRules: [],
+        summerOnRules: [],
+        weatherApiKey: "",
         lat: "",
         lon: "",
-        m: {
-            f: "",
-            k: ""
+        monitoring: {
+            feed: "",
+            key: ""
         }
     }
     const rulesMaxCount = 5;
@@ -129,24 +127,24 @@ export function ConfigurationPage() {
     if (!values) {
         return <div></div>
     }
-    const maxTrendingDownInvalid = values.td < 60 || values.td > 1800;
-    const nameInvalid = !values.n || values.n.length > 20 || !isASCII(values.n);
-    const maxInsideTemperatureInvalid = values.wmit < 0 || values.wmit > 1000;
-    let winterRulesInvalid = values.wor && values.wor.some((item, index) => {
-        return values.wor.filter((_, i) => {
+    const nameInvalid = !values.name || values.name.length > 20 || !isASCII(values.name);
+    const maxInsideTemperatureInvalid = values.winterMaxInsideTemp < 0 || values.winterMaxInsideTemp > 1000;
+    let winterRulesInvalid = values.winterOnRules && values.winterOnRules.some((item, index) => {
+        return values.winterOnRules.filter((_, i) => {
             return i < index;
         }).some((previous) => winterOrderValidation(previous, item))
     })
-    let summerRulesInvalid = values.sor && values.sor.some((item, index) => {
-        return values.sor.filter((_, i) => {
+
+    let summerRulesInvalid = values.summerOnRules && values.summerOnRules.some((item, index) => {
+        return values.summerOnRules.filter((_, i) => {
             return i < index;
         })
             .some((previous) => summerOrderValidation(previous, item))
     })
     let rulesInvalid = winterRulesInvalid
         || summerRulesInvalid
-        || (values.wor && values.wor.length > rulesMaxCount)
-        || (values.sor && values.sor.length > rulesMaxCount);
+        || (values.winterOnRules && values.winterOnRules.length > rulesMaxCount)
+        || (values.summerOnRules && values.summerOnRules.length > rulesMaxCount);
     const isOverlapping = (a: number, b: number, c: number, d: number):boolean => {
         if (a < b && c < d) {
             return a < d && c < b;
@@ -159,11 +157,11 @@ export function ConfigurationPage() {
         const w1 = (d - c) % m;
         return (w1 != 0 && ((c - a) % m) < w0) || (w0 != 0 && ((a - c) % m) < w1);
     }
-    const winterSummerOverlaps = isOverlapping(values.aws, values.awe, values.ass, values.ase)
-    const anyInvalid = maxTrendingDownInvalid || maxInsideTemperatureInvalid || rulesInvalid || nameInvalid || winterSummerOverlaps;
+    const winterSummerOverlaps = isOverlapping(values.autoWinterStart, values.autoWinterEnd, values.autoSummerStart, values.autoSummerEnd)
+    const anyInvalid = maxInsideTemperatureInvalid || rulesInvalid || nameInvalid || winterSummerOverlaps;
     const handleMonitoringChange = (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
-        let monitoring = {...values.m, [prop]: event.target.value}
-        setValues({...values, m: monitoring});
+        let monitoring = {...values.monitoring, [prop]: event.target.value}
+        setValues({...values, monitoring: monitoring});
     };
     const handleChange = (prop: string, validator: (value: string) => boolean, transform: (value: string) => any = (it) => it) => (event: ChangeEvent<HTMLInputElement>) => {
         if (validator(event.target.value)) {
@@ -182,7 +180,7 @@ export function ConfigurationPage() {
         setReloadId(reloadCounter + 1)
     }
     const setMode = (e: ChangeEvent<HTMLInputElement>, value: string) => {
-        setValues({...values, mo: Number(value)})
+        setValues({...values, mode: Number(value)})
     }
     return <div className={classes.header}>
         <Grid container>
@@ -190,14 +188,14 @@ export function ConfigurationPage() {
                 <Paper className={classes.properties}>
                     <InputLabel htmlFor="standard-adornment-amount" className={classes.label}>
                         <BrandingWatermarkIcon/>
-                        Název zařízení <i>(bude dostupné jako http://{values.n}/)</i>
+                        Název zařízení <i>(bude dostupné jako http://{values.name}/)</i>
                     </InputLabel>
                     <Input
                         error={nameInvalid}
                         id="standard-adornment-name"
-                        value={values.n}
+                        value={values.name}
                         className={classes.input}
-                        onChange={handleChange('n', (it) => it.length <= 20)}
+                        onChange={handleChange('name', (it) => it.length <= 20)}
                         startAdornment={<InputAdornment position="start"><PersonPinIcon/></InputAdornment>}
                     />
                 </Paper>
@@ -219,11 +217,11 @@ export function ConfigurationPage() {
                             Naměřené hodnoty pomáhají sledovat funkčnost zařízení, ale také sledovat jeho užitečnost.
                             Kromě hodnoty ze sensorů se odesílá také počet restartů, aktuální stav paměti a také počet
                             chybových čtení ze sensorů.
-                            {[{key: "f", label: "feed ID"}, {key: "k", label: "Api Key"}].map((item) => {
+                            {[{key: "feed", label: "feed ID"}, {key: "key", label: "Api Key"}].map((item) => {
                                 let value = ""
-                                if (values.m) {
+                                if (values.monitoring) {
                                     // @ts-ignore
-                                    value = values.m[item.key] || ""
+                                    value = values.monitoring[item.key] || ""
                                 }
                                 return <Grid item xs={12} md={6} lg={4} key={item.key}>
                                     <Paper className={classes.properties}>
@@ -284,28 +282,28 @@ export function ConfigurationPage() {
                 </ExpansionPanel>
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
-                <Paper className={classes.properties} key={values.mo + ""}>
+                <Paper className={classes.properties} key={values.mode + ""}>
                     <FormControl component="fieldset">
                         <div className={classes.label}>
                             <FormLabel component="legend"><CompareArrowsIcon/> Režim provozu</FormLabel>
                         </div>
-                        <RadioGroup aria-label="mode" name="gender1" value={values.mo}
+                        <RadioGroup aria-label="mode" name="gender1" value={values.mode}
                                     onChange={setMode} className={classes.radioBtnGroup}>
                             <FormControlLabel value={Mode.INACTIVE}
                                               control={<Radio/>}
-                                              className={values.mo == Mode.INACTIVE ? classes.selectedFont : undefined}
+                                              className={values.mode == Mode.INACTIVE ? classes.selectedFont : undefined}
                                               label="Neaktivní"/>
                             <FormControlLabel value={Mode.WINTER}
                                               control={<Radio/>}
-                                              className={values.mo == Mode.WINTER ? classes.selectedFont : undefined}
+                                              className={values.mode == Mode.WINTER ? classes.selectedFont : undefined}
                                               label="Ohřívání vzduchu a topení"/>
                             <FormControlLabel value={Mode.SUMMER}
                                               control={<Radio/>}
-                                              className={values.mo == Mode.SUMMER ? classes.selectedFont : undefined}
+                                              className={values.mode == Mode.SUMMER ? classes.selectedFont : undefined}
                                               label={<>Noční chlazení <i>(Zařízení musí být připojené k WiFi)</i></>}/>
                             <FormControlLabel value={Mode.AUTO}
                                               control={<Radio/>}
-                                              className={values.mo == Mode.AUTO ? classes.selectedFont : undefined}
+                                              className={values.mode == Mode.AUTO ? classes.selectedFont : undefined}
                                               label={<>Automaticky <i>(Zařízení musí být připojené k WiFi, odkud si
                                                   synchronizuje čas a předpověď počasí)</i></>}/>
                         </RadioGroup>
@@ -318,26 +316,6 @@ export function ConfigurationPage() {
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><AcUnitIcon/> Nastavení vyhřívacího programu</h2>
                 </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                    <Paper className={classes.properties}>
-                        <InputLabel htmlFor="standard-adornment-amount" className={classes.label}>
-                            <TrendingDownIcon/>
-                            Sledování klesajícího trendu
-                        </InputLabel>
-                        <Input
-                            error={maxTrendingDownInvalid}
-                            id="standard-adornment-max-trending-down"
-                            value={values.td}
-                            className={classes.input}
-                            onChange={handleChange('td', rangeValidator(0, 1800))}
-                            startAdornment={<InputAdornment position="start">počet vteřin (60 až 1800)</InputAdornment>}
-                        />
-                        <div className={classes.helplabel}>(Ventilátor se vypne, pokud teplota v kolektoru klesá daný
-                            počet
-                            vteřin. Neaktivní při teplotě nad 70°C)
-                        </div>
-                    </Paper>
-                </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper className={classes.properties}>
                         <InputLabel className={classes.label}>
@@ -348,20 +326,20 @@ export function ConfigurationPage() {
                             error={maxInsideTemperatureInvalid}
                             id="standard-adornment-max-inside-temp"
                             type={"number"}
-                            value={values.wmit / 10}
+                            value={values.winterMaxInsideTemp}
                             className={classes.input}
-                            onChange={handleChange('wmit', temperatureValidator, (val: string) => {
+                            onChange={handleChange('winterMaxInsideTemp', temperatureValidator, (val: string) => {
                                 console.log(val);
-                                return Math.round(Number(val) * 10)
+                                return Math.round(Number(val) * 100) / 100
                             })}
                             startAdornment={<InputAdornment position="start">°C</InputAdornment>}
                         />
                     </Paper>
                 </Grid>
                 <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší teploty po největší):"}
-                                rules={values.wor}
+                                rules={values.winterOnRules}
                                 validate={winterOrderValidation}
-                                onChange={handleRuleChange('wor')}/>
+                                onChange={handleRuleChange('winterOnRules')}/>
             </Grid></div>
         <div className={classes.summerSetting}>
             <Grid container>
@@ -378,11 +356,11 @@ export function ConfigurationPage() {
                             error={maxInsideTemperatureInvalid}
                             id="standard-adornment-min-inside-temp"
                             type={"number"}
-                            value={values.smit / 10}
+                            value={values.summerMinInsideTemp}
                             className={classes.input}
-                            onChange={handleChange('smit', temperatureValidator, (val: string) => {
+                            onChange={handleChange('summerMinInsideTemp', temperatureValidator, (val: string) => {
                                 console.log(val);
-                                return Math.round(Number(val) * 10)
+                                return Math.round(Number(val) * 100) / 100
                             })}
                             startAdornment={<InputAdornment position="start">°C</InputAdornment>}
                         />
@@ -391,9 +369,9 @@ export function ConfigurationPage() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                     <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší teploty po nejmenší):"}
-                                    rules={values.sor}
+                                    rules={values.summerOnRules}
                                     validate={summerOrderValidation}
-                                    onChange={handleRuleChange('sor')}/>
+                                    onChange={handleRuleChange('summerOnRules')}/>
                 </Grid>
 
             </Grid>
@@ -406,18 +384,18 @@ export function ConfigurationPage() {
                 <Grid item xs={12} sm={12} md={12}>
                     <Paper className={classes.properties}>
                         Nastavení období vyhřívacího programu
-                        <Range color="orange" start={values.aws} end={values.awe}
+                        <Range color="orange" start={values.autoWinterStart} end={values.autoWinterEnd}
                                onChange={(start, end) => {
-                                   setValues({...values, aws: start, awe: end})
+                                   setValues({...values, autoWinterStart: start, autoWinterEnd: end})
                                }}/>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                     <Paper className={classes.properties}>
                         Nastavení období klimatizačního programu
-                        <Range color="blue" start={values.ass} end={values.ase}
+                        <Range color="blue" start={values.autoSummerStart} end={values.autoSummerEnd}
                                onChange={(start, end) => {
-                                   setValues({...values, ass: start, ase: end})
+                                   setValues({...values, autoSummerStart: start, autoSummerEnd: end})
                                }}/>
                     </Paper>
                 </Grid>

@@ -27,25 +27,25 @@ const useStyles = makeStyles((theme) => {
 export function TrialPage() {
     const trialAction = useActions(TrialActions);
     const classes = useStyles();
-    const [power, setPower] = React.useState(0);
+    const [power, setVentilator] = React.useState(0);
     const [duration, setDuration] = React.useState("60000");
     const [enabled, setEnabled] = React.useState(false);
 
     const currentState = useSelector((state: RootState) => state.state);
     useEffect(() => {
-        if (currentState.tpd) {
-            setEnabled(true);
-            setPower(currentState.tpp ? currentState.tpp : 0);
-            setDuration(currentState.tpd ? currentState.tpd + "" : "60000");
+        if (currentState.trial) {
+            setEnabled(currentState.trial.enabled);
+            setVentilator(currentState.trial.ventilator ? currentState.trial.ventilator : 0);
+            setDuration(currentState.trial.duration ? currentState.trial.duration + "" : "60000");
         } else {
             setEnabled(false);
         }
-    }, [currentState.tpp, currentState.tpd]);
+    }, [currentState.trial]);
     const handlePowerChange = (event: any, newPower: number|number[]) => {
-        setPower(newPower as number)
+        setVentilator(newPower as number)
     };
     const handlePowerChangeCommited = (event: any, newPower: number|number[]) => {
-        setPower(newPower as number)
+        setVentilator(newPower as number)
         trialAction.changeTrial({power: newPower, duration: duration, on: true})
     };
     const handleDurationChange = (event: any, newDuration: string) => {

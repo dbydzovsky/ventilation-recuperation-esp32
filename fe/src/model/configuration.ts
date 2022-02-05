@@ -8,8 +8,8 @@ export interface Rule {
 }
 
 export interface Monitoring {
-  f: string,
-  k: string
+  feed: string,
+  key: string
 }
 
 export enum Mode {
@@ -20,22 +20,20 @@ export enum Mode {
 }
 
 export interface Configuration {
-  c: number
-  n: string
-  mo: Mode
-  td: number // treding down
-  wmit: number
-  wor: Rule[]
-  sor: Rule[]
-  smit: number
-  m: Monitoring
-  w: string
+  name: string
+  mode: Mode
+  winterMaxInsideTemp: number
+  winterOnRules: Rule[]
+  summerOnRules: Rule[]
+  summerMinInsideTemp: number
+  monitoring: Monitoring
+  weatherApiKey: string
   lat: string
   lon: string
-  aws: number
-  awe: number
-  ass: number
-  ase: number
+  autoWinterStart: number
+  autoWinterEnd: number
+  autoSummerStart: number
+  autoSummerEnd: number
 }
 
 export interface ConfigurationState {

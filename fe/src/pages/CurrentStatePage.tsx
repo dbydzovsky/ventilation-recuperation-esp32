@@ -3,7 +3,7 @@ import {makeStyles, withStyles} from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {CurrentStatePanel} from "./CurrentStatePanel";
 import {TempHumSensorComp} from "../components/TempHumSensor";
-import {TempPressSensorComp} from "../components/TempPressSensor";
+import {TempCo2SensorComp} from "../components/TempPressSensor";
 import {DebugInfo} from "../components/DebugInfo";
 import {useSelector} from "react-redux";
 import {RootState} from "../reducers";
@@ -33,18 +33,18 @@ export function CurrentStatePage() {
         <Grid container>
             <Grid item xs={12} md={4} lg={4} className={classes.sensor}>
                 <Paper className={classes.sensorInside}>
-                    <TempHumSensorComp data={currentState.o} label={"Venkovní čidlo"} />
+                    <TempHumSensorComp hum={currentState.outsideHum || {}} temp={currentState.outsideTemp|| {}} label={"Venkovní čidlo"} />
                 </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={4} className={classes.sensor}>
                 <Paper className={classes.sensorInside}>
-                    <TempPressSensorComp data={currentState.i} label={"Vnitřní čidlo"} />
+                    <TempCo2SensorComp temp={currentState.insideTemp|| {}} co2={currentState.co2Inside|| {}} label={"Vnitřní čidlo"} />
                 </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={4} className={classes.sensor}>
                 <Paper className={classes.sensorInside}>
                     <div className={classes.margination}>
-                        <b>Zapnuto</b><br/> {msToTime(currentState.a)}
+                        <b>Zapnuto</b><br/> {msToTime(currentState.alive)}
                     </div>
                 </Paper>
             </Grid>

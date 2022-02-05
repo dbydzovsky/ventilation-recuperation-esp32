@@ -1,11 +1,11 @@
 import React from "react";
 import {Tooltip} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
+import {Sensor} from "../model/state";
 
 export interface SensorProps {
     icon: any,
-    property: string,
-    obj: {},
+    obj: Sensor,
     unit: string,
     label: string,
     transform?: (val: number) => number,
@@ -15,24 +15,24 @@ export interface SensorProps {
 export function SensorValue(props: SensorProps) {
     const classes = useStyles();
     // @ts-ignore
-    let value = props.obj[props.property] as number | undefined
+    let value = props.obj.v;
     value = value ? value : 0
     if (props.transform) {
         value = props.transform(value)
     }
     value = roundMe(value, props.precission)
     // @ts-ignore
-    let valueAvg = props.obj[props.property+"Avg"] as number | undefined
+    let valueAvg = props.obj.avg as number | undefined
     valueAvg = valueAvg ? valueAvg : 0
     if (props.transform) {
         valueAvg = props.transform(valueAvg)
     }
     valueAvg = roundMe(valueAvg, props.precission)
     // @ts-ignore
-    let valueErr = props.obj[props.property+"Err"] as number | undefined
+    let valueErr = props.obj.err
     valueErr = valueErr ? valueErr : 0
     // @ts-ignore
-    let valueWarn = props.obj[props.property+"Warn"] as number | undefined
+    let valueWarn = props.obj.warn as number | undefined
     valueWarn = valueWarn ?  valueWarn : 0
     let title = valueWarn + " varování a " + valueErr + " chyb"
     return <Tooltip title={title}>

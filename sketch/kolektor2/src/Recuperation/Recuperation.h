@@ -20,11 +20,14 @@ class Recuperation {
     void setPower(byte power, byte mode);
 
     void act();
+    short getPower();
   private:
+    unsigned long _last_direction_change = millis();
     PwmControl * _control;
     Relay * _relay;
     byte _power;
     byte _mode;
+    bool _directionIn = false;
 };
 
 #endif

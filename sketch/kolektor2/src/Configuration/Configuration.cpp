@@ -12,7 +12,7 @@ void Configuration::setInactiveMode() {
 
 bool Configuration::changeProperty(const char* name, short value) {
   if (IS_DEBUG) Serial.println("Changing property.");
-  DynamicJsonDocument doc(2048);
+  DynamicJsonDocument doc(4096);
   if (this->loadJson(&doc)) {
     doc[name] = value;
     return this->saveJson(doc);
@@ -39,7 +39,7 @@ bool Configuration::isOverlapping(short a, short b, short c, short d) {
 
 void Configuration::setup() {
   if (IS_DEBUG) Serial.println("Goding to allocate doc..");
-  DynamicJsonDocument doc(2048);
+  DynamicJsonDocument doc(4096);
   if (IS_DEBUG) Serial.println("Loading json..");
   if (this->loadJson(&doc)) {
     if (IS_DEBUG) Serial.println("Json Loaded, validating..");
@@ -98,26 +98,26 @@ bool Configuration::saveJson(DynamicJsonDocument doc) {
 
 bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (IS_DEBUG) Serial.println("Parsing name");
-  const char* name = c["n"].as<const char*>();
+  const char* name = c["name"].as<const char*>();
   if (strlen(name) > 29) {
     return false;
   }
   strncpy(out->name, name, 30);
   if (IS_DEBUG) Serial.println("Parsing mode");
-  out->mode = c["mo"].as<byte>();
-  out->autoWinterStart = c["aws"].as<short>();
+  out->mode = c["mode"].as<byte>();
+  out->autoWinterStart = c["autoWinterStart"].as<short>();
   if (out->autoWinterStart < 0 || out->autoWinterStart > 365) {
     return false;
   }
-  out->autoWinterEnd = c["awe"].as<short>();
+  out->autoWinterEnd = c["autoWinterEnd"].as<short>();
   if (out->autoWinterEnd < 0 || out->autoWinterEnd > 365) {
     return false;
   }
-  out->autoSummerStart = c["ass"].as<short>();
+  out->autoSummerStart = c["autoSummerStart"].as<short>();
   if (out->autoSummerStart < 0 || out->autoSummerStart > 365) {
     return false;
   }
-  out->autoSummerEnd = c["ase"].as<short>();
+  out->autoSummerEnd = c["autoSummerEnd"].as<short>();
   if (out->autoSummerEnd < 0 || out->autoSummerEnd > 365) {
     return false;
   }
@@ -125,34 +125,34 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     return false;
   }
   
-  out->winterMaxInsideTemp = c["wmit"].as<short>();
+  out->winterMaxInsideTemp = c["winterMaxInsideTemp"].as<float>();
   if (out->winterMaxInsideTemp < 0 || out->winterMaxInsideTemp > 1000) {
     return false;
   }
 
-  out->summerMinInsideTemp = c["smit"].as<short>();
+  out->summerMinInsideTemp = c["summerMinInsideTemp"].as<float>();
   if (out->summerMinInsideTemp < 0 || out->summerMinInsideTemp > 1000) {
     return false;
   }
   if (IS_DEBUG) Serial.println("Parsing monitoring");
-  Monitoring * monitoring = new Monitoring();
+  MonitoringData * monitoring = new MonitoringData();
   out->monitoring = monitoring;
-  const char* apikey = c["m"]["k"].as<const char*>();
+  const char* apikey = c["monitoring"]["key"].as<const char*>();
   if (strlen(apikey) > 49) {
     return false;
   }
   strncpy(monitoring->apikey, apikey, 50);
-  const char* feed = c["m"]["f"].as<const char*>();
+  const char* feed = c["monitoring"]["feed"].as<const char*>();
   if (strlen(feed) > 29) {
     return false;
   }
   strncpy(monitoring->feed, feed, 30);
-  int winterOnRulesSize = c["wor"].size();
+  int winterOnRulesSize = c["winterOnRules"].size();
   if (winterOnRulesSize > 5) {
     return false;
   }
   if (IS_DEBUG) Serial.println("Parsing weather key");
-  const char* weatherApiKey = c["w"].as<const char*>();
+  const char* weatherApiKey = c["weatherApiKey"].as<const char*>();
   if (strlen(weatherApiKey) > 33) {
     return false;
   }
@@ -175,8 +175,8 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   out->winterOnRules = onRules;
   for (short i = 0; i < winterOnRulesSize; i++) {
     Rule * rule = new Rule();
-    rule->temperature = c["wor"][i]["t"].as<byte>();
-    rule->percentage = c["wor"][i]["p"].as<byte>();
+    rule->temperature = c["winterOnRules"][i]["t"].as<byte>();
+    rule->percentage = c["winterOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
       return false;
     }
@@ -192,7 +192,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     }
   }
   if (IS_DEBUG) Serial.println("Parsing summer rules");
-  int summerOnRulesSize = c["sor"].size();
+  int summerOnRulesSize = c["summerOnRules"].size();
   if (summerOnRulesSize > 5) {
     return false;
   }
@@ -201,8 +201,8 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   out->summerOnRules = summerOnRules;
   for (short i = 0; i < summerOnRulesSize; i++) {
     Rule * rule = new Rule();
-    rule->temperature = c["sor"][i]["t"].as<byte>();
-    rule->percentage = c["sor"][i]["p"].as<byte>();
+    rule->temperature = c["summerOnRules"][i]["t"].as<byte>();
+    rule->percentage = c["summerOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
       return false;
     }

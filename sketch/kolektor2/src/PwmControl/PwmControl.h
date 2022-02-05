@@ -11,6 +11,7 @@ class PwmControl {
     void setDutyCycle(byte dutyCycle);
   private:
     int _channel;
+    byte _dutyCycle = 0;
 };
 
 #endif

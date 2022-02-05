@@ -12,10 +12,10 @@ export function DebugInfo(){
     return <div className={classes.root}>
              <Grid container>
                  <Grid item xs={12}>
-                     <MemoryIcon/> Volná paměť (bytes): {state.h}
+                     <MemoryIcon/> Volná paměť (bytes): {state.heap}
                  </Grid>
                  <Grid item xs={12}>
-                     <OfflineBoltIcon/> Počet restartů: {state.r}
+                     <OfflineBoltIcon/> Počet restartů: {state.restarts}
                  </Grid>
              </Grid>
     </div>

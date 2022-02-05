@@ -26,10 +26,13 @@ class ErrorProgramme: public Programme {
       return false;
     }
     void configureTicking(RGBDiode * diode) {
-      diode->configure(tickingCritical);
+      diode->configure(&tickingCritical);
     }
     void getPower(ProgrammeContext* context, PowerOutput *out) {
       return;
+    }
+    void invalidate() {
+      
     }
     bool isValid(ConfigurationData * data) {
       return true;

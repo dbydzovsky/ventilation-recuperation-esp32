@@ -10,6 +10,9 @@ class Relay {
     void disable();
   private:
     int _pin;
+    bool _state = false;
+    unsigned long _last_changed = millis();
+    bool _should_be_enabled = false;
 };
 
 #endif

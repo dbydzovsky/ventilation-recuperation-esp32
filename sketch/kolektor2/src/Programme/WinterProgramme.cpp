@@ -6,6 +6,7 @@
 
 class WinterProgramme: public Programme {
   private:
+    Programme * _recuperation;
     short currentRuleIndex = -1;
     byte error = 0;
     float markError(byte error) {
@@ -13,6 +14,9 @@ class WinterProgramme: public Programme {
       return 0;
     }
   public:
+    WinterProgramme(Programme * Recuperation) {
+      this->_recuperation = Recuperation;
+    }
     void onStart() {
       this->currentRuleIndex = -1;
     }
@@ -51,12 +55,12 @@ class WinterProgramme: public Programme {
     }
     void configureTicking(RGBDiode * diode) {
       if (this->error != 0) {
-        diode->configure(tickingConditionsMet);
+        diode->configure(&tickingConditionsMet);
       } else {
         if (WiFi.status() == WL_CONNECTED) {
-          diode->configure(tickingDeviceEnabledWifiOn);
+          diode->configure(&tickingDeviceEnabledWifiOn);
         } else {
-          diode->configure(tickingDeviceEnabledWifiOff);
+          diode->configure(&tickingDeviceEnabledWifiOff);
         }
       }
     }
@@ -67,8 +71,9 @@ class WinterProgramme: public Programme {
         return;
       }
       
-      if (context->tempInside > (context->data->winterMaxInsideTemp / ((float)10))) {
+      if (context->tempInside > context->data->winterMaxInsideTemp) {
         this->markError(121);
+        this->_recuperation->getPower(context, out);
         return;
       }
       Rules * rules = context->data->winterOnRules;
@@ -78,19 +83,30 @@ class WinterProgramme: public Programme {
           this->currentRuleIndex = i;
           this->error = 0;
           out->ventilatorPower = rule->percentage;
+          if (rule->percentage == 0) {
+            this->_recuperation->getPower(context, out);
+          }
           return;
         }
         if (this->currentRuleIndex == i) {
           if ((context->tempOutside) > (((float) rule->temperature) - temperatureDownTolerationProgramme)) {
             out->ventilatorPower = rule->percentage;
             this->error = 0;
+            if (rule->percentage == 0) {
+              this->_recuperation->getPower(context, out);
+            }
             return;
           }
         }
       }
+      this->_recuperation->getPower(context, out);
       this->currentRuleIndex = -1;
       this->error = 0;
       return;
+    }
+    
+    void invalidate() {
+      
     }
     bool isValid(ConfigurationData *data) {
       return data->mode == WINTER_MODE;

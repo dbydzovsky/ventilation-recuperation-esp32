@@ -18,7 +18,7 @@
 #include "../Average/Average.h"
 #include "../Weather/Weather.h"
 #include "../TimeProvider/TimeProvider.h"
-
+#include "../DewPoint/DewPoint.h"
 struct Dependencies {
   Ventilator * ventilation;
   Recuperation * recuperation;
@@ -31,6 +31,7 @@ struct Dependencies {
   Average * outsideHum;
   Average * insideTemp;
   Average * co2Inside;
+  DewPoint * dewPoint;
   WeatherForecast * forecast;
   TimeProvider * timeProvider;
   HTTPClient * httpClient;

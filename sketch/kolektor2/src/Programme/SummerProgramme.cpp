@@ -7,6 +7,7 @@
 
 class SummerProgramme: public Programme {
   private:
+    Programme * _recuperation;
     short currentRuleIndex = -1;
     byte error = 1;
 
@@ -15,6 +16,9 @@ class SummerProgramme: public Programme {
       return 0;
     }
   public:
+    SummerProgramme(Programme * Recuperation) {
+      this->_recuperation = Recuperation;
+    }
     void onStart() {
       if (IS_DEBUG) Serial.println("Starting Summer Programme");
     }
@@ -53,12 +57,12 @@ class SummerProgramme: public Programme {
     }
     void configureTicking(RGBDiode *diode)  {
       if (this->error >= 113) {
-        diode->configure(tickingConditionsMet);
+        diode->configure(&tickingConditionsMet);
       } else {
         if (WiFi.status() == WL_CONNECTED) {
-          diode->configure(tickingSummerDeviceEnabledWifiOn);
+          diode->configure(&tickingSummerDeviceEnabledWifiOn);
         } else {
-          diode->configure(tickingSummerDeviceEnabledWifiOff);
+          diode->configure(&tickingSummerDeviceEnabledWifiOff);
         }
       }
     }
@@ -68,15 +72,18 @@ class SummerProgramme: public Programme {
       context->forecast->act(context->weatherDeps);
       if (!context->forecast->hasValidForecast()) {
         this->error = 115;
+        this->_recuperation->getPower(context, out);
         return;
       }
 
-      if (!context->forecast->shouldCoolInsides()) { 
+      if (!context->forecast->shouldCoolInsides()) {
+        this->_recuperation->getPower(context, out);
         return;
       }
       
-      if (context->tempInside < (context->data->summerMinInsideTemp / ((float)10))) {
+      if (context->tempInside < context->data->summerMinInsideTemp) {
         this->markError(111);
+        this->_recuperation->getPower(context, out);
         return;
       }
     
@@ -97,6 +104,9 @@ class SummerProgramme: public Programme {
           byte percentage = rule->percentage;
           this->error = 0;
           out->ventilatorPower = percentage;
+          if (percentage == 0) {
+            this->_recuperation->getPower(context, out);
+          }
           return;
         }
         if (this->currentRuleIndex == i) {
@@ -104,16 +114,23 @@ class SummerProgramme: public Programme {
             byte percentage = rule->percentage;
             this->error = 0;
             out->ventilatorPower = percentage;
+            if (percentage == 0) {
+              this->_recuperation->getPower(context, out);
+            }
             return;
           }
         }
       }
       this->currentRuleIndex = -1;
       this->error = 0;
+      this->_recuperation->getPower(context, out);
       return;
     }
     bool handleHold(int duration_ms, bool finished) {
       return false;
+    }
+    void invalidate() {
+      
     }
     bool isValid(ConfigurationData * data) {
       return data->mode == SUMMER_MODE;

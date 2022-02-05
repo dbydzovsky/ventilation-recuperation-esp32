@@ -1,5 +1,7 @@
 #include "Arduino.h"
 #include "PwmControl.h"
+#include "../Constants/Constants.h"
+
 PwmControl::PwmControl(int channel, int pin)
 {
   pinMode(pin, OUTPUT);
@@ -9,5 +11,10 @@ PwmControl::PwmControl(int channel, int pin)
 }
 
 void PwmControl::setDutyCycle(byte duty) {
-  ledcWrite(this->_channel, (int) duty);
+  if (this->_dutyCycle != duty) {
+    if (IS_DEBUG) Serial.print("Setting duty cycle: ");
+    if (IS_DEBUG) Serial.println(duty);
+    this->_dutyCycle = duty;
+    ledcWrite(this->_channel, (int) duty);
+  }
 }

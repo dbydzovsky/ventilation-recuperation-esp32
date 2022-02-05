@@ -57,5 +57,5 @@ void tickingSummerDeviceEnabledWifiOff(TickingConfiguration *out);
 void tickingAutoProgrammeOn(TickingConfiguration *out);
 void tickingDeviceDisabledWifiOn(TickingConfiguration *out);
 void tickingDeviceDisabledWifiOff(TickingConfiguration *out);
-
+void tickingRecuperation(TickingConfiguration *out);
 #endif

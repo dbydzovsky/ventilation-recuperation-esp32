@@ -11,7 +11,8 @@
 class Source {
   public:
     virtual float getValue() = 0;
-    virtual short getToleration() = 0;
+    virtual void setValue(float newOne) = 0;
+    virtual int getToleration() = 0;
 };
 
 class Sensors {

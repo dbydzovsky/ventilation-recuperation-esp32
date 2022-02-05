@@ -35,10 +35,13 @@ class InitialWarmingUpProgramme: public Programme {
       return false;
     }
     void configureTicking(RGBDiode *diode) {
-      diode->configure(tickingWarmingUp);
+      diode->configure(&tickingWarmingUp);
     }
     void getPower(ProgrammeContext * context, PowerOutput * out) {
       return;
+    }
+    void invalidate() {
+      this->startedWaiting = NAN;
     }
     bool isValid(ConfigurationData * data) {
       if (isnan(this->startedWaiting)) {

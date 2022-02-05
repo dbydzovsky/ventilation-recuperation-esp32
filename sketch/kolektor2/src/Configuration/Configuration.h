@@ -27,7 +27,7 @@ class Rules {
     byte count = 0;
 };
 
-struct Monitoring {
+struct MonitoringData {
   char feed[30] = "";
   char apikey[50] = "";
 };
@@ -35,11 +35,11 @@ struct Monitoring {
 struct ConfigurationData {
   char name[30] = "";
   byte mode = INACTIVE_MODE;
-  short winterMaxInsideTemp = 0;
-  short summerMinInsideTemp = 0;
+  float winterMaxInsideTemp = 0;
+  float summerMinInsideTemp = 0;
   Rules *winterOnRules;
   Rules *summerOnRules;
-  Monitoring *monitoring;
+  MonitoringData *monitoring;
   short autoWinterStart = 0;
   short autoWinterEnd = 0;
   short autoSummerStart = 0;

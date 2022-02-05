@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Relay.h"
+#include "../Constants/Constants.h"
 
 Relay::Relay(int pin)
 {
@@ -9,13 +10,25 @@ Relay::Relay(int pin)
 }
 
 void Relay::act() {
-
+  if (millis() - this->_last_changed > RELAY_COOLDOWN) {
+    this->_last_changed = millis();
+    if (this->_state != this->_should_be_enabled) {
+      this->_state = this->_should_be_enabled;
+      if (this->_state) {
+        if (IS_DEBUG) Serial.println("Turning relay on.");
+        digitalWrite(this->_pin, LOW);
+      } else {
+        if (IS_DEBUG) Serial.println("Turning relay off.");
+        digitalWrite(this->_pin, HIGH);
+      }
+    }
+  }
 }
 
 void Relay::enable() {
-  digitalWrite(this->_pin, LOW);
+  this->_should_be_enabled = true;
 }
 
 void Relay::disable() {
-  digitalWrite(this->_pin, HIGH);
+  this->_should_be_enabled = false;
 }

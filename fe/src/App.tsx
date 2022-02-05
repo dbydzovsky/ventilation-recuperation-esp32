@@ -35,7 +35,6 @@ import {useSelector} from "react-redux";
 import {RootState} from "./reducers";
 import {TrialPage} from "./pages/TrialPage";
 import ControlCameraIcon from '@material-ui/icons/ControlCamera';
-import {CalibrationPage} from "./pages/CalibrationPage";
 
 function Routes() {
 	const classes = useStyles();
@@ -47,7 +46,6 @@ function Routes() {
 			<Route exact={true} path="/" component={CurrentStatePage} />
 			<Route exact={true} path="/state" component={CurrentStatePage} />
 			<Route exact={true} path="/configuration" component={ConfigurationPage} />
-			<Route exact={true} path="/calibration" component={CalibrationPage} />
 			<Route exact={true} path="/actions" component={ActionPage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
@@ -95,15 +93,6 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/calibration")}>
-					<ListItemIcon>
-						<ControlCameraIcon />
-					</ListItemIcon>
-					<ListItemText primary="Kalibrace" />
-				</ListItem>
-			</List>
-			<Divider />
-			<List>
 				<ListItem button onClick={() => history.push("/help")}>
 					<ListItemIcon>
 						<HelpIcon />
@@ -144,7 +133,7 @@ function App() {
 		setMobileOpen(!mobileOpen);
 	};
 
-	const name = useSelector((state: RootState) => state.configuration).conf?.n || "rekuperace";
+	const name = useSelector((state: RootState) => state.configuration).conf?.name || "rekuperace";
 	return (
 		<Router history={history}>
 			<div className={classes.root}>

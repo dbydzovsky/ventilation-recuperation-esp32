@@ -1,8 +1,8 @@
 {
-  "mo": 3,
-  "wmit": 290,
-  "smit": 190,
-  "wor": [
+  "mode": 3,
+  "winterMaxInsideTemp": 29.0,
+  "summerMinInsideTemp": 19.0,
+  "winterOnRules": [
     {
       "t": 35,
       "p": 30
@@ -12,7 +12,7 @@
       "p": 70
     }
   ],
-  "sor": [
+  "summerOnRules": [
     {
       "t": 20,
       "p": 30
@@ -22,16 +22,16 @@
       "p": 0
     }
   ],
-  "n": "rekuperace",
-  "w": "9f151bec449ef6f558ce7b1af4f5dcba",
+  "name": "rekuperace",
+  "weatherApiKey": "9f151bec449ef6f558ce7b1af4f5dcba",
   "lat": "50.25",
   "lon": "15.39",
-  "aws": 250,
-  "awe": 50,
-  "ass": 100,
-  "ase": 200,
-  "m": {
-    "f": "683493479138901944",
-    "k": "590f37c41a71c6febdafe6fc70d4310eb653c45594"
+  "autoWinterStart": 250,
+  "autoWinterEnd": 50,
+  "autoSummerStart": 100,
+  "autoSummerEnd": 200,
+  "monitoring": {
+    "feed": "683493479138901944",
+    "key": "590f37c41a71c6febdafe6fc70d4310eb653c45594"
   }
 }

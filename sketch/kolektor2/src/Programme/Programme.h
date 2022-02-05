@@ -15,6 +15,7 @@ typedef struct {
   float tempInside;
   float tempOutside;
   float humidityOutside;
+  float co2;
   float dewPoint;
   WeatherForecast * forecast;
   WeatherDeps * weatherDeps;
@@ -38,18 +39,22 @@ class Programme {
     virtual void configureTicking(RGBDiode *diode) = 0;
     virtual bool isValid(ConfigurationData* data) = 0;
     virtual bool canForce() = 0;
+    virtual void invalidate() = 0;
     virtual byte getCode() = 0;
 };
 
 class ConfigurableProgramme: public Programme {
   public:
     virtual void setPower(PowerOutput output, int duration) = 0;
+    virtual PowerOutput getActualSetting() = 0;
+    virtual int getDuration() = 0;
 };
 
 class ProgrammeFactory {
   public:
     ProgrammeFactory();
     Programme *Disabled;
+    Programme *Recuperation;
     Programme *Summer;
     Programme *Winter;
     Programme *Initial;

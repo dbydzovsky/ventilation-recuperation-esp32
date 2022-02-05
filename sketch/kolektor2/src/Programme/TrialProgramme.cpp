@@ -49,7 +49,7 @@ class TrialProgramme: public ConfigurableProgramme {
       return false;
     }
     void configureTicking(RGBDiode * diode) {
-      diode->configure(tickingTrial);
+      diode->configure(&tickingTrial);
     }
 
     void getPower(ProgrammeContext* context, PowerOutput *out) {
@@ -58,7 +58,9 @@ class TrialProgramme: public ConfigurableProgramme {
       out->recuperationPower = this->output.recuperationPower;
       out->recuperationMode = this->output.recuperationMode;
     }
-
+    PowerOutput getActualSetting() {
+      return this->output;
+    }
     int getDuration() {
       return this->durationMillis;
     }

@@ -194,3 +194,11 @@ void tickingDeviceDisabledWifiOff(TickingConfiguration *out) {
   out->ticking[3] = DIODE_RED_COLOR;
     out->size = 4;
 }
+void tickingRecuperation(TickingConfiguration *out) {
+  // todo
+  out->ticking[0] = 35;
+  out->ticking[1] = DIODE_BLUE_COLOR;
+  out->ticking[2] = DIODE_BLUE_COLOR;
+  out->ticking[3] = DIODE_BLUE_COLOR;
+  out->size = 4;
+}

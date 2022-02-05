@@ -68,14 +68,14 @@ export function CurrentStatePanel() {
     return <div className={classes.header}>
         <ConnectionStatePanel/>
         { connectionState == ConnectionState.Unitiliazed && "Loading.." }
-        { connectionState != ConnectionState.Unitiliazed && currentState.mo == Mode.INACTIVE && <div className={classes.turnedOff}><NotInterestedIcon/> Neaktivní (vypnuto)</div>}
-        <div><b>{currentState.de}</b></div>
+        { connectionState != ConnectionState.Unitiliazed && currentState.mode == Mode.INACTIVE && <div className={classes.turnedOff}><NotInterestedIcon/> Neaktivní (vypnuto)</div>}
+        <div><b>{currentState.description}</b></div>
         <div className={clazz}>
-            <VentilatorIcon percentage={currentState.p} />
-            Aktuální výkon {currentState.p}%
+            <VentilatorIcon percentage={currentState.ventilator} />
+            Aktuální výkon {currentState.ventilator}%
         </div>
-        <BorderLinearProgress variant="determinate" className={classes.progress} value={currentState.p} />
-        {currentState.t}
+        <BorderLinearProgress variant="determinate" className={classes.progress} value={currentState.ventilator} />
+        {currentState.time}
     </div>
 }
 

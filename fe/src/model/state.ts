@@ -9,35 +9,35 @@ export enum ConnectionState {
   TooMuchRequests = "TooMuchRequests"
 }
 
-export interface TempPressSensor {
-  tAvg: number
-  tErr: number
-  tWarn: number
-  t: number
-}
-export interface TempHumSensor {
-  tAvg: number
-  tErr: number
-  tWarn: number
-  t: number
-  hAvg: number
-  hErr: number
-  hWarn: number
-  h: number
+export interface Sensor {
+  v?: number
+  avg?: number
+  err?: number
+  warn?: number
 }
 
+export interface Trial {
+  enabled: boolean,
+  duration: number
+  mode: number
+  ventilator: number
+  recuperation: number
+  recuperationMode: number
+}
 export interface CurrentState {
-  t: string,
-  p: number,
-  a: number,
-  mo: 0|1|2|3, // 0 inactive, 1 winter, 2 summer, 3 auto
-  tpp?: number,
-  tpd?: number,
-  o: TempHumSensor,
-  i: TempPressSensor,
-  r: number,
-  h: number,
-  de: string
+  time: string,
+  trial: Trial,
+  alive: number,
+  mode: 0|1|2|3, // 0 inactive, 1 winter, 2 summer, 3 auto
+  ventilator: number,
+  recuperation?: number,
+  insideTemp?: Sensor,
+  outsideTemp?: Sensor,
+  outsideHum?: Sensor,
+  co2Inside?: Sensor,
+  restarts?: number,
+  heap: number,
+  description: string
 }
 
 interface StateActionType<T, P> {

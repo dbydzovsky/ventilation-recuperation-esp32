@@ -4,9 +4,9 @@
 #include "../Constants/Constants.h"
 
 
-float average (short * values, float len) {
+float average (int * values, float len) {
   int sum = 0;
-  for (short i = 0 ; i < len ; i++)
+  for (int i = 0 ; i < len ; i++)
     sum += values[i] ;
   return sum / len;
 }
@@ -15,17 +15,17 @@ Average::Average(Source *source) {
   this->source = source;
 }
 
-short Average::readSingle() {
+int Average::readSingle() {
   float newVal = this->source->getValue();
   if (newVal == -100) {
     this->error = true;
     return NAN;
   }
-  return (short) (newVal * 100);
+  return (int) (newVal * 100);
 }
 
-bool Average::isInValidRange(short value) {
-  short toleration = this->source->getToleration() * 100;
+bool Average::isInValidRange(int value) {
+  int toleration = this->source->getToleration() * 100;
   if (value > (this->avg + toleration) || value < (this->avg - toleration)) {
     return false;
   }
@@ -45,7 +45,7 @@ void Average::startInitializing () {
   this->index = 1;
 }
 
-void Average::handleUnitialized(short newVal) {
+void Average::handleUnitialized(int newVal) {
   if (this->initSuccessLoopCount == 0) {
     this->takeReading(newVal);
   } else {
@@ -63,7 +63,7 @@ void Average::handleUnitialized(short newVal) {
   }
 }
 
-void Average::handleNormal(short newVal) {
+void Average::handleNormal(int newVal) {
   if (this->isInValidRange(newVal)) {
     this->takeReading(newVal);
   } else {
@@ -74,14 +74,14 @@ void Average::handleNormal(short newVal) {
   }
 }
 void Average::setActual(float newValue) {
-  for (short i = 0; i < averageValuesCount; i++) {
-    this->values[i] = (short) (newValue * 100);
+  for (int i = 0; i < averageValuesCount; i++) {
+    this->values[i] = (int) (newValue * 100);
   }
-  this->actual = (short) (newValue * 100);
-  this->avg = (short) average(this->values, averageValuesCount);
+  this->actual = (int) (newValue * 100);
+  this->avg = (int) average(this->values, averageValuesCount);
 }
 
-unsigned short Average::getErrors() {
+unsigned int Average::getErrors() {
   return this->errorsInRow;
 }
 
@@ -102,17 +102,17 @@ float Average::getValue() {
   }
   return NAN;
 }
-void Average::takeReading(short newval) {
+void Average::takeReading(int newval) {
   this->errorsInRow = 0;
   this->values[this->index] = newval;
   this->actual = newval;
-  this->avg = (short) average(this->values, averageValuesCount);
+  this->avg = (int) average(this->values, averageValuesCount);
   this->index = (this->index + 1) % averageValuesCount;
 }
 
 void Average::doReading() {
   this->error = false;
-  short newVal = this->readSingle();
+  int newVal = this->readSingle();
   if (!this->error) {
     if (this->initialized) {
       this->handleNormal(newVal);

@@ -3,15 +3,26 @@ import {CurrentState, StateAction, StateActions} from "../model/state";
 import {Mode} from "../model/configuration";
 
 let initialState: CurrentState = {
-    t: "",
-    a: 0,
-    mo: Mode.INACTIVE,
-    p: 0,
-    r: 0,
-    i: {t: 0, tAvg: 0,tErr: 0,tWarn: 0},
-    o: {t: 0, h: 0,tAvg: 0,tErr: 0,tWarn: 0,  hAvg: 0,hErr: 0, hWarn: 0},
-    h: 0,
-    de: ""
+    time: "",
+    alive: 0,
+    mode: Mode.INACTIVE,
+    restarts: 0,
+    insideTemp: {v: 0, avg: 0, err: 0, warn: 0},
+    outsideTemp: {v: 0, avg: 0, err: 0, warn: 0},
+    outsideHum: {v: 0, avg: 0, err: 0, warn: 0},
+    co2Inside: {v: 0, avg: 0, err: 0, warn: 0},
+    heap: 0,
+    description: "",
+    trial: {
+        enabled: false,
+        duration: 60000,
+        mode: Mode.INACTIVE,
+        ventilator: 0,
+        recuperation: 0,
+        recuperationMode: 0,
+    },
+    ventilator: 0,
+    recuperation: 0
 }
 
 export const state = createReducer<CurrentState>(initialState, {

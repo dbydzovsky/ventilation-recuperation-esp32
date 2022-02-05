@@ -36,6 +36,9 @@ class DisabledProgramme: public Programme {
     void getPower(ProgrammeContext * context, PowerOutput *out) {
       return;
     }
+    void invalidate() {
+      
+    }
     bool isValid(ConfigurationData* data) {
       return data->mode == INACTIVE_MODE;
     }
