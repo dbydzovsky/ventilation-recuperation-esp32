@@ -99,7 +99,7 @@ class SummerProgramme: public Programme {
       Rules * rules = context->data->summerOnRules;
       for (short i = (rules->count - 1); i >= 0 ; i--) {
         Rule * rule = rules->rules[i];
-        if (context->tempOutside < ((float) rule->temperature)) {
+        if (context->tempOutside < ((float) rule->targetValue)) {
           this->currentRuleIndex = i;
           byte percentage = rule->percentage;
           this->error = 0;
@@ -110,7 +110,7 @@ class SummerProgramme: public Programme {
           return;
         }
         if (this->currentRuleIndex == i) {
-          if (context->tempOutside < (((float) rule->temperature) + temperatureDownTolerationProgramme)) {
+          if (context->tempOutside < (((float) rule->targetValue) + temperatureDownTolerationProgramme)) {
             byte percentage = rule->percentage;
             this->error = 0;
             out->ventilatorPower = percentage;

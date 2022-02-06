@@ -3,7 +3,7 @@ export enum ConfigurationActions{
 }
 
 export interface Rule {
-  t: number
+  tv: number
   p: number
 }
 
@@ -25,6 +25,7 @@ export interface Configuration {
   winterMaxInsideTemp: number
   winterOnRules: Rule[]
   summerOnRules: Rule[]
+  co2Rules: Rule[]
   summerMinInsideTemp: number
   monitoring: Monitoring
   weatherApiKey: string

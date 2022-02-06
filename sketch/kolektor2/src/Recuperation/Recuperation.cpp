@@ -49,16 +49,19 @@ void Recuperation::act() {
   }
   this->_relay->enable();
   if (millis() - this->_last_direction_change > (RECUPERATION_CYCLE_DURATION + RECUPERATION_WAIT_FOR_DIRECTION_CHANGE)) {
+    bool previousDirection = this->_directionIn;
     if (this->_mode == RECUPERATION_MODE_EXHALE) {
-      this->_directionIn = true;
+      this->_directionIn = false;
     }
     if (this->_mode == RECUPERATION_MODE_INHALE) {
-      this->_directionIn = false;
+      this->_directionIn = true;
     }
     if (this->_mode == RECUPERATION_MODE_RECYCLE) {
       this->_directionIn = !this->_directionIn;
     }
-    this->_last_direction_change = millis(); 
+    if (previousDirection != this->_directionIn) {
+      this->_last_direction_change = millis(); 
+    }
   }
   if (millis() - this->_last_direction_change < RECUPERATION_WAIT_FOR_DIRECTION_CHANGE) {
     this->_control->setDutyCycle(DISABLED_FAN_DUTY);

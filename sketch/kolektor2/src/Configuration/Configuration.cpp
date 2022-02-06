@@ -175,18 +175,18 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   out->winterOnRules = onRules;
   for (short i = 0; i < winterOnRulesSize; i++) {
     Rule * rule = new Rule();
-    rule->temperature = c["winterOnRules"][i]["t"].as<byte>();
+    rule->targetValue = c["winterOnRules"][i]["tv"].as<int>();
     rule->percentage = c["winterOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
       return false;
     }
-    if (rule->temperature < 0 || rule->temperature > 100) {
+    if (rule->targetValue < 0 || rule->targetValue > 100) {
       return false;
     }
     onRules->rules[i] = rule;
     if (i != 0) {
       Rule * previous = onRules->rules[i - 1];
-      if (previous->temperature > (rule->temperature - 3)) {
+      if (previous->targetValue > (rule->targetValue - 3)) {
         return false;
       }
     }
@@ -201,18 +201,44 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   out->summerOnRules = summerOnRules;
   for (short i = 0; i < summerOnRulesSize; i++) {
     Rule * rule = new Rule();
-    rule->temperature = c["summerOnRules"][i]["t"].as<byte>();
+    rule->targetValue = c["summerOnRules"][i]["tv"].as<int>();
     rule->percentage = c["summerOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
       return false;
     }
-    if (rule->temperature < 0 || rule->temperature > 100) {
+    if (rule->targetValue < 0 || rule->targetValue > 100) {
       return false;
     }
     summerOnRules->rules[i] = rule;
     if (i != 0) {
       Rule * previous = summerOnRules->rules[i - 1];
-      if (previous->temperature < (rule->temperature + 3)) {
+      if (previous->targetValue < (rule->targetValue + 3)) {
+        return false;
+      }
+    }
+  }
+  if (IS_DEBUG) Serial.println("Parsing co2 rules.");
+  int co2RulesSize = c["co2Rules"].size();
+  if (co2RulesSize > 5) {
+    return false;
+  }
+  Rules * co2Rules = new Rules();
+  co2Rules->count = byte(co2RulesSize);
+  out->co2Rules = co2Rules;
+  for (short i = 0; i < co2RulesSize; i++) {
+    Rule * rule = new Rule();
+    rule->targetValue = c["co2Rules"][i]["tv"].as<int>();
+    rule->percentage = c["co2Rules"][i]["p"].as<short>();
+    if (rule->percentage < 0 || rule->percentage > 100) {
+      return false;
+    }
+    if (rule->targetValue < 0 || rule->targetValue > 5000) {
+      return false;
+    }
+    co2Rules->rules[i] = rule;
+    if (i != 0) {
+      Rule * previous = co2Rules->rules[i - 1];
+      if (previous->targetValue > (rule->targetValue - 50)) {
         return false;
       }
     }

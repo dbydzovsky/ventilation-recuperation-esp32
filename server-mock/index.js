@@ -12,47 +12,42 @@
 module.exports = () => {
     const data = {
         conf: {
-            c: 1.5,
-            e: true,
-            s: true,
-            we: true,
-            mh: 80,
-            wmit: 255,
-            w: true,
-            wor: [
-                { id: 1, t: 30, p: 50 },
-                { id: 2, t: 40, p: 100 },
-                { id: 3, t: 50, p: 0 }
-            ]
+            "mode": 3,
+            "winterMaxInsideTemp": 29,
+            "summerMinInsideTemp": 19,
+            "winterOnRules": [{"t": 35, "p": 30}, {"t": 40, "p": 70}],
+            "summerOnRules": [{"t": 20, "p": 30}, {"t": 10, "p": 0}],
+            "name": "rekuperace",
+            "weatherApiKey": "9f151bec449ef6f558ce7b1af4f5dcba",
+            "lat": "50.25",
+            "lon": "15.39",
+            "autoWinterStart": 250,
+            "autoWinterEnd": 50,
+            "autoSummerStart": 100,
+            "autoSummerEnd": 200,
+            "monitoring": {"feed": "683493479138901944", "key": "590f37c41a71c6febdafe6fc70d4310eb653c45594"}
         },
         t: {},
         s: {
-            n: "obyvak",
-            p: 20,
-            tpp: 20,
-            tpd: 120000,
-            r: 0,
-            // a: 146489584,
-            a: 11111489584,
-            di: false,
-            h: 19982,
-            de: "sdfsdfs fsfsfs",
-            o: {
-                t: 21.6856489,
-                tWarn: 6,
-                tAvg: 21.6851984984,
-                tErr: 6,
-                h: 70.68498451,
-                hAvg: 70.6,
-                hErr: 70.6,
-                hWarn: 4
+            "trial": {
+                "enabled": true,
+                "duration": 60000,
+                "mode": 1,
+                "ventilator": 70,
+                "recuperation": 60,
+                "recuperationMode": 1
             },
-            i: {
-                t: 21.6856198198,
-                tAvg: 21.685618984,
-                tErr: 0,
-                tWarn: 3
-            },
+            "mode": 3,
+            "time": "2022/2/6 9:23.24",
+            "ventilator": 0,
+            "recuperation": -60,
+            "alive": 4082775,
+            "description": "xxxx",
+            "heap": 207348,
+            "insideTemp": {"v": 20, "avg": 20, "err": 0, "warn": 0},
+            "co2Inside": {"v": 1000, "avg": 1000, "err": 0, "warn": 0},
+            "outsideTemp": {"v": 20, "avg": 20, "err": 0, "warn": 0},
+            "outsideHum": {"v": 5, "avg": 5, "err": 0, "warn": 0}
         }
     }
 

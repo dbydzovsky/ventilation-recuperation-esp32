@@ -4,7 +4,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import {CurrentStatePanel} from "./CurrentStatePanel";
 import {TempHumSensorComp} from "../components/TempHumSensor";
 import {TempCo2SensorComp} from "../components/TempPressSensor";
-import {DebugInfo} from "../components/DebugInfo";
 import {useSelector} from "react-redux";
 import {RootState} from "../reducers";
 import Grid from "@material-ui/core/Grid";
@@ -46,31 +45,6 @@ export function CurrentStatePage() {
                     <div className={classes.margination}>
                         <b>Zapnuto</b><br/> {msToTime(currentState.alive)}
                     </div>
-                </Paper>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6} className={classes.sensor}>
-                <Paper className={classes.sensorInside}>
-                    <DebugInfo/>
-                </Paper>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6} className={classes.sensor}>
-                <Paper className={classes.sensorInside}>
-                    <Table className={classes.margination}>
-                        <tbody>
-                            <tr>
-                                <td><b>Max. příkon</b></td>
-                                <td>14 W</td>
-                            </tr>
-                            <tr>
-                                <td><b>Max. průtok vzduchu</b></td>
-                                <td>105 m3/h</td>
-                            </tr>
-                            <tr>
-                                <td><b>Max. otáčky</b></td>
-                                <td>2300</td>
-                            </tr>
-                        </tbody>
-                    </Table>
                 </Paper>
             </Grid>
         </Grid>

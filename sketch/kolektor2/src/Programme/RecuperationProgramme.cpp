@@ -8,6 +8,8 @@
 class RecuperationProgramme: public Programme {
   private:
     bool directionIn = false;
+    short currentRuleIndex = -1;
+    byte error = 0;
   public:
     byte getCode() {
       return 200;
@@ -38,9 +40,26 @@ class RecuperationProgramme: public Programme {
       }
       out->recuperationMode = RECUPERATION_MODE_RECYCLE;
       float co2Value = context->co2;
-      // todo configuration
-      if (co2Value > 700) {
-        out->recuperationPower = 100;
+      if (!isnan(co2Value)) {
+        Rules * rules = context->data->co2Rules;
+        for (short i = (rules->count - 1); i >= 0; i--) {
+          Rule * rule = rules->rules[i];
+          if ((co2Value) >= ((float) rule->targetValue)) {
+            this->currentRuleIndex = i;
+            this->error = 0;
+            out->recuperationPower = rule->percentage;
+            return;
+          }
+          if (this->currentRuleIndex == i) {
+            if ((co2Value) > (((float) rule->targetValue) - co2DownTolerationProgramme)) {
+              out->recuperationPower = rule->percentage;
+              this->error = 0;
+              return;
+            }
+          }
+        }
+        this->currentRuleIndex = -1;
+        this->error = 0;
       }
     }
     void invalidate() {

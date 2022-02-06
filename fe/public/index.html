@@ -11,6 +11,41 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
   <link rel="stylesheet" href="%PUBLIC_URL%/index.css" />
   <title>Ventilátor</title>
+  <style>
+    body > #root > div {
+      /*height: 100vh;*/
+    }
+
+
+    @keyframes spin {
+      from {
+        transform:rotate(0deg);
+      }
+      to {
+        transform:rotate(360deg);
+      }
+    }
+
+    @keyframes spinCounter {
+      from {
+        transform:rotate(360deg);
+      }
+      to {
+        transform:rotate(0deg);
+      }
+    }
+
+    .spin {
+      animation-name: spin;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .spinCounter {
+      animation-name: spinCounter;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+  </style>
 </head>
   <body>
     <noscript>

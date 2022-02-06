@@ -17,7 +17,7 @@
 
 class Rule {
   public:
-    byte temperature = 0;
+    int targetValue = 0;
     byte percentage = 0;
 };
 
@@ -39,6 +39,7 @@ struct ConfigurationData {
   float summerMinInsideTemp = 0;
   Rules *winterOnRules;
   Rules *summerOnRules;
+  Rules *co2Rules; 
   MonitoringData *monitoring;
   short autoWinterStart = 0;
   short autoWinterEnd = 0;

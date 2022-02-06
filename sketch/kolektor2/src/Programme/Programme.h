@@ -8,6 +8,7 @@
 #include <WiFiClientSecure.h>
 
 #define temperatureDownTolerationProgramme 2
+#define co2DownTolerationProgramme 100
 #define warmingUpTime 40000
 
 typedef struct {

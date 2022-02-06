@@ -4,22 +4,28 @@
   "summerMinInsideTemp": 19.0,
   "winterOnRules": [
     {
-      "t": 35,
+      "tv": 35,
       "p": 30
     },
     {
-      "t": 40,
+      "tv": 40,
       "p": 70
     }
   ],
   "summerOnRules": [
     {
-      "t": 20,
+      "tv": 20,
       "p": 30
     },
     {
-      "t": 10,
+      "tv": 10,
       "p": 0
+    }
+  ],
+  "co2Rules": [
+    {
+      "tv": 600,
+      "p": 30
     }
   ],
   "name": "rekuperace",

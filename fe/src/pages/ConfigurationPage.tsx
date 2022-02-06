@@ -20,10 +20,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../reducers";
 import {Configuration, Mode, Rule} from "../model/configuration";
 import Grid from "@material-ui/core/Grid";
-import TrendingDownIcon from '@material-ui/icons/TrendingDown';
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PanToolIcon from '@material-ui/icons/PanTool';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import AcUnitIcon from '@material-ui/icons/AcUnit';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
 import BrandingWatermarkIcon from '@material-ui/icons/BrandingWatermark';
@@ -35,12 +32,16 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {Range} from "../components/Range";
 import WarningIcon from "@material-ui/icons/Warning";
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 export const winterOrderValidation = (previous: Rule, actual: Rule) => {
-    return previous.t > (actual.t - 3);
+    return previous.tv > (actual.tv - 3);
 }
 export const summerOrderValidation = (previous: Rule, actual: Rule) => {
-    return previous.t < (actual.t + 3);
+    return previous.tv < (actual.tv + 3);
+}
+export const co2OrderValidation = (previous: Rule, actual: Rule) => {
+    return previous.tv < (actual.tv + 50);
 }
 export const weatherKeys = [
     {key: "lat", label: "Zeměpisná šírka (např. 50.25)", max: 5},
@@ -48,6 +49,18 @@ export const weatherKeys = [
     {key: "weatherApiKey", label: "API klíč (max. 32 znaků)", max: 32}
 ]
 
+export function co2Validator(input:string|number): boolean {
+    if (input === "0") {
+        return true
+    } else {
+        let candidate = Number(input)
+        let valid = !Number.isNaN(candidate)
+        if (valid) {
+            return candidate > 400 && candidate < 5000
+        }
+        return false
+    }
+}
 export function temperatureValidator(input: string | number) {
     if (input === "0") {
         return true
@@ -105,12 +118,13 @@ export function ConfigurationPage() {
         autoSummerEnd: 200,
         autoWinterStart: 250,
         autoWinterEnd: 50,
-        name: "aName",
+        name: "rekuperace",
         mode: 0,
         winterMaxInsideTemp: 24.0,
         summerMinInsideTemp: 18.0,
         winterOnRules: [],
         summerOnRules: [],
+        co2Rules: [],
         weatherApiKey: "",
         lat: "",
         lon: "",
@@ -336,10 +350,17 @@ export function ConfigurationPage() {
                         />
                     </Paper>
                 </Grid>
-                <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší teploty po největší):"}
-                                rules={values.winterOnRules}
-                                validate={winterOrderValidation}
-                                onChange={handleRuleChange('winterOnRules')}/>
+                <Grid item xs={12} sm={12} md={12}>
+                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší teploty po největší):"}
+                                    adornment={"°C"}
+                                    placeholder={"Teplota"}
+                                    requiredDifference={3}
+                                    newDefault={20}
+                                    valueValidator={temperatureValidator}
+                                    rules={values.winterOnRules}
+                                    validate={winterOrderValidation}
+                                    onChange={handleRuleChange('winterOnRules')}/>
+                </Grid>
             </Grid></div>
         <div className={classes.summerSetting}>
             <Grid container>
@@ -369,11 +390,36 @@ export function ConfigurationPage() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                     <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší teploty po nejmenší):"}
+                                    adornment={"°C"}
+                                    placeholder={"Teplota"}
+                                    newDefault={20}
+                                    requiredDifference={3}
+                                    valueValidator={temperatureValidator}
                                     rules={values.summerOnRules}
                                     validate={summerOrderValidation}
                                     onChange={handleRuleChange('summerOnRules')}/>
                 </Grid>
-
+            </Grid>
+        </div>
+        <div className={classes.co2Setting}>
+            <Grid container>
+                <Grid item xs={12} sm={12} md={12}>
+                    <h2><CompareArrowsIcon/> Nastavení řízeného větrání</h2>
+                    <p>
+                        V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion), v průmyslových oblastech je hodnota o něco vyšší. Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm. Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických jednotek nebo výměny vzduchu v místnosti.
+                    </p>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12}>
+                    <TurnOnOffRules header={"Pravidla pro sepnutí rekuperace (max 5, od nejnižší hodnoty PPM):"}
+                                    adornment={"PPM"}
+                                    placeholder={"Co2"}
+                                    newDefault={800}
+                                    requiredDifference={50}
+                                    valueValidator={co2Validator}
+                                    rules={values.co2Rules}
+                                    validate={co2OrderValidation}
+                                    onChange={handleRuleChange('co2Rules')}/>
+                </Grid>
             </Grid>
         </div>
         <div className={classes.autoSetting}>
@@ -437,6 +483,11 @@ const useStyles = makeStyles({
     },
     summerSetting: {
         borderLeft: "blue 2px solid",
+        padding: 20,
+        marginTop: 10,
+    },
+    co2Setting: {
+        borderLeft: "violet 2px solid",
         padding: 20,
         marginTop: 10,
     },

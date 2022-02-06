@@ -9,15 +9,27 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {percentageValidator, temperatureValidator} from "../pages/ConfigurationPage";
 
 export interface Rule {
-    t: number
+    tv: number
     p: number
 }
 
-export const TurnOnOffRules = (props: { header: string, rules: Rule[], onChange: (rules: Rule[])=>void, validate: (previous: Rule, actual: Rule) => boolean }) => {
+interface Props {
+    adornment: string
+    placeholder: string
+    header: string,
+    rules: Rule[],
+    requiredDifference: number,
+    newDefault: number,
+    valueValidator: (val:number) =>boolean,
+    onChange: (rules: Rule[])=>void,
+    validate: (previous: Rule, actual: Rule) => boolean
+}
+
+export const TurnOnOffRules = (props: Props) => {
     const value = props.rules ? props.rules : [];
     const setValue = (rules: Rule[]) => {
         let valid = rules.every((rule) => {
-            return temperatureValidator(rule.t) && percentageValidator(rule.p)
+            return props.valueValidator(rule.tv) && percentageValidator(rule.p)
         })
         if (valid) {
             props.onChange(rules);
@@ -28,7 +40,7 @@ export const TurnOnOffRules = (props: { header: string, rules: Rule[], onChange:
         <div className={classes.row}>
             {props.header}
             <IconButton color="primary" aria-label="Přidat pravidlo" onClick={() => {
-                setValue([...value, {t: 30, p: 50}])
+                setValue([...value, {tv: props.newDefault, p: 50}])
             }}>
                 <AddIcon/>
             </IconButton>
@@ -49,18 +61,18 @@ export const TurnOnOffRules = (props: { header: string, rules: Rule[], onChange:
                         }}>
                             <DeleteIcon color={"error"}/>
                         </IconButton>
-                        <Tooltip title={isError ? "Hodnota musí být vždy alespoň o 3 stupně rozdílná než předchozí,." : ""}>
+                        <Tooltip title={isError ? "Hodnota musí být vždy alespoň o " +props.requiredDifference+" rozdílná než předchozí,." : ""}>
                             <Input
                                 id="standard-adornment-amount"
                                 error={isError}
-                                value={item.t}
-                                placeholder={"teplota"}
+                                value={item.tv}
+                                placeholder={props.placeholder}
                                 onChange={(event) => {
-                                    item.t = Number(event.target.value)
+                                    item.tv = Number(event.target.value)
                                     setValue([...value])
                                 }}
                                 className={classes.temperature}
-                                endAdornment={<InputAdornment position="start">°C</InputAdornment>}
+                                endAdornment={<InputAdornment position="start">{props.adornment}</InputAdornment>}
                             />
                         </Tooltip>
                         {/*<Divider orientation={"vertical"} />*/}
@@ -108,7 +120,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
     },
     temperature: {
-        width: 60,
+        width: 100,
         textAlign: "center"
     },
     percentage: {

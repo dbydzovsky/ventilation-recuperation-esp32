@@ -23,6 +23,7 @@ class Orchestrator  {
     Dependencies * deps;
     int _programCode;
     Programme * actual;
+    int validateCommonSense();
 };
     
 #endif

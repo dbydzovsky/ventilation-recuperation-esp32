@@ -105,12 +105,16 @@ void HttpServer::setup() {
     });
     AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/a/t", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         if (json["on"].as<int>() == 1) {
-            byte power = json["power"].as<byte>();
+            byte ventilatorPower = json["ventilator"].as<byte>();
+            byte recuperationPower = json["recuperation"].as<byte>();
+            byte recuperationMode = json["recuperationMode"].as<byte>();
             int duration = json["duration"].as<int>();
             ConfigurableProgramme * trialProgramme = this->_deps->factory->Trial;
             PowerOutput powerOutput;
-            powerOutput.mode = POWER_OUTPUT_MODE_VENTILATION;
-            powerOutput.ventilatorPower = power;
+            powerOutput.mode = POWER_OUTPUT_MODE_BOTH;
+            powerOutput.ventilatorPower = ventilatorPower;
+            powerOutput.recuperationPower = recuperationPower;
+            powerOutput.recuperationMode = recuperationMode;
             trialProgramme->setPower(powerOutput, duration);
             this->_orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
         } else {

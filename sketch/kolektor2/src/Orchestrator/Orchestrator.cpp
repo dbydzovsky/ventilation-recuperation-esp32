@@ -117,6 +117,22 @@ bool Orchestrator::handleHold(int duration_ms, bool finished) {
   return finished;
 }
 
+int Orchestrator::validateCommonSense() {
+  float outsideAirTemp = this->deps->outsideTemp->getAverage();
+  if (isnan(outsideAirTemp)) {
+    return 51;
+  }
+  float insideTemp = this->deps->insideTemp->getAverage();
+  if (isnan(insideTemp)) {
+    return 52;
+  }
+  float outsideHumidity = this->deps->outsideHum->getAverage();
+  if (isnan(outsideHumidity)) {
+    return 53;
+  }
+  return 0;
+}
+
 void Orchestrator::act() {
   if (!this->deps->confLock->readLock()) {
     return;
@@ -137,17 +153,16 @@ void Orchestrator::act() {
   WeatherDeps weatherDeps = {data, this->deps->timeProvider, this->deps->httpClient, this->deps->httpLock};
   context.weatherDeps = &weatherDeps;
   PowerOutput out;
-  int programCode;
   if (this->actual->canForce()) {
     this->actual->configureTicking(this->deps->diode);
     this->actual->getPower(&context, &out);
-    programCode = this->actual->getCode();
+    this->_programCode = this->actual->getCode();
   } else {
-    // todo programCode = validateCommonSense(data);
-    if (programCode == 0) {
+    this->_programCode = this->validateCommonSense();
+    if (this->_programCode == 0) {
       this->actual->configureTicking(this->deps->diode);
       this->actual->getPower(&context, &out);
-      programCode = this->actual->getCode();
+      this->_programCode = this->actual->getCode();
     } else {
       this->deps->diode->configure(&tickingError);
     }

@@ -79,7 +79,7 @@ class WinterProgramme: public Programme {
       Rules * rules = context->data->winterOnRules;
       for (short i = (rules->count - 1); i >= 0; i--) {
         Rule * rule = rules->rules[i];
-        if ((context->tempOutside) >= ((float) rule->temperature)) {
+        if ((context->tempOutside) >= ((float) rule->targetValue)) {
           this->currentRuleIndex = i;
           this->error = 0;
           out->ventilatorPower = rule->percentage;
@@ -89,7 +89,7 @@ class WinterProgramme: public Programme {
           return;
         }
         if (this->currentRuleIndex == i) {
-          if ((context->tempOutside) > (((float) rule->temperature) - temperatureDownTolerationProgramme)) {
+          if ((context->tempOutside) > (((float) rule->targetValue) - temperatureDownTolerationProgramme)) {
             out->ventilatorPower = rule->percentage;
             this->error = 0;
             if (rule->percentage == 0) {
