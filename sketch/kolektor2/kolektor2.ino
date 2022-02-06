@@ -25,6 +25,7 @@
 #include "src/Monitoring/Monitoring.h"
 #include "src/HttpServer/HttpServer.h"
 #include "src/Constants/Constants.h"
+#include "src/FilterMonitor/FilterMonitor.h"
 
 HTTPClient httpClient;
 
@@ -68,14 +69,14 @@ Dependencies deps = {
   forecast, timeProvider, &httpClient 
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
-Monitoring * monitoring = new Monitoring(&deps);
-
+Monitoring * monitoring = new Monitoring(orchestrator, &deps);
+FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
 Button * button = new Button(BTN_PIN, orchestrator);
 
 DNSServer dns;
 AsyncWebServer server(80);
 AsyncWiFiManager wifiManager(&server, &dns);
-HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator);
+HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter);
 void setup()
 {
   pinMode(stateDiode, OUTPUT);
@@ -87,6 +88,7 @@ void setup()
   digitalWrite(stateDiode, LOW);
   configuration->setup();
   httpServer->setup();
+  filter->setup();
 }
 
 unsigned long last_sensor_reading = millis();
@@ -112,6 +114,7 @@ void loop() {
   relay->act();
   dns.processNextRequest();
   orchestrator->act();
+  filter->act();
   delay(30);
   digitalWrite(stateDiode, HIGH);
   delay(30);

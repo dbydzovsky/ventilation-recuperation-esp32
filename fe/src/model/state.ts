@@ -24,7 +24,15 @@ export interface Trial {
   recuperation: number
   recuperationMode: number
 }
+
+export interface FilterState {
+  needCleaning: boolean
+  remainingMinutes: number
+}
+
 export interface CurrentState {
+  filterVentilator: FilterState,
+  filterRecuperation: FilterState,
   time: string,
   trial: Trial,
   alive: number,

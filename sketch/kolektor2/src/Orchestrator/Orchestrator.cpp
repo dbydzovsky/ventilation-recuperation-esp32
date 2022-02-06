@@ -27,7 +27,9 @@ Orchestrator::Orchestrator(Dependencies * deps) {
     this->actual = deps->factory->Initial;  
   }
 }
-
+int Orchestrator::getProgrammeCode() {
+  return this->_programCode;
+}
 void Orchestrator::getProgrammeName(char dest[80]) {
   if (this->_programCode < 60) {
     translateCode(this->_programCode, dest);

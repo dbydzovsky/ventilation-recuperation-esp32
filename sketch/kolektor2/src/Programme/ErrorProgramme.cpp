@@ -4,6 +4,7 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+
 class ErrorProgramme: public Programme {
   public:
     void onStart() {

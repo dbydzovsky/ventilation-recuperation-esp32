@@ -41,7 +41,7 @@ export const summerOrderValidation = (previous: Rule, actual: Rule) => {
     return previous.tv < (actual.tv + 3);
 }
 export const co2OrderValidation = (previous: Rule, actual: Rule) => {
-    return previous.tv < (actual.tv + 50);
+    return previous.tv > (actual.tv + 50);
 }
 export const weatherKeys = [
     {key: "lat", label: "Zeměpisná šírka (např. 50.25)", max: 5},
@@ -56,7 +56,7 @@ export function co2Validator(input:string|number): boolean {
         let candidate = Number(input)
         let valid = !Number.isNaN(candidate)
         if (valid) {
-            return candidate > 400 && candidate < 5000
+            return candidate > -1 && candidate < 5000
         }
         return false
     }

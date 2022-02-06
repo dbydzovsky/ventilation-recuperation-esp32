@@ -22,7 +22,7 @@
 	"scripts": {
 		"dev": "react-scripts start",
 		"start": "react-scripts start",
-		"build": "react-scripts build && npx gulp && rm -rf ./build/static && cp ./build/index.html ../sketch/kolektor2/data/index.html && cp ./build/index.css ../sketch/kolektor2/data/index.css"
+		"build": "react-scripts build && npx gulp && rm -rf ./build/static && cp ./build/index.html ../sketch/kolektor2/data/index.html"
 	},
 	"browserslist": [
 		">0.2%",

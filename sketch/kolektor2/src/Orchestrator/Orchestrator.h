@@ -19,6 +19,7 @@ class Orchestrator  {
     void act();
     bool handleHold(int durationMillis, bool finished);
     bool handleClick(byte times);
+    int getProgrammeCode();
   private:
     Dependencies * deps;
     int _programCode;

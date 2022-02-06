@@ -4,9 +4,11 @@
 #include "../Constants/Constants.h"
 #include <WiFiClientSecure.h>
 #include "../Dependencies/Dependencies.h"
+#include "../Orchestrator/Orchestrator.h"
 
-Monitoring::Monitoring(Dependencies * deps){
+Monitoring::Monitoring(Orchestrator* orchestrator, Dependencies * deps){
   this->_deps = deps;
+  this->_orchestrator = orchestrator;
 }
 
 void Monitoring::doReport() {
@@ -36,7 +38,7 @@ void Monitoring::doReport() {
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
     data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
-    // todo data["Code"][0]["value"] = ((float) programCode) / 10;
+    data["Code"][0]["value"] = this->_orchestrator->getProgrammeCode() / 10;
     float insideTemperature = this->_deps->insideTemp->getAverage();
     if (!isnan(insideTemperature)) {
         data["TeplotaVnitrni"][0]["value"] = insideTemperature;

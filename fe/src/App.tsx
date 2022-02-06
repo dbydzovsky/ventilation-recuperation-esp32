@@ -26,6 +26,8 @@ import {ConfigurationPage} from "./pages/ConfigurationPage";
 import {Loader} from "./components/Loader";
 import {NotificationWidget} from "./pages/NotificationPage";
 import TuneIcon from '@material-ui/icons/Tune';
+import WarningIcon from '@material-ui/icons/Warning';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {HelpPage} from "./pages/HelpPage";
 import HelpIcon from '@material-ui/icons/Help';
 import {ActionPage} from "./pages/ActionsPage";
@@ -35,6 +37,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "./reducers";
 import {TrialPage} from "./pages/TrialPage";
 import ControlCameraIcon from '@material-ui/icons/ControlCamera';
+import {FilterPage} from "./pages/FilterPage";
 
 function Routes() {
 	const classes = useStyles();
@@ -47,6 +50,7 @@ function Routes() {
 			<Route exact={true} path="/state" component={CurrentStatePage} />
 			<Route exact={true} path="/configuration" component={ConfigurationPage} />
 			<Route exact={true} path="/actions" component={ActionPage} />
+			<Route exact={true} path="/filter" component={FilterPage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
@@ -56,7 +60,9 @@ function Routes() {
 
 function Drawer(props: {  }) {
 	const classes = useStyles();
-
+	const ventilatorCleaning = useSelector((state: RootState) => state.state.filterVentilator.needCleaning);
+	const recuperationCleaning = useSelector((state: RootState) => state.state.filterRecuperation.needCleaning);
+	const cleaningNeeded = ventilatorCleaning || recuperationCleaning;
 	return (
 		<div>
 			<div className={classes.drawerHeader} />
@@ -80,6 +86,15 @@ function Drawer(props: {  }) {
 						<SettingsIcon />
 					</ListItemIcon>
 					<ListItemText primary="Nastavení" />
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem button onClick={() => history.push("/filter")}>
+					<ListItemIcon>
+						{cleaningNeeded && <WarningIcon htmlColor={"orange"}/> || <CheckCircleIcon />}
+					</ListItemIcon>
+					<ListItemText primary={cleaningNeeded ? "Filtr (Vyčistit)" : "Filtr"} />
 				</ListItem>
 			</List>
 			<Divider />

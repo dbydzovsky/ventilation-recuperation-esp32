@@ -8,15 +8,16 @@
 #define Monitoring_h
 #include "Arduino.h"
 #include "../Dependencies/Dependencies.h"
-
+#include "../Orchestrator/Orchestrator.h"
 class Monitoring {
   public:
-    Monitoring(Dependencies * deps);
+    Monitoring(Orchestrator* orchestrator, Dependencies * deps);
     void act();
   private:
     unsigned long last_retrival = millis();
     void doReport();
     Dependencies * _deps;
+    Orchestrator * _orchestrator;
 };
 
 #endif

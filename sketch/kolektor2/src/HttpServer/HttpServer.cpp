@@ -9,6 +9,7 @@
 #include "../Constants/Constants.h"
 #include "../Programme/Programme.h"
 #include "../Orchestrator/Orchestrator.h"
+#include "../FilterMonitor/FilterMonitor.h"
 #include "SPIFFS.h"
 #include "TimeLib.h"
 
@@ -19,11 +20,12 @@ void setCache(AsyncWebServerResponse *response) {
   response->addHeader("Cache-Control", "public, max-age=31536000, immutable");
 }
 
-HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator){
+HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter){
     this->_deps = deps;
     this->_server = server;
     this->_wifiManager = wifiManager;
     this->_orchestrator = orchestrator;
+    this->_filter = filter;
 }
 
 
@@ -94,6 +96,18 @@ void HttpServer::setup() {
         outsideHum["err"] = this->_deps->outsideHum->getErrors();
         outsideHum["warn"] = this->_deps->outsideHum->getWarnings();
 
+        JsonObject filterVentilator = root.createNestedObject("filterVentilator");
+        FilterReport ventReport;
+        this->_filter->report(FILTER_MONITOR_VENTILATOR, &ventReport);
+        filterVentilator["needCleaning"] = ventReport.needCleaning;
+        filterVentilator["remainingMinutes"] = ventReport.remainMinutes;
+        
+        JsonObject filterRecuperation = root.createNestedObject("filterRecuperation");
+        FilterReport recuperationReport;
+        this->_filter->report(FILTER_MONITOR_RECUPERATION, &recuperationReport);
+        filterRecuperation["needCleaning"] = recuperationReport.needCleaning;
+        filterRecuperation["remainingMinutes"] = recuperationReport.remainMinutes;
+        
         serializeJson(root, *response);
         setCors(response);
         request->send(response);
@@ -128,6 +142,18 @@ void HttpServer::setup() {
         request->send(response);
     });
 
+    AsyncCallbackJsonWebHandler* filterHandler = new AsyncCallbackJsonWebHandler("/a/clean/", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+        int fanType = json["filter"].as<int>();
+        if (this->_filter->cleared(fanType)){
+            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+            setCors(response);
+            request->send(response);    
+        } else {
+            AsyncWebServerResponse *response = request->beginResponse(503, "application/json", "{'msg':'error'}");
+            setCors(response);
+            request->send(response);
+        }
+    });
     AsyncCallbackJsonWebHandler* trialHandler = new AsyncCallbackJsonWebHandler("/a/conf", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         // todo lock?
         if (this->_deps->conf->save(json)) {
@@ -140,8 +166,10 @@ void HttpServer::setup() {
             request->send(response);
         }    
     });
+
     this->_server->addHandler(handler);
     this->_server->addHandler(trialHandler);
+    this->_server->addHandler(filterHandler);
     this->_server->onNotFound([](AsyncWebServerRequest * request) {
         if (request->method() == HTTP_OPTIONS) {
             AsyncWebServerResponse *response = request->beginResponse(204);

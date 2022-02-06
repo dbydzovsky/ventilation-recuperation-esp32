@@ -37,6 +37,14 @@ module.exports = () => {
                 "recuperation": 60,
                 "recuperationMode": 1
             },
+            "filterVentilator": {
+                needCleaning: false,
+                remainingMinutes: 90
+            },
+            "filterRecuperation": {
+                needCleaning: true,
+                remainingMinutes: -5
+            },
             "mode": 3,
             "time": "2022/2/6 9:23.24",
             "ventilator": 0,

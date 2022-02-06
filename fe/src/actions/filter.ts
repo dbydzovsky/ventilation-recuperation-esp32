@@ -3,11 +3,16 @@ import {handleResponseWithNotification} from "./notification";
 
 const baseurl = process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
 
-export interface CalibrationData {
-    insideTemp: number
+export enum Filter {
+    ventilator = 1,
+    recuperation = 2,
 }
 
-export function calibrate(data: CalibrationData) {
+export interface CleanFilterData {
+    filter: Filter
+}
+
+export function cleanFilter(data: CleanFilterData) {
     return async function save(dispatch: Function, getState: Function) {
         dispatch({type: LoaderActions.SHOW_LOADER})
         const body = JSON.stringify(data);
@@ -16,10 +21,10 @@ export function calibrate(data: CalibrationData) {
         })
 
         await handleResponseWithNotification(dispatch,
-            "Zařízení bylo úspěšně kalibrováno",
-            "Bohužel nebylo možné zařízení kalibrovat.",
+            "Potvrzuji, filter vyčištěň.",
+            "Bohužel nebylo možné označit filter za vyčištěný.",
             () => {
-            return fetch(baseurl + "/a/cal/", {method: "POST", body: body, headers: headers});
+            return fetch(baseurl + "/a/clean/", {method: "POST", body: body, headers: headers});
         })
     }
 }

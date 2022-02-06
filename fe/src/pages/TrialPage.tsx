@@ -180,7 +180,7 @@ export function TrialPage() {
                     <FormLabel component="legend">Nastavení výkonu rekuperace (aktuálně { recuperationPower }%)</FormLabel>
                 </Grid>
                 <Grid item>
-                    <VentilatorIcon disabled={!enabled} percentage={100}/>
+                    <VentilatorIcon disabled={!enabled} percentage={0}/>
                 </Grid>
                 <Grid item xs>
                     <Slider color={"secondary"}

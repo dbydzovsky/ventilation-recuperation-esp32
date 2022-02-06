@@ -6,6 +6,7 @@ export interface ActionData {
     id: number
 }
 
+
 export async function restartESP(dispatch: Function, getState: Function) {
     generic(dispatch, {id: 1}, {ok: "Úspěšný restart", notok: "Úspěšný restart."})
 }

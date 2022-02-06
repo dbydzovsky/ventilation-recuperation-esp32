@@ -11,6 +11,7 @@ import * as StateActions from "../actions/state";
 import {ConnectionState} from "../model/state";
 import {Mode} from "../model/configuration";
 import Grid from "@material-ui/core/Grid";
+import WarningIcon from "@material-ui/icons/Warning";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -50,12 +51,9 @@ export function CurrentStateRefresher() {
 export function CurrentStatePanel() {
     const classes = useStyles();
 
-    // Příkon [W] 	14
-    // Jmenovitý proud [A] 	0,08
-    // Průtok vzduchu [m3/h] 	105
-    // Otáčky[min] 	2300
     const dispatch = useDispatch();
     const currentState = useSelector((state: RootState) => state.state);
+    const cleaningNeeded = currentState.filterRecuperation.needCleaning || currentState.filterVentilator.needCleaning;
     const connectionState = useSelector((state: RootState) => state.errorState).state;
     let clazz = classes.connected;
     if (connectionState == ConnectionState.Disconnected) {
@@ -67,6 +65,7 @@ export function CurrentStatePanel() {
     }
     let recuperationPower = currentState.recuperation === undefined ? 0 : currentState.recuperation
     return <div className={classes.header}>
+        {cleaningNeeded && <p style={{textAlign: "center", color: "orange"}}><WarningIcon htmlColor={"orange"}/>Je třeba vyčistit filtr</p>}
         <ConnectionStatePanel/>
         { connectionState == ConnectionState.Unitiliazed && "Loading.." }
         { connectionState != ConnectionState.Unitiliazed && currentState.mode == Mode.INACTIVE && <div className={classes.turnedOff}><NotInterestedIcon/> Neaktivní (vypnuto)</div>}

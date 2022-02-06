@@ -13,9 +13,17 @@ let initialState: CurrentState = {
     co2Inside: {v: 0, avg: 0, err: 0, warn: 0},
     heap: 0,
     description: "",
+    filterRecuperation: {
+        remainingMinutes: 0,
+        needCleaning: false,
+    },
+    filterVentilator: {
+        remainingMinutes: 0,
+        needCleaning: false,
+    },
     trial: {
         enabled: false,
-        duration: 60000,
+        duration: 300000,
         mode: Mode.INACTIVE,
         ventilator: 0,
         recuperation: 0,

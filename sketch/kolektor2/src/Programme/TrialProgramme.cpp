@@ -8,7 +8,7 @@ class TrialProgramme: public ConfigurableProgramme {
   private:
     bool valid = false;
     unsigned long started = 0;
-    int durationMillis = 60000;
+    int durationMillis = 300000;
     PowerOutput output;
   public:
     byte getCode() {
