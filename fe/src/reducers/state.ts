@@ -21,6 +21,18 @@ let initialState: CurrentState = {
         remainingMinutes: 0,
         needCleaning: false,
     },
+    alarmVentilator: {
+        blocked: false,
+        remainMinutes: 0,
+        highRpm: false,
+        needAttention: false
+    },
+    alarmRecuperation: {
+        blocked: false,
+        remainMinutes: 0,
+        highRpm: false,
+        needAttention: false
+    },
     trial: {
         enabled: false,
         duration: 300000,

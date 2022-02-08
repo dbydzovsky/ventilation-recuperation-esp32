@@ -1,18 +1,14 @@
 import {LoaderActions} from "../model/loader";
 import {handleResponseWithNotification} from "./notification";
+import {FanType} from "./filter";
 
 const baseurl = process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
 
-export enum FanType {
-    ventilator = 1,
-    recuperation = 2,
-}
-
-export interface CleanFilterData {
+export interface CleanAlarmData {
     filter: FanType
 }
 
-export function cleanFilter(data: CleanFilterData) {
+export function cleanAlarm(data: CleanAlarmData) {
     return async function save(dispatch: Function, getState: Function) {
         dispatch({type: LoaderActions.SHOW_LOADER})
         const body = JSON.stringify(data);
@@ -21,10 +17,10 @@ export function cleanFilter(data: CleanFilterData) {
         })
 
         await handleResponseWithNotification(dispatch,
-            "Potvrzuji, filter vyčištěň.",
-            "Bohužel nebylo možné označit filter za vyčištěný.",
+            "Potvrzuji, alarm byl restartován.",
+            "Bohužel nebylo možné označit alarm uvolnit.",
             () => {
-            return fetch(baseurl + "/a/clean/", {method: "POST", body: body, headers: headers});
+            return fetch(baseurl + "/a/alarm/", {method: "POST", body: body, headers: headers});
         })
     }
 }

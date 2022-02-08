@@ -17,7 +17,7 @@ Average::Average(Source *source) {
 
 int Average::readSingle() {
   float newVal = this->source->getValue();
-  if (newVal == -100) {
+  if (newVal == INVALID_VALUE) {
     this->error = true;
     return NAN;
   }

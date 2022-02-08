@@ -12,6 +12,7 @@
 #include "../FilterMonitor/FilterMonitor.h"
 #include "SPIFFS.h"
 #include "TimeLib.h"
+#include "../RPMChecker/RPMChecker.h"
 
 void setCors(AsyncWebServerResponse *response) {
   response->addHeader("Access-Control-Allow-Origin", "*");
@@ -84,7 +85,7 @@ void HttpServer::setup() {
         co2Inside["v"] = this->_deps->co2Inside->getValue();
         co2Inside["avg"] = this->_deps->co2Inside->getAverage();
         co2Inside["err"] = this->_deps->co2Inside->getErrors();
-        co2Inside["warn"] = this->_deps->co2Inside->getWarnings();
+        co2Inside["warn"] = this->_deps->co2Inside->getWarnings();    
         JsonObject outsideTemp = root.createNestedObject("outsideTemp");
         outsideTemp["v"] = this->_deps->outsideTemp->getValue();
         outsideTemp["avg"] = this->_deps->outsideTemp->getAverage();
@@ -98,16 +99,32 @@ void HttpServer::setup() {
 
         JsonObject filterVentilator = root.createNestedObject("filterVentilator");
         FilterReport ventReport;
-        this->_filter->report(FILTER_MONITOR_VENTILATOR, &ventReport);
+        this->_filter->report(FAN_TYPE_VENTILATOR, &ventReport);
         filterVentilator["needCleaning"] = ventReport.needCleaning;
         filterVentilator["remainingMinutes"] = ventReport.remainMinutes;
         
         JsonObject filterRecuperation = root.createNestedObject("filterRecuperation");
         FilterReport recuperationReport;
-        this->_filter->report(FILTER_MONITOR_RECUPERATION, &recuperationReport);
+        this->_filter->report(FAN_TYPE_RECUPERATION, &recuperationReport);
         filterRecuperation["needCleaning"] = recuperationReport.needCleaning;
         filterRecuperation["remainingMinutes"] = recuperationReport.remainMinutes;
         
+        JsonObject alarmVentilator = root.createNestedObject("alarmVentilator");
+        AlarmReport ventilatorAlarmReport;
+        this->_deps->ventilatorChecker->report(&ventilatorAlarmReport);
+        alarmVentilator["needAttention"] = ventilatorAlarmReport.needAttention;
+        alarmVentilator["blocked"] = ventilatorAlarmReport.blocked;
+        alarmVentilator["highRpm"] = ventilatorAlarmReport.highRpm;
+        alarmVentilator["remainMinutes"] = ventilatorAlarmReport.remainMinutes;
+        
+        JsonObject alarmRecuperation = root.createNestedObject("alarmRecuperation");
+        AlarmReport recuperationAlarmReport;
+        this->_deps->recuperationChecker->report(&recuperationAlarmReport);
+        alarmRecuperation["needAttention"] = recuperationAlarmReport.needAttention;
+        alarmRecuperation["blocked"] = recuperationAlarmReport.blocked;
+        alarmRecuperation["highRpm"] = recuperationAlarmReport.highRpm;
+        alarmRecuperation["remainMinutes"] = recuperationAlarmReport.remainMinutes;
+
         serializeJson(root, *response);
         setCors(response);
         request->send(response);
@@ -154,6 +171,29 @@ void HttpServer::setup() {
             request->send(response);
         }
     });
+    AsyncCallbackJsonWebHandler* alarmHandler = new AsyncCallbackJsonWebHandler("/a/alarm/", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+        int fanType = json["filter"].as<int>();
+        RPMChecker * checker;
+        if (fanType == FAN_TYPE_VENTILATOR) {
+            checker = this->_deps->ventilatorChecker;
+        } else if (fanType == FAN_TYPE_RECUPERATION) {
+            checker = this->_deps->recuperationChecker;
+        } else {
+            AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'bad request'}");
+            setCors(response);
+            request->send(response);    
+            return;
+        }
+        if (checker->resetAlarm()){
+            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+            setCors(response);
+            request->send(response);    
+        } else {
+            AsyncWebServerResponse *response = request->beginResponse(503, "application/json", "{'msg':'error'}");
+            setCors(response);
+            request->send(response);
+        }
+    });
     AsyncCallbackJsonWebHandler* trialHandler = new AsyncCallbackJsonWebHandler("/a/conf", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         // todo lock?
         if (this->_deps->conf->save(json)) {
@@ -164,12 +204,13 @@ void HttpServer::setup() {
             AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'Could not parse JSON or not valid values'}");
             setCors(response);
             request->send(response);
-        }    
+        }
     });
 
     this->_server->addHandler(handler);
     this->_server->addHandler(trialHandler);
     this->_server->addHandler(filterHandler);
+    this->_server->addHandler(alarmHandler);
     this->_server->onNotFound([](AsyncWebServerRequest * request) {
         if (request->method() == HTTP_OPTIONS) {
             AsyncWebServerResponse *response = request->beginResponse(204);

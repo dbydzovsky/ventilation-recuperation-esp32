@@ -38,7 +38,8 @@ import {RootState} from "./reducers";
 import {TrialPage} from "./pages/TrialPage";
 import ControlCameraIcon from '@material-ui/icons/ControlCamera';
 import {FilterPage} from "./pages/FilterPage";
-
+import AlarmOnIcon from '@material-ui/icons/AlarmOn';
+import {AlarmPage} from "./pages/AlarmPage";
 function Routes() {
 	const classes = useStyles();
 
@@ -51,6 +52,7 @@ function Routes() {
 			<Route exact={true} path="/configuration" component={ConfigurationPage} />
 			<Route exact={true} path="/actions" component={ActionPage} />
 			<Route exact={true} path="/filter" component={FilterPage} />
+			<Route exact={true} path="/alarm" component={AlarmPage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
@@ -60,9 +62,8 @@ function Routes() {
 
 function Drawer(props: {  }) {
 	const classes = useStyles();
-	const ventilatorCleaning = useSelector((state: RootState) => state.state.filterVentilator.needCleaning);
-	const recuperationCleaning = useSelector((state: RootState) => state.state.filterRecuperation.needCleaning);
-	const cleaningNeeded = ventilatorCleaning || recuperationCleaning;
+	const cleaningNeeded  = useSelector((state: RootState) => state.state.filterVentilator.needCleaning || state.state.filterRecuperation.needCleaning);
+	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || state.state.alarmRecuperation.needAttention);
 	return (
 		<div>
 			<div className={classes.drawerHeader} />
@@ -95,6 +96,15 @@ function Drawer(props: {  }) {
 						{cleaningNeeded && <WarningIcon htmlColor={"orange"}/> || <CheckCircleIcon />}
 					</ListItemIcon>
 					<ListItemText primary={cleaningNeeded ? "Filtr (Vyčistit)" : "Filtr"} />
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem button onClick={() => history.push("/alarm")}>
+					<ListItemIcon>
+						{alarmAttentionNeeded && <WarningIcon htmlColor={"orange"}/> || <AlarmOnIcon />}
+					</ListItemIcon>
+					<ListItemText primary={alarmAttentionNeeded ? "Alarm (Zkontrolovat)" : "Alarm"} />
 				</ListItem>
 			</List>
 			<Divider />

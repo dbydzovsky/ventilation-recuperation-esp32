@@ -68,7 +68,7 @@ const useStyles = makeStyles({
 })
 
 
-function msToTime(s: number): string {
+export function msToTime(s: number): string {
     if (s){
         var ms = s % 1000;
         s = (s - ms) / 1000;

@@ -25,6 +25,13 @@ export interface Trial {
   recuperationMode: number
 }
 
+export interface AlarmState {
+  needAttention: boolean
+  blocked: boolean
+  highRpm: boolean
+  remainMinutes: number
+}
+
 export interface FilterState {
   needCleaning: boolean
   remainingMinutes: number
@@ -33,6 +40,8 @@ export interface FilterState {
 export interface CurrentState {
   filterVentilator: FilterState,
   filterRecuperation: FilterState,
+  alarmRecuperation: AlarmState,
+  alarmVentilator: AlarmState,
   time: string,
   trial: Trial,
   alive: number,

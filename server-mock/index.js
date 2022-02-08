@@ -45,6 +45,18 @@ module.exports = () => {
                 needCleaning: true,
                 remainingMinutes: -5
             },
+            alarmVentilator: {
+                blocked: false,
+                remainMinutes: 95,
+                highRpm: false,
+                needAttention: false
+            },
+            alarmRecuperation: {
+                blocked: false,
+                remainMinutes: 5,
+                highRpm: false,
+                needAttention: false
+            },
             "mode": 3,
             "time": "2022/2/6 9:23.24",
             "ventilator": 0,

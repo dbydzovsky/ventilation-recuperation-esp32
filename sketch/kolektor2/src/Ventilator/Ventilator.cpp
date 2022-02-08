@@ -2,19 +2,27 @@
 #include "Ventilator.h"
 #include "../PwmControl/PwmControl.h"
 #include "../Constants/Constants.h"
+#include "../RPMChecker/RPMChecker.h"
 
-Ventilator::Ventilator(PwmControl * control)
+Ventilator::Ventilator(PwmControl * control, RPMChecker * checker)
 {
-  _control = control;
-  _power = 0;
+  this->_control = control;
+  this->_checker = checker;
+  this->_power = 0;
 }
 
 short Ventilator::getPower() {
+  if (this->_checker->shouldStop()) {
+    return 0;
+  }
   return (short) this->_power;
 }
 
 void Ventilator::act() {
   short duty = map(this->_power, 0, 100, 0, 254);
+  if (this->_checker->shouldStop()) {
+    this->_control->setDutyCycle(0);
+  }
   this->_control->setDutyCycle((byte) duty);
 }
 

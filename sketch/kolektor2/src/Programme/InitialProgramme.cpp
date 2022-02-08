@@ -7,7 +7,8 @@
 
 class InitialWarmingUpProgramme: public Programme {
   private:
-    unsigned long startedWaiting = NAN;
+    unsigned long startedWaiting;
+    bool _isValid = false;
   public:
     byte getCode() {
       return 70;
@@ -27,6 +28,7 @@ class InitialWarmingUpProgramme: public Programme {
     void onStart() {
       if (IS_DEBUG) Serial.println("Starting Initial Programme");
       this->startedWaiting = millis();
+      this->_isValid = true;
     }
     bool handleClick(byte times) {
       return false;
@@ -41,15 +43,15 @@ class InitialWarmingUpProgramme: public Programme {
       return;
     }
     void invalidate() {
-      this->startedWaiting = NAN;
+      this->_isValid = false;
     }
     bool isValid(ConfigurationData * data) {
-      if (isnan(this->startedWaiting)) {
+      if (!this->_isValid) {
         return false;
       }
       bool valid = millis() - this->startedWaiting < warmingUpTime;
       if (!valid) {
-        this->startedWaiting = NAN;
+        this->_isValid = false;
       }
       return valid;
     }

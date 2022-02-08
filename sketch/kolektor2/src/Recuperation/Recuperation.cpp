@@ -3,15 +3,17 @@
 #include "../PwmControl/PwmControl.h"
 #include "../Constants/Constants.h"
 #include "../Relay/Relay.h"
+#include "../RPMChecker/RPMChecker.h"
 
 #define DISABLED_FAN_DUTY 125
 
-Recuperation::Recuperation(Relay * relay, PwmControl *control)
+Recuperation::Recuperation(Relay * relay, PwmControl *control, RPMChecker * checker)
 {
-  _control = control;
-  _relay = relay;
-  _mode = RECUPERATION_MODE_RECYCLE;
-  _power = 0;
+  this->_control = control;
+  this->_relay = relay;
+  this->_mode = RECUPERATION_MODE_RECYCLE;
+  this->_power = 0;
+  this->_checker = checker;
   this->_control->setDutyCycle(DISABLED_FAN_DUTY);
 }
 
@@ -34,6 +36,9 @@ void Recuperation::setPower(byte power, byte mode) {
 }
 
 short Recuperation::getPower(){
+  if (this->_checker->shouldStop()) {
+    return 0;
+  }
   if (this->_directionIn) {
     return (short) this->_power;
   } else {
@@ -42,7 +47,7 @@ short Recuperation::getPower(){
 }
 
 void Recuperation::act() {
-  if (this->_power == 0) {
+  if (this->_power == 0 || this->_checker->shouldStop()) {
     this->_control->setDutyCycle(125);
     this->_relay->disable();
     return;

@@ -62,7 +62,7 @@ void FilterMonitor::setup() {
 }
 
 bool FilterMonitor::cleared(int filter){
-  if (filter == FILTER_MONITOR_VENTILATOR) {
+  if (filter == FAN_TYPE_VENTILATOR) {
     if (IS_DEBUG) Serial.println("Going to clear ventilator");
     FilterData data;
     if (save(ventilator_filename, data)) {
@@ -71,7 +71,7 @@ bool FilterMonitor::cleared(int filter){
       return true;
     }
   }
-  if (filter == FILTER_MONITOR_RECUPERATION) {
+  if (filter == FAN_TYPE_RECUPERATION) {
     if (IS_DEBUG) Serial.println("Going to clear recuperation");
     FilterData data;
     if (save(recuperation_filename, data)) {
@@ -84,12 +84,12 @@ bool FilterMonitor::cleared(int filter){
 }
 
 void FilterMonitor::report(byte filter, FilterReport * report) {
-  if (filter == FILTER_MONITOR_VENTILATOR) {
+  if (filter == FAN_TYPE_VENTILATOR) {
     long liveMinutesTotal = filterVentilatorDaysWithoutCleaning * 24 * 60;
     report->remainMinutes = liveMinutesTotal - this->_ventilatorMinutes;
     report->needCleaning = report->remainMinutes <= 0;
   }
-  if (filter == FILTER_MONITOR_RECUPERATION) {
+  if (filter == FAN_TYPE_RECUPERATION) {
     long liveMinutesTotal = filterRecuperationDaysWithoutCleaning * 24 * 60;
     report->remainMinutes = liveMinutesTotal - this->_recuperationMinutes;
     report->needCleaning = report->remainMinutes <= 0;
@@ -99,9 +99,10 @@ void FilterMonitor::report(byte filter, FilterReport * report) {
 void FilterMonitor::act(){ 
     if (millis() - this->_lastTracking > 60000) {
       this->_lastTracking = millis();
-      if (this->_ventilator->getPower() != 0) {
+      short ventilatorPower = this->_ventilator->getPower();
+      if (ventilatorPower != 0) {
         if (IS_DEBUG) Serial.println("Adding a filter minute to ventilator");
-        this->_ventilatorMinutes += 1;
+        this->_ventilatorMinutes += max(1, (int)(ventilatorPower/25));
       };
       if (this->_recuperation->getPower() != 0) {
         if (IS_DEBUG) Serial.println("Adding a filter minute to recuperation");

@@ -34,7 +34,28 @@
         transform:rotate(0deg);
       }
     }
-
+    @keyframes blocked {
+      0% {
+        transform:rotate(0deg);
+      }
+      20% {
+        transform:rotate(40deg);
+      }
+      100% {
+        transform:rotate(0deg);
+      }
+    }
+    @keyframes highRPM {
+      0% {
+        transform:rotate(0deg);
+      }
+      70% {
+        transform:rotate(2500deg);
+      }
+      100% {
+        transform:rotate(2500deg);
+      }
+    }
     .spin {
       animation-name: spin;
       animation-iteration-count: infinite;
@@ -42,6 +63,20 @@
     }
     .spinCounter {
       animation-name: spinCounter;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .blocked {
+      animation-name: blocked;
+      animation-duration: 400ms;
+      color: red;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .highRPM {
+      animation-name: highRPM;
+      animation-duration: 2000ms;
+      color: red;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
     }

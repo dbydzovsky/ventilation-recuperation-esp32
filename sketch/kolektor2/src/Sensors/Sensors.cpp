@@ -1,18 +1,8 @@
 #include "Arduino.h"
 #include "Sensors.h"
+#include <MHZ19_uart.h>
 #include "../Constants/Constants.h"
-class InsideSensor {
-  public:
-    InsideSensor() {
 
-    }
-    float readCo2() {
-      return 400;
-    }
-    float readTemp() {
-      return 20;
-    }
-};
 class OutsideSensor {
   public:
     OutsideSensor() {
@@ -28,17 +18,25 @@ class OutsideSensor {
 
 class Co2Sensor: public Source {
   private:
-    InsideSensor * _sensor;
+    MHZ19_uart * _mhz19;
   public:
-    Co2Sensor(InsideSensor * sensor) {
-      this->_sensor = sensor;
+    
+    Co2Sensor(MHZ19_uart * mhz19) {
+      this->_mhz19 = mhz19;
     }
+    
     float getValue() {
-      return 1000;
+      int ppm = this->_mhz19->getCO2PPM();
+      if (ppm < 400 || ppm > 5000) {
+        return INVALID_VALUE;
+      }
+      return (float) ppm;
     };
+    
     int getToleration() {
-      return 200;
+      return 300;
     };
+
     void setValue(float newVal) {
       
     }
@@ -46,13 +44,20 @@ class Co2Sensor: public Source {
 
 class TempInsideSensor: public Source {
   private:
-    InsideSensor * _sensor;
+    MHZ19_uart * _mhz19;
   public:
-    TempInsideSensor(InsideSensor * sensor) {
-
+    TempInsideSensor(MHZ19_uart * mhz19) {
+      this->_mhz19 = mhz19;
     }
     float getValue() {
-      return 24;
+      int temp = this->_mhz19->getTemperature();
+      if (temp == -1) {
+        return INVALID_VALUE;
+      }
+      if (temp < -20 || temp > 60) {
+        return INVALID_VALUE;
+      }
+      return temp;
     };
     int getToleration() {
       return 5;
@@ -115,18 +120,20 @@ class TestingSensor: public Source {
     } 
 };
 
-Sensors::Sensors() {
-  if (IS_DEBUG) {
-    Serial.println("Configuring testing sensors");
+Sensors::Sensors(MHZ19_uart * mhz19) {
+  if (TESTING_CO2_SENSOR) {
     this->co2Inside = new TestingSensor(1000);
     this->insideTemp = new TestingSensor(20);
+  } else {
+    this->co2Inside = new Co2Sensor(mhz19);
+    this->insideTemp = new TempInsideSensor(mhz19);
+  }
+  if (IS_DEBUG) {
+    Serial.println("Configuring testing sensors");
     this->outsideHum = new TestingSensor(5);
     this->outsideTemp = new TestingSensor(20);
   } else {
-    InsideSensor * inside = new InsideSensor();
     OutsideSensor * outside = new OutsideSensor();
-    this->co2Inside = new Co2Sensor(inside);
-    this->insideTemp = new TempInsideSensor(inside);
     this->outsideHum = new HumOutsideSensor(outside);
     this->outsideTemp = new TempOutsideSensor(outside);
   } 

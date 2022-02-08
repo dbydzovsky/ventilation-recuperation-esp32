@@ -4,9 +4,10 @@
   Released into the public domain.
 */
 
-#ifndef Morse_h
-#define Morse_h
+#ifndef Sensors_h
+#define Sensors_h
 #include "Arduino.h"
+#include <MHZ19_uart.h>
 
 class Source {
   public:
@@ -17,7 +18,7 @@ class Source {
 
 class Sensors {
   public:
-    Sensors();
+    Sensors(MHZ19_uart * mhz19);
     Source * outsideTemp;
     Source * outsideHum;
     Source * insideTemp;

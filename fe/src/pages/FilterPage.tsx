@@ -7,7 +7,7 @@ import PhotoFilterIcon from '@material-ui/icons/PhotoFilter';
 import WarningIcon from "@material-ui/icons/Warning";
 import Button from "@material-ui/core/Button";
 import {InputLabel, Paper} from "@material-ui/core";
-import {cleanFilter, Filter} from "../actions/filter";
+import {cleanFilter, FanType} from "../actions/filter";
 import {RootState} from "../reducers";
 import {FilterState} from "../model/state";
 
@@ -16,11 +16,11 @@ export function FilterPage() {
     const recuperationFilter = useSelector((state: RootState) => state.state.filterRecuperation);
 
     return <Grid container>
-            <FilterShowcase filter={Filter.ventilator}
+            <FilterShowcase filter={FanType.ventilator}
                             state={ventilatorFilter}
                             title={"Filtr ventilátoru"}
             />
-            <FilterShowcase filter={Filter.recuperation}
+            <FilterShowcase filter={FanType.recuperation}
                             state={recuperationFilter}
                             title={"Filtr rekuperace"}
             />
@@ -28,7 +28,7 @@ export function FilterPage() {
 }
 
 export interface FilterShowcaseProps {
-    filter: Filter
+    filter: FanType
     state: FilterState
     title: string
 }

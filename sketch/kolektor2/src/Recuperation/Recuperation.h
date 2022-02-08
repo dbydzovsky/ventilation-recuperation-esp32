@@ -9,9 +9,11 @@
 #include "Arduino.h"
 #include "../PwmControl/PwmControl.h"
 #include "../Relay/Relay.h"
+#include "../RPMChecker/RPMChecker.h"
+
 class Recuperation {
   public:
-    Recuperation(Relay * relay, PwmControl *control);
+    Recuperation(Relay * relay, PwmControl *control, RPMChecker * checker);
     /**
      * @brief Set the Power object
      * 
@@ -24,6 +26,7 @@ class Recuperation {
   private:
     unsigned long _last_direction_change = millis();
     PwmControl * _control;
+    RPMChecker * _checker;
     Relay * _relay;
     byte _power;
     byte _mode;

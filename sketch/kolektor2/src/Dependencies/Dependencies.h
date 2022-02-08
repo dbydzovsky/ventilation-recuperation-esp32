@@ -19,6 +19,8 @@
 #include "../Weather/Weather.h"
 #include "../TimeProvider/TimeProvider.h"
 #include "../DewPoint/DewPoint.h"
+#include "../RPMChecker/RPMChecker.h"
+
 struct Dependencies {
   Ventilator * ventilation;
   Recuperation * recuperation;
@@ -35,6 +37,8 @@ struct Dependencies {
   WeatherForecast * forecast;
   TimeProvider * timeProvider;
   HTTPClient * httpClient;
+  RPMChecker * ventilatorChecker;
+  RPMChecker * recuperationChecker;
 };
 
 #endif

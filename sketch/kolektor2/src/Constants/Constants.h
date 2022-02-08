@@ -5,6 +5,7 @@
 #define DEFAULT_PASSWORD "123456789"
 
 #define IS_DEBUG true
+#define TESTING_CO2_SENSOR true
 
 #define temporaryDisabledProgrammeDuration 3600000 // 1hour
 #define manual100ProgrammeDuration 900000 // 15 minutes
@@ -16,7 +17,7 @@
 #define averageValuesCount 7
 #endif
 
-
+#define INVALID_VALUE -9999
 #define enablementTresholdMs 4000 // 4 seconds
 
 #define syncForecastTolerateLastSuccessFor 172800000 // 2 days
@@ -41,6 +42,8 @@
 #define RELAY_COOLDOWN 5000
 #endif
 
+#define VENTILATOR_MAX_RPM 7600
+#define RECUPERATION_MAX_RPM 5500
 
-#define FILTER_MONITOR_VENTILATOR 1
-#define FILTER_MONITOR_RECUPERATION 2
+#define FAN_TYPE_VENTILATOR 1
+#define FAN_TYPE_RECUPERATION 2

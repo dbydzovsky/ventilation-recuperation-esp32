@@ -71,12 +71,18 @@ export function CurrentStatePanel() {
         { connectionState != ConnectionState.Unitiliazed && currentState.mode == Mode.INACTIVE && <div className={classes.turnedOff}><NotInterestedIcon/> Neaktivní (vypnuto)</div>}
         <div><b>{currentState.description}</b></div>
         <div className={clazz}>
-            <VentilatorIcon percentage={currentState.ventilator} />
+            <VentilatorIcon
+                highRPM={currentState.alarmVentilator.highRpm}
+                blocked={currentState.alarmVentilator.blocked}
+                percentage={currentState.ventilator} />
             Ventilátor {currentState.ventilator}%
         </div>
         <BorderLinearProgress variant="determinate" className={classes.progress} value={currentState.ventilator} />
         <div className={clazz}>
-            <VentilatorIcon percentage={recuperationPower} />
+            <VentilatorIcon
+                highRPM={currentState.alarmRecuperation.highRpm}
+                blocked={currentState.alarmRecuperation.blocked}
+                percentage={recuperationPower} />
             Rekuperace {recuperationPower}%
         </div>
         <Grid container>
@@ -95,10 +101,16 @@ export function CurrentStatePanel() {
     </div>
 }
 
-export function VentilatorIcon(props: {percentage: number, disabled?: boolean}) {
+export function VentilatorIcon(props: {percentage: number, highRPM?: boolean, blocked?: boolean, disabled?: boolean}) {
     let style: any = {}
     if (props.disabled) {
         style["color"] = "grey"
+    }
+    if (props.blocked) {
+        return <ToysIcon className={"blocked"}/>
+    }
+    if (props.highRPM) {
+        return <ToysIcon className={"highRPM"}/>
     }
     if (props.percentage) {
         if (props.percentage > 0) {
