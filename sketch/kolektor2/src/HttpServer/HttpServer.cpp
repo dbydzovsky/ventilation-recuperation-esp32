@@ -21,6 +21,19 @@ void setCache(AsyncWebServerResponse *response) {
   response->addHeader("Cache-Control", "public, max-age=31536000, immutable");
 }
 
+void notNotFound(AsyncWebServerRequest * request) {
+    if (request->method() == HTTP_OPTIONS) {
+        AsyncWebServerResponse *response = request->beginResponse(204);
+        setCors(response);
+        setCache(response);
+        request->send(response);
+    } else if (request->method() == HTTP_GET) {
+        AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/index.html");
+        setCache(response);
+        request->send(response);
+    }
+}
+
 HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter){
     this->_deps = deps;
     this->_server = server;
@@ -62,7 +75,9 @@ void HttpServer::setup() {
             root["time"] = "Čas nenastaven.";
         }
         root["ventilator"] = this->_deps->ventilation->getPower();
+        root["ventilatorRPM"] = this->_deps->ventilatorChecker->getRpm();
         root["recuperation"] = this->_deps->recuperation->getPower();
+        root["recuperationRPM"] = this->_deps->recuperationChecker->getRpm();
         root["alive"] = millis();
         char description[80] = "";
         this->_orchestrator->getProgrammeName(description);
@@ -211,17 +226,6 @@ void HttpServer::setup() {
     this->_server->addHandler(trialHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
-    this->_server->onNotFound([](AsyncWebServerRequest * request) {
-        if (request->method() == HTTP_OPTIONS) {
-            AsyncWebServerResponse *response = request->beginResponse(204);
-            setCors(response);
-            setCache(response);
-            request->send(response);
-        } else if (request->method() == HTTP_GET) {
-            AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/index.html");
-            setCache(response);
-            request->send(response);
-        }
-    });
+    this->_server->onNotFound(notNotFound);
     this->_server->begin();
 }

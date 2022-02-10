@@ -30,7 +30,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {HelpPage} from "./pages/HelpPage";
 import HelpIcon from '@material-ui/icons/Help';
-import {ActionPage} from "./pages/ActionsPage";
 import {CurrentStatePage} from "./pages/CurrentStatePage";
 import HomeIcon from '@material-ui/icons/Home';
 import {useSelector} from "react-redux";
@@ -40,6 +39,7 @@ import ControlCameraIcon from '@material-ui/icons/ControlCamera';
 import {FilterPage} from "./pages/FilterPage";
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
 import {AlarmPage} from "./pages/AlarmPage";
+import {MaintenancePage} from "./pages/MaintenancePage";
 function Routes() {
 	const classes = useStyles();
 
@@ -50,9 +50,7 @@ function Routes() {
 			<Route exact={true} path="/" component={CurrentStatePage} />
 			<Route exact={true} path="/state" component={CurrentStatePage} />
 			<Route exact={true} path="/configuration" component={ConfigurationPage} />
-			<Route exact={true} path="/actions" component={ActionPage} />
-			<Route exact={true} path="/filter" component={FilterPage} />
-			<Route exact={true} path="/alarm" component={AlarmPage} />
+			<Route exact={true} path="/maintenance" component={MaintenancePage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
@@ -91,20 +89,11 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/filter")}>
+				<ListItem button onClick={() => history.push("/maintenance")}>
 					<ListItemIcon>
-						{cleaningNeeded && <WarningIcon htmlColor={"orange"}/> || <CheckCircleIcon />}
+						{(cleaningNeeded||alarmAttentionNeeded) && <WarningIcon htmlColor={"orange"}/> || <CheckCircleIcon />}
 					</ListItemIcon>
-					<ListItemText primary={cleaningNeeded ? "Filtr (Vyčistit)" : "Filtr"} />
-				</ListItem>
-			</List>
-			<Divider />
-			<List>
-				<ListItem button onClick={() => history.push("/alarm")}>
-					<ListItemIcon>
-						{alarmAttentionNeeded && <WarningIcon htmlColor={"orange"}/> || <AlarmOnIcon />}
-					</ListItemIcon>
-					<ListItemText primary={alarmAttentionNeeded ? "Alarm (Zkontrolovat)" : "Alarm"} />
+					<ListItemText primary={(cleaningNeeded||alarmAttentionNeeded) ? "Údržba (zkontrolovat)" : "Údržba"} />
 				</ListItem>
 			</List>
 			<Divider />

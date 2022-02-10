@@ -23,17 +23,22 @@ class RPMChecker {
   public:
     RPMChecker(int pin, int maxRpm, const char* filename);
     void setup();
-    void act(short currentPower);
+    bool act(long ticks, short currentPower);
     bool shouldStop();
     bool resetAlarm();
+    int getRpm();
     void report(AlarmReport * out);
   private:
-    bool _blocked = false;
-    unsigned long _blockedSince;
+    bool _stopped = false;
+    unsigned long _stoppedSince;
     int _pin;
     int _maxRpm;
     const char* _filename;
     int _reason = 0;
+    int _notExpectedRotations = 0;
+    int _rpm = 0;
+    short _lastPower = 0;
+    unsigned long last_sample = millis();
 };
 
 #endif

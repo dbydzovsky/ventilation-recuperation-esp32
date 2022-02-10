@@ -37,7 +37,9 @@ void Monitoring::doReport() {
         data["CO2"][0]["value"] = insideCo2;
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
+    data["VentilatorRPM"][0]["value"] = this->_deps->ventilatorChecker->getRpm();
     data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
+    data["RecuperationRPM"][0]["value"] = this->_deps->recuperationChecker->getRpm();
     data["Code"][0]["value"] = this->_orchestrator->getProgrammeCode() / 10;
     float insideTemperature = this->_deps->insideTemp->getAverage();
     if (!isnan(insideTemperature)) {

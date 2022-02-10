@@ -23,6 +23,7 @@ class Recuperation {
 
     void act();
     short getPower();
+    short getActualPower();
   private:
     unsigned long _last_direction_change = millis();
     PwmControl * _control;
@@ -31,6 +32,7 @@ class Recuperation {
     byte _power;
     byte _mode;
     bool _directionIn = false;
+    bool _changingDirection = false;
 };
 
 #endif

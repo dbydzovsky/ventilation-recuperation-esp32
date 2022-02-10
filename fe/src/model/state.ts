@@ -47,7 +47,9 @@ export interface CurrentState {
   alive: number,
   mode: 0|1|2|3, // 0 inactive, 1 winter, 2 summer, 3 auto
   ventilator: number,
+  ventilatorRPM: number,
   recuperation?: number,
+  recuperationRPM: number,
   insideTemp?: Sensor,
   outsideTemp?: Sensor,
   outsideHum?: Sensor,

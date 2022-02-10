@@ -46,10 +46,18 @@ short Recuperation::getPower(){
   }
 }
 
+short Recuperation::getActualPower() {
+  if (this->_changingDirection) {
+    return 0;
+  }
+  return this->getPower();
+}
+
 void Recuperation::act() {
-  if (this->_power == 0 || this->_checker->shouldStop()) {
+  if (this->_power <= 0 || this->_power > 100 || this->_checker->shouldStop()) {
     this->_control->setDutyCycle(125);
     this->_relay->disable();
+    this->_changingDirection = false;
     return;
   }
   this->_relay->enable();
@@ -69,14 +77,17 @@ void Recuperation::act() {
     }
   }
   if (millis() - this->_last_direction_change < RECUPERATION_WAIT_FOR_DIRECTION_CHANGE) {
+    this->_changingDirection = true;
     this->_control->setDutyCycle(DISABLED_FAN_DUTY);
   } else {
-    int duty = DISABLED_FAN_DUTY;
+    this->_changingDirection = false;
     if (_directionIn) {
-      duty = map(this->_power, 0, 100, 150, 254);
+      int duty = map(this->_power, 0, 100, 150, 254);
+      this->_control->setDutyCycle(duty);
     } else {
-      duty = map(this->_power, 0, 100, 100, 0);
+      int duty = map(this->_power, 0, 100, 100, 0);
+      this->_control->setDutyCycle(duty);
     }
-    this->_control->setDutyCycle(duty);
+
   }
 }

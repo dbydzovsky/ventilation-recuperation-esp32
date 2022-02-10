@@ -42,7 +42,9 @@ let initialState: CurrentState = {
         recuperationMode: 0,
     },
     ventilator: 0,
-    recuperation: 0
+    ventilatorRPM: 0,
+    recuperation: 0,
+    recuperationRPM: 0,
 }
 
 export const state = createReducer<CurrentState>(initialState, {

@@ -75,7 +75,7 @@ export function CurrentStatePanel() {
                 highRPM={currentState.alarmVentilator.highRpm}
                 blocked={currentState.alarmVentilator.blocked}
                 percentage={currentState.ventilator} />
-            Ventilátor {currentState.ventilator}%
+            Ventilátor ({currentState.ventilatorRPM} RPM) {currentState.ventilator}%
         </div>
         <BorderLinearProgress variant="determinate" className={classes.progress} value={currentState.ventilator} />
         <div className={clazz}>
@@ -83,7 +83,7 @@ export function CurrentStatePanel() {
                 highRPM={currentState.alarmRecuperation.highRpm}
                 blocked={currentState.alarmRecuperation.blocked}
                 percentage={recuperationPower} />
-            Rekuperace {recuperationPower}%
+            Rekuperace ({currentState.recuperationRPM} RPM) {recuperationPower}%
         </div>
         <Grid container>
             <Grid item xs={6} >

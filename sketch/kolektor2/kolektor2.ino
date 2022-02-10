@@ -34,15 +34,15 @@ HTTPClient httpClient;
 
 // PINS
 #define PWM_ventilator_PIN 5
-#define ventilatorSignal 18
-#define PWM_recuperation_PIN 14
-#define recuperationSignal 19
+#define ventilatorSignal 19
+#define PWM_recuperation_PIN 26
+#define recuperationSignal 16
 #define BTN_PIN 15
 #define RELAY_PIN 13
 #define RED_DIODE_PIN 12
 #define GREEN_DIODE_PIN 3
 #define BLUE_DIODE_PIN 4
-#define rx_pin 16
+#define rx_pin 18 // 16
 #define tx_pin 17
 
 
@@ -91,6 +91,31 @@ DNSServer dns;
 AsyncWebServer server(80);
 AsyncWiFiManager wifiManager(&server, &dns);
 HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter);
+
+long ventilatorTicks = 0;
+void IRAM_ATTR myVentilatorHandler() {
+  ventilatorTicks = ventilatorTicks + 1;
+}
+void attachVentilator() {
+  attachInterrupt(digitalPinToInterrupt(ventilatorSignal), myVentilatorHandler, RISING);
+}
+void detachVentilator() {
+  detachInterrupt(digitalPinToInterrupt(ventilatorSignal));
+}
+
+long recuperationTicks = 0;
+void IRAM_ATTR myRecuperationHandler() {
+  recuperationTicks = recuperationTicks + 1;
+}
+
+void attachRecuperation() {
+  attachInterrupt(digitalPinToInterrupt(recuperationSignal), myRecuperationHandler, RISING);
+}
+void detachRecuperation() {
+  detachInterrupt(digitalPinToInterrupt(recuperationSignal));
+}
+
+
 void setup()
 {
   pinMode(stateDiode, OUTPUT);
@@ -110,6 +135,7 @@ void setup()
   filter->setup();
   rpmVentilatorChecker->setup();
   rpmRecuperationChecker->setup();
+  attachRecuperation();
 }
 
 unsigned long last_sensor_reading = millis();
@@ -137,8 +163,17 @@ void loop() {
   dns.processNextRequest();
   orchestrator->act();
   filter->act();
-  rpmVentilatorChecker->act(ventilator->getPower());
-  rpmRecuperationChecker->act(recuperation->getPower());
+  if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
+    detachVentilator();
+    ventilatorTicks = 0;
+    attachVentilator();  
+  }
+  if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
+    detachRecuperation();
+    recuperationTicks = 0;
+    attachRecuperation();  
+  }
+  
   delay(30);
   
   if (IS_DEBUG) {

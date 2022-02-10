@@ -6,7 +6,8 @@
 
 #define IS_DEBUG true
 #define TESTING_CO2_SENSOR true
-
+#define RPM_SAMPLING_DURATION 1000
+#define UNBLOCKING_FANS_PERIOD 172800000 // 2 days
 #define temporaryDisabledProgrammeDuration 3600000 // 1hour
 #define manual100ProgrammeDuration 900000 // 15 minutes
 #define updatingSensorStatsInterval 60000
@@ -33,9 +34,9 @@
 #define RECUPERATION_MODE_EXHALE 3
 
 
-#define RECUPERATION_WAIT_FOR_DIRECTION_CHANGE 4000
+#define RECUPERATION_WAIT_FOR_DIRECTION_CHANGE 6000
 #if defined(IS_DEBUG)
-#define RECUPERATION_CYCLE_DURATION 20000
+#define RECUPERATION_CYCLE_DURATION 40000
 #elif 
 #define RECUPERATION_CYCLE_DURATION 70000
 #endif
@@ -43,7 +44,7 @@
 #endif
 
 #define VENTILATOR_MAX_RPM 7600
-#define RECUPERATION_MAX_RPM 5500
+#define RECUPERATION_MAX_RPM 6000
 
 #define FAN_TYPE_VENTILATOR 1
 #define FAN_TYPE_RECUPERATION 2
