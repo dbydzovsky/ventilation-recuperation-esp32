@@ -51,11 +51,19 @@ bool WeatherForecast::sync(WeatherDeps * deps){
   }
 }
 
+
+void WeatherForecast::setSyncInterval(int interval) {
+  this->syncForecastInterval = interval;
+}
+void WeatherForecast::setTolerateLastSuccess(int interval) {
+  this->syncForecastTolerateLastSuccessFor = interval;
+}
+
 bool WeatherForecast::hasValidForecast(){
-  return !(this->lastStatusCode != -100) && (millis() - this->last_success > syncForecastTolerateLastSuccessFor);
+  return !(this->lastStatusCode != -100) && (millis() - this->last_success > this->syncForecastTolerateLastSuccessFor);
 }
 void WeatherForecast::act(WeatherDeps * deps) {
-  if ((this->lastStatusCode == -100) || (millis() - this->last_retrival > syncForecastInterval)) {
+  if ((this->lastStatusCode == -100) || (millis() - this->last_retrival > this->syncForecastInterval)) {
     if (IS_DEBUG) Serial.println("It is time to sync forecast");
     this->sync(deps);
   }

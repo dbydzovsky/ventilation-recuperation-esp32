@@ -25,7 +25,7 @@
   "co2Rules": [
     {
       "tv": 600,
-      "p": 30
+      "p": 60
     }
   ],
   "name": "rekuperace",

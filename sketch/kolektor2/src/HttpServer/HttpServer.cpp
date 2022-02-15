@@ -149,6 +149,18 @@ void HttpServer::setup() {
         setCors(response);
         request->send(response);
     });
+    this->_server->on("/a/settings/", HTTP_GET, [](AsyncWebServerRequest * request) {
+        if (SPIFFS.exists("/settings.json")) {
+            AsyncWebServerResponse * response = request->beginResponse(SPIFFS, "/settings.json", "application/json");
+            setCors(response);
+            request->send(response);
+        } else {
+            AsyncWebServerResponse *response = request->beginResponse(503, "application/json", "{'msg':'Settings file is not present'}");
+            setCors(response);
+            request->send(response);
+        }
+        
+    });
     AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/a/t", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         if (json["on"].as<int>() == 1) {
             byte ventilatorPower = json["ventilator"].as<byte>();
@@ -209,7 +221,7 @@ void HttpServer::setup() {
             request->send(response);
         }
     });
-    AsyncCallbackJsonWebHandler* trialHandler = new AsyncCallbackJsonWebHandler("/a/conf", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+    AsyncCallbackJsonWebHandler* saveConfigHandler = new AsyncCallbackJsonWebHandler("/a/conf", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         // todo lock?
         if (this->_deps->conf->save(json)) {
             AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
@@ -222,8 +234,20 @@ void HttpServer::setup() {
         }
     });
 
+    AsyncCallbackJsonWebHandler* saveSettingsHandler = new AsyncCallbackJsonWebHandler("/a/settings", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+        if (this->_deps->settings->save(json)) {
+            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+            setCors(response);
+            request->send(response);
+        } else {
+            AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'Could not parse JSON or not valid values'}");
+            setCors(response);
+            request->send(response);
+        }
+    });
     this->_server->addHandler(handler);
-    this->_server->addHandler(trialHandler);
+    this->_server->addHandler(saveConfigHandler);
+    this->_server->addHandler(saveSettingsHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
     this->_server->onNotFound(notNotFound);

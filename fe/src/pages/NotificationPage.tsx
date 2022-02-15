@@ -47,7 +47,7 @@ export function NotificationWidget() {
         open={opened }
         autoHideDuration={6000}
         onClose={handleClose}
-        message={notification?.type + ": " + notification?.message}
+        message={notification?.message}
         action={
             <React.Fragment>
                 <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>

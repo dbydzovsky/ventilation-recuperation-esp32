@@ -44,10 +44,13 @@ void read(const char* path, AlarmData *out){
   if (IS_DEBUG) Serial.println(out->highRpm);
 }
 
-RPMChecker::RPMChecker(int pin, int maxRpm, const char* filename){
+RPMChecker::RPMChecker(int pin, const char* filename){
   this->_pin = pin;
-  this->_maxRpm = maxRpm;
   this->_filename = filename;
+}
+
+void RPMChecker::deactivate() {
+  this->_activated = false;
 }
 
 void RPMChecker::setup() {
@@ -76,6 +79,13 @@ int RPMChecker::getRpm() {
   return this->_rpm;
 }
 
+void RPMChecker::setUnblockingFansPeriod(int unblockingPeriodSeconds) {
+  this->_unblockingFansPeriod = unblockingPeriodSeconds;
+}
+void RPMChecker::setMaxRpm(int maxRpm) {
+  this->_maxRpm = maxRpm;
+}
+
 bool RPMChecker::act(long ticks, short currentPower) {
   // return true if counter should be reset
   if (currentPower != this->_lastPower) {
@@ -84,7 +94,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
     return true;
   }
   if (this->_stopped) {
-    if (millis() - this->_stoppedSince > UNBLOCKING_FANS_PERIOD) {
+    if (millis() - this->_stoppedSince > this->_unblockingFansPeriod) {
       AlarmData data;
       save(this->_filename, data);
       this->_stopped = false;
@@ -95,7 +105,6 @@ bool RPMChecker::act(long ticks, short currentPower) {
   if (duration > RPM_SAMPLING_DURATION) {
     this->last_sample = millis();
     this->_rpm = computeRpm(duration, ticks);
-    if (IS_DEBUG) Serial.println(this->_rpm);
     if (this->_rpm > this->_maxRpm) {
       AlarmData data;
       data.highRpm = true;
@@ -123,7 +132,10 @@ bool RPMChecker::act(long ticks, short currentPower) {
 }
 
 bool RPMChecker::shouldStop() {
-  return this->_stopped;
+  if (this->_activated) {
+    return this->_stopped;
+  }
+  return false;
 }
 
 bool RPMChecker::resetAlarm() {
@@ -137,10 +149,14 @@ bool RPMChecker::resetAlarm() {
 }
 
 void RPMChecker::report(AlarmReport * out) {
+  if (!this->_activated) {
+    return;
+  }
   if (this->_stopped) {
     out->blocked = this->_reason == MOTOR_BLOCKED_REASON;
     out->highRpm = this->_reason == MOTOR_HIGH_RPM_REASON;
   }
   out->needAttention = this->_stopped;
-  out->remainMinutes = (millis() - this->_stoppedSince) / 1000 / 60;
+  int durationPassed = (millis() - this->_stoppedSince);
+  out->remainMinutes = (this->_unblockingFansPeriod - durationPassed) / 1000 / 60;
 }

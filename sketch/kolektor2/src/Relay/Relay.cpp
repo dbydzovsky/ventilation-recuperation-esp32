@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "Relay.h"
 #include "../Constants/Constants.h"
-
 Relay::Relay(int pin)
 {
   digitalWrite(pin, HIGH);
@@ -9,8 +8,12 @@ Relay::Relay(int pin)
   this->_pin = pin;
 }
 
+void Relay::setCooldown(int cooldown) {
+  this->_cooldown = cooldown;
+}
+
 void Relay::act() {
-  if (millis() - this->_last_changed > RELAY_COOLDOWN) {
+  if (millis() - this->_last_changed > this->_cooldown) {
     this->_last_changed = millis();
     if (this->_state != this->_should_be_enabled) {
       this->_state = this->_should_be_enabled;

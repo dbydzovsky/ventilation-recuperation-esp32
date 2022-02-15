@@ -11,6 +11,9 @@
 
 module.exports = () => {
     const data = {
+        settings: {
+            checkRecuperationRpm: true,
+        },
         conf: {
             "mode": 3,
             "winterMaxInsideTemp": 29,

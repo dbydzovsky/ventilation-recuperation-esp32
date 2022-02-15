@@ -1,0 +1,6 @@
+Configuration   KEYWORD1
+dataSet    KEYWORD2
+save     KEYWORD2
+getData     KEYWORD2
+setInactiveMode     KEYWORD2
+setup     KEYWORD2

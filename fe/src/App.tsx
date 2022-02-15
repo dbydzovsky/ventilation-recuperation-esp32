@@ -40,6 +40,7 @@ import {FilterPage} from "./pages/FilterPage";
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
 import {AlarmPage} from "./pages/AlarmPage";
 import {MaintenancePage} from "./pages/MaintenancePage";
+import {SettingsPage} from "./pages/SettingsPage";
 function Routes() {
 	const classes = useStyles();
 
@@ -50,6 +51,7 @@ function Routes() {
 			<Route exact={true} path="/" component={CurrentStatePage} />
 			<Route exact={true} path="/state" component={CurrentStatePage} />
 			<Route exact={true} path="/configuration" component={ConfigurationPage} />
+			<Route exact={true} path="/advanced" component={SettingsPage} />
 			<Route exact={true} path="/maintenance" component={MaintenancePage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />

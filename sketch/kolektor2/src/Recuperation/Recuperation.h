@@ -24,7 +24,11 @@ class Recuperation {
     void act();
     short getPower();
     short getActualPower();
+    void setDurationChangeWait(int duration);
+    void setCycleDuration(int duration);
   private:
+    int _durationChangeWait = 6000;
+    int _cycleDuration = 70000;
     unsigned long _last_direction_change = millis();
     PwmControl * _control;
     RPMChecker * _checker;

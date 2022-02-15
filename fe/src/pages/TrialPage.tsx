@@ -6,7 +6,7 @@ import Slider from '@material-ui/core/Slider';
 import {makeStyles} from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import {VentilatorIcon} from "./CurrentStatePanel";
-import {FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup} from "@material-ui/core";
+import {Button, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {RootState} from "../reducers";
 import Switch from '@material-ui/core/Switch';
@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => {
         },
         paper: {
             padding: 20,
-            margin: 20
+            margin: 20,
+        },
+        end: {
+            marginBottom: 60,
         }
     }
 });
@@ -97,6 +100,17 @@ export function TrialPage() {
         }
         trialAction.changeTrial(props)
     };
+    // todo
+    const startPartyMod = () => {
+        let props: ChangeTrialProps = {
+            ventilator: ventilatorPower,
+            duration: Number(duration),
+            recuperationMode: recuperationMode,
+            recuperation: recuperationPower,
+            on: true
+        }
+        trialAction.changeTrial(props)
+    }
     const activation = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         if (checked) {
             let props: ChangeTrialProps = {
@@ -123,8 +137,6 @@ export function TrialPage() {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <FormLabel component="legend">Spustit/vypnout manuální ovládání</FormLabel>
-                </Grid>
-                <Grid item xs>
                     <Switch
                         checked={enabled}
                         onChange={activation}
@@ -133,9 +145,17 @@ export function TrialPage() {
                         inputProps={{ 'aria-label': 'secondary checkbox' }}
                     />
                 </Grid>
+                <Grid item xs>
+                    <Button variant={"contained"}
+                            color={"secondary"}
+                            onClick={startPartyMod}
+                    >
+                        Párty mód
+                    </Button>
+                </Grid>
             </Grid>
         </Paper>
-        <Paper className={classes.paper}>
+        <Paper className={classes.paper + " " + classes.end}>
                 <FormControl component="fieldset">
                     <Grid container spacing={2} direction={"column"}>
                         <Grid item>

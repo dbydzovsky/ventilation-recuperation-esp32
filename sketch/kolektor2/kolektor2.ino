@@ -29,6 +29,7 @@
 #include "src/Constants/Constants.h"
 #include "src/FilterMonitor/FilterMonitor.h"
 #include "src/RPMChecker/RPMChecker.h"
+#include "src/Settings/Settings.h"
 
 HTTPClient httpClient;
 
@@ -46,8 +47,8 @@ HTTPClient httpClient;
 #define tx_pin 17
 
 
-RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, VENTILATOR_MAX_RPM, "/blockvent");
-RPMChecker * rpmRecuperationChecker = new RPMChecker(recuperationSignal, RECUPERATION_MAX_RPM, "/blockrecu");
+RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent");
+RPMChecker * rpmRecuperationChecker = new RPMChecker(recuperationSignal, "/blockrecu");
 int stateDiode = LED_BUILTIN;
 DewPoint * dewPoint = new DewPoint();
 #define PWM_1_CHANNEL 1
@@ -62,7 +63,7 @@ ProgrammeFactory * factory = new ProgrammeFactory();
 Ventilator * ventilator = new Ventilator(pwmVent, rpmVentilatorChecker);
 Relay * relay = new Relay(RELAY_PIN);
 Recuperation * recuperation = new Recuperation(relay, pwmRecuperation, rpmRecuperationChecker);
-
+Settings * settings = new Settings();
 TimeProvider * timeProvider = new TimeProvider();
 WeatherForecast * forecast = new WeatherForecast();
 
@@ -80,7 +81,7 @@ Dependencies deps = {
   factory, diode, configuration, 
   outsideTemp, outsideHum, insideTemp, co2Inside, dewPoint,
   forecast, timeProvider, &httpClient,
-  rpmVentilatorChecker, rpmRecuperationChecker
+  rpmVentilatorChecker, rpmRecuperationChecker, settings
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
@@ -123,11 +124,12 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
-  
+
+  settings->setup();
   Serial2.begin(9600, SERIAL_8N1, rx_pin, tx_pin);
   mhz19.begin(rx_pin, tx_pin);
   mhz19.setAutoCalibration(true);
-  
+
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
   configuration->setup();
@@ -136,6 +138,23 @@ void setup()
   rpmVentilatorChecker->setup();
   rpmRecuperationChecker->setup();
   attachRecuperation();
+
+  SettingsData * settingsData = settings->getSettings();
+  if (!settingsData->checkRecuperationRpm){ 
+    rpmRecuperationChecker->deactivate();
+  }
+  if (!settingsData->checkVentilatorRpm){ 
+    rpmVentilatorChecker->deactivate();
+  }
+  rpmRecuperationChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
+  rpmRecuperationChecker->setMaxRpm(settingsData->recuperationMaxRpm);
+  rpmVentilatorChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
+  rpmVentilatorChecker->setMaxRpm(settingsData->ventilatorMaxRpm);
+  forecast->setSyncInterval(settingsData->syncForecastInterval);
+  forecast->setTolerateLastSuccess(settingsData->syncForecastTolerateLastSuccessFor);
+  relay->setCooldown(settingsData->relayCooldown);
+  recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
+  recuperation->setCycleDuration(settingsData->recuperationCycleDuration); 
 }
 
 unsigned long last_sensor_reading = millis();
@@ -155,7 +174,7 @@ void loop() {
   }
   monitoring->act();
   if (!IS_DEBUG) {
-    button->act();
+//    button->act();
   }
   ventilator->act();
   recuperation->act();

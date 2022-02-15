@@ -20,6 +20,7 @@
 #include "../TimeProvider/TimeProvider.h"
 #include "../DewPoint/DewPoint.h"
 #include "../RPMChecker/RPMChecker.h"
+#include "../Settings/Settings.h"
 
 struct Dependencies {
   Ventilator * ventilation;
@@ -39,6 +40,7 @@ struct Dependencies {
   HTTPClient * httpClient;
   RPMChecker * ventilatorChecker;
   RPMChecker * recuperationChecker;
+  Settings * settings;
 };
 
 #endif

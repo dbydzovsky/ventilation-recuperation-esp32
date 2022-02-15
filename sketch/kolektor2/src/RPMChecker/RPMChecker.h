@@ -21,14 +21,19 @@ struct AlarmReport {
 
 class RPMChecker {
   public:
-    RPMChecker(int pin, int maxRpm, const char* filename);
+    RPMChecker(int pin, const char* filename);
     void setup();
+    void deactivate();
+    void setUnblockingFansPeriod(int unblockingPeriodSeconds);
+    void setMaxRpm(int maxRpm);
     bool act(long ticks, short currentPower);
     bool shouldStop();
     bool resetAlarm();
     int getRpm();
     void report(AlarmReport * out);
   private:
+    int _unblockingFansPeriod = 0;
+    bool _activated = true;
     bool _stopped = false;
     unsigned long _stoppedSince;
     int _pin;

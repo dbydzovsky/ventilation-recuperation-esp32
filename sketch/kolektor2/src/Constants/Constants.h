@@ -4,13 +4,14 @@
 #define DEFAULT_SSID "SolarAirCollectorV2"
 #define DEFAULT_PASSWORD "123456789"
 
-#define IS_DEBUG true
+#define IS_DEBUG false
 #define TESTING_CO2_SENSOR true
+
 #define RPM_SAMPLING_DURATION 1000
-#define UNBLOCKING_FANS_PERIOD 172800000 // 2 days
 #define temporaryDisabledProgrammeDuration 3600000 // 1hour
 #define manual100ProgrammeDuration 900000 // 15 minutes
 #define updatingSensorStatsInterval 60000
+
 
 #if defined(IS_DEBUG)
 #define averageValuesCount 1
@@ -20,9 +21,6 @@
 
 #define INVALID_VALUE -9999
 #define enablementTresholdMs 4000 // 4 seconds
-
-#define syncForecastTolerateLastSuccessFor 172800000 // 2 days
-#define syncForecastInterval 43200000 // 12 hours
 
 #define POWER_OUTPUT_MODE_NONE 0
 #define POWER_OUTPUT_MODE_VENTILATION 1
@@ -34,17 +32,6 @@
 #define RECUPERATION_MODE_EXHALE 3
 
 
-#define RECUPERATION_WAIT_FOR_DIRECTION_CHANGE 6000
-#if defined(IS_DEBUG)
-#define RECUPERATION_CYCLE_DURATION 40000
-#elif 
-#define RECUPERATION_CYCLE_DURATION 70000
-#endif
-#define RELAY_COOLDOWN 5000
-#endif
-
-#define VENTILATOR_MAX_RPM 7600
-#define RECUPERATION_MAX_RPM 6000
-
 #define FAN_TYPE_VENTILATOR 1
 #define FAN_TYPE_RECUPERATION 2
+#endif

@@ -1,0 +1,12 @@
+{
+  "checkRecuperationRpm": true,
+  "checkVentilatorRpm": true,
+  "unblockingFansPeriod": 172800000,
+  "ventilatorMaxRpm": 7600,
+  "recuperationMaxRpm": 6000,
+  "syncForecastTolerateLastSuccessFor": 172800000,
+  "syncForecastInterval": 43200000,
+  "relayCooldown": 5000,
+  "recuperationWaitForDirectionChange": 6000,
+  "recuperationCycleDuration": 70000
+}

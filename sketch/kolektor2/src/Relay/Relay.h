@@ -8,7 +8,9 @@ class Relay {
     void act();
     void enable();
     void disable();
+    void setCooldown(int cooldown);
   private:
+    int _cooldown = 0;
     int _pin;
     bool _state = false;
     unsigned long _last_changed = millis();

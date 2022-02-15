@@ -12,8 +12,8 @@ bool TimeProvider::isTimeSet() {
 }
 
 void TimeProvider::updateTime(unsigned long unixTimestamp, int offset) {
-  if (!IS_DEBUG) Serial.print("Updating time to: ");
-  if (!IS_DEBUG) Serial.println(unixTimestamp);
+  if (IS_DEBUG) Serial.print("Updating time to: ");
+  if (IS_DEBUG) Serial.println(unixTimestamp);
   setTime(unixTimestamp);
   adjustTime(offset);
 }

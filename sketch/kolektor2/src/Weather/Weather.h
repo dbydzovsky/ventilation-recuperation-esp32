@@ -26,7 +26,11 @@ class WeatherForecast {
     bool hasValidForecast();
     void act(WeatherDeps * deps);
     bool shouldCoolInsides();
+    void setSyncInterval(int interval);
+    void setTolerateLastSuccess(int interval);
   private:
+    int syncForecastTolerateLastSuccessFor = 0;
+    int syncForecastInterval = 0;
     bool sync(WeatherDeps * deps);
     float feelsLikeToday = 0;
     short lastStatusCode = -100;

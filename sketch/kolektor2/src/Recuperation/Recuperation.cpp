@@ -53,6 +53,14 @@ short Recuperation::getActualPower() {
   return this->getPower();
 }
 
+void Recuperation::setCycleDuration(int duration) {
+  this->_cycleDuration = duration;
+}
+
+void Recuperation::setDurationChangeWait(int duration) {
+  this->_durationChangeWait = duration;
+}
+
 void Recuperation::act() {
   if (this->_power <= 0 || this->_power > 100 || this->_checker->shouldStop()) {
     this->_control->setDutyCycle(125);
@@ -61,7 +69,7 @@ void Recuperation::act() {
     return;
   }
   this->_relay->enable();
-  if (millis() - this->_last_direction_change > (RECUPERATION_CYCLE_DURATION + RECUPERATION_WAIT_FOR_DIRECTION_CHANGE)) {
+  if (millis() - this->_last_direction_change > (this->_cycleDuration + this->_durationChangeWait)) {
     bool previousDirection = this->_directionIn;
     if (this->_mode == RECUPERATION_MODE_EXHALE) {
       this->_directionIn = false;
@@ -76,7 +84,7 @@ void Recuperation::act() {
       this->_last_direction_change = millis(); 
     }
   }
-  if (millis() - this->_last_direction_change < RECUPERATION_WAIT_FOR_DIRECTION_CHANGE) {
+  if (millis() - this->_last_direction_change < this->_durationChangeWait) {
     this->_changingDirection = true;
     this->_control->setDutyCycle(DISABLED_FAN_DUTY);
   } else {

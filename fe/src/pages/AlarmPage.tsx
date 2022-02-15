@@ -53,6 +53,7 @@ export function AlarmShowcase(props: AlarmShowcaseProps)  {
                 <p>
                     <WarningIcon htmlColor={"orange"}/> Byl spuštěn alarm, neboť motor se nechová dle očekávání.
                     Pro nápravu je důležité motor zkontrolovat a poté alarm uvolnit stisknutím tlačítka.
+                    Je také možné, že přestal fungovat sensor rychlosti otáčení.
                 </p>
             </div>}
             <p>
