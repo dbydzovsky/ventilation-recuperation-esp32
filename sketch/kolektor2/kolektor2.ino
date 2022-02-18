@@ -30,6 +30,7 @@
 #include "src/FilterMonitor/FilterMonitor.h"
 #include "src/RPMChecker/RPMChecker.h"
 #include "src/Settings/Settings.h"
+#include "src/Restarter/Restarter.h"
 
 HTTPClient httpClient;
 
@@ -63,6 +64,7 @@ ProgrammeFactory * factory = new ProgrammeFactory();
 Ventilator * ventilator = new Ventilator(pwmVent, rpmVentilatorChecker);
 Relay * relay = new Relay(RELAY_PIN);
 Recuperation * recuperation = new Recuperation(relay, pwmRecuperation, rpmRecuperationChecker);
+Restarter * restarter = new Restarter();
 Settings * settings = new Settings();
 TimeProvider * timeProvider = new TimeProvider();
 WeatherForecast * forecast = new WeatherForecast();
@@ -81,7 +83,8 @@ Dependencies deps = {
   factory, diode, configuration, 
   outsideTemp, outsideHum, insideTemp, co2Inside, dewPoint,
   forecast, timeProvider, &httpClient,
-  rpmVentilatorChecker, rpmRecuperationChecker, settings
+  rpmVentilatorChecker, rpmRecuperationChecker, settings,
+  restarter
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
@@ -150,9 +153,6 @@ void setup()
   rpmRecuperationChecker->setMaxRpm(settingsData->recuperationMaxRpm);
   rpmVentilatorChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
   rpmVentilatorChecker->setMaxRpm(settingsData->ventilatorMaxRpm);
-  forecast->setSyncInterval(settingsData->syncForecastInterval);
-  forecast->setTolerateLastSuccess(settingsData->syncForecastTolerateLastSuccessFor);
-  relay->setCooldown(settingsData->relayCooldown);
   recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
   recuperation->setCycleDuration(settingsData->recuperationCycleDuration); 
 }
@@ -161,6 +161,7 @@ unsigned long last_sensor_reading = millis();
 #define averageReadingInterval 2000
 
 void loop() {
+  restarter->act();
   if (millis() - last_sensor_reading > averageReadingInterval) {
     digitalWrite(stateDiode, HIGH);
     delay(15);

@@ -37,9 +37,9 @@ void Monitoring::doReport() {
         data["CO2"][0]["value"] = insideCo2;
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
-    data["VentilatorRPM"][0]["value"] = this->_deps->ventilatorChecker->getRpm();
+    data["VentilatorBlocked"][0]["value"] = this->_deps->ventilatorChecker->shouldStop();
     data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
-    data["RecuperationRPM"][0]["value"] = this->_deps->recuperationChecker->getRpm();
+    data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
     data["Code"][0]["value"] = this->_orchestrator->getProgrammeCode() / 10;
     float insideTemperature = this->_deps->insideTemp->getAverage();
     if (!isnan(insideTemperature)) {
@@ -49,8 +49,6 @@ void Monitoring::doReport() {
     if (!isnan(dewPoint)) {
         data["RosnyBod"][0]["value"] = dewPoint;
     }
-    // data["Restarts"][0]["value"] = restarts;
-    data["ValidForecast"][0]["value"] = this->_deps->forecast->hasValidForecast();
     data["Heap"][0]["value"] = ESP.getFreeHeap();
     // data["Warnings"][0]["value"] = (outsideTemperatureSensor->getWarnings() + outsideHumiditySensor->getWarnings() + insideTemperatureSensor->getWarnings());
     // data["Errors"][0]["value"] = (outsideTemperatureSensor->getErrors() + outsideHumiditySensor->getErrors() + insideTemperatureSensor->getErrors());

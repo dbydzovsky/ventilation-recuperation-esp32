@@ -40,13 +40,16 @@ import {FilterPage} from "./pages/FilterPage";
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
 import {AlarmPage} from "./pages/AlarmPage";
 import {MaintenancePage} from "./pages/MaintenancePage";
-import {SettingsPage} from "./pages/SettingsPage";
+import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+
 function Routes() {
 	const classes = useStyles();
 
 	return (
 		<div className={classes.content}>
 			<Loader/>
+			<SettingsLoader/>
 			<NotificationWidget/>
 			<Route exact={true} path="/" component={CurrentStatePage} />
 			<Route exact={true} path="/state" component={CurrentStatePage} />
@@ -114,6 +117,15 @@ function Drawer(props: {  }) {
 						<HelpIcon />
 					</ListItemIcon>
 					<ListItemText primary="Nápověda" />
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem button onClick={() => history.push("/advanced")}>
+					<ListItemIcon>
+						<SettingsEthernetIcon />
+					</ListItemIcon>
+					<ListItemText primary="Pokročilé" />
 				</ListItem>
 			</List>
 			<Divider />

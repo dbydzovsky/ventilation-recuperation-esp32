@@ -239,6 +239,7 @@ void HttpServer::setup() {
             AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
             setCors(response);
             request->send(response);
+            this->_deps->restarter->restart();
         } else {
             AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'Could not parse JSON or not valid values'}");
             setCors(response);

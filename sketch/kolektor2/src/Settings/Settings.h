@@ -8,10 +8,9 @@
 #define Settings_h
 #include "Arduino.h"
 #include "ArduinoJson.h"
+#include "../Constants/Constants.h"
 
 // UNBLOCKING_FANS_PERIOD 172800000 // 2 days
-// syncForecastTolerateLastSuccessFor 172800000 // 2 days
-// syncForecastInterval 43200000 // 12 hours
 // RECUPERATION_WAIT_FOR_DIRECTION_CHANGE 6000
 
 // VENTILATOR_MAX_RPM 7600
@@ -23,11 +22,12 @@ struct SettingsData {
   int unblockingFansPeriod = 172800000;  // 2 days
   int ventilatorMaxRpm = 7600;
   int recuperationMaxRpm = 6000;
-  int syncForecastTolerateLastSuccessFor = 172800000;  // 2 days
-  int syncForecastInterval = 43200000; // 12 hours
-  int relayCooldown = 5000;
   int recuperationWaitForDirectionChange = 6000;
   int recuperationCycleDuration = 70000;
+  int recuperationMode = RECUPERATION_MODE_RECYCLE;
+  int recuperationPower = 100;
+  int ventilatorPower = 0;
+  int durationMillis = 300000;
 };
 
 class Settings {

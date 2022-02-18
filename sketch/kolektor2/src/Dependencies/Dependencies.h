@@ -21,6 +21,7 @@
 #include "../DewPoint/DewPoint.h"
 #include "../RPMChecker/RPMChecker.h"
 #include "../Settings/Settings.h"
+#include "../Restarter/Restarter.h"
 
 struct Dependencies {
   Ventilator * ventilation;
@@ -41,6 +42,7 @@ struct Dependencies {
   RPMChecker * ventilatorChecker;
   RPMChecker * recuperationChecker;
   Settings * settings;
+  Restarter * restarter;
 };
 
 #endif

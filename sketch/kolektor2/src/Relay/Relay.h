@@ -10,7 +10,7 @@ class Relay {
     void disable();
     void setCooldown(int cooldown);
   private:
-    int _cooldown = 0;
+    int _cooldown = 5000; // 5 seconds
     int _pin;
     bool _state = false;
     unsigned long _last_changed = millis();

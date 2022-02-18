@@ -1,5 +1,6 @@
 export enum SettingsActions{
-  GET_SETTINGS = "GET_SETTINGS",
+  SET_SETTINGS = "SET_SETTINGS",
+  CLEAR_SETTINGS = "CLEAR_SETTINGS",
 }
 
 export interface Settings {
@@ -8,15 +9,18 @@ export interface Settings {
   unblockingFansPeriod: number
   ventilatorMaxRpm: number
   recuperationMaxRpm: number
-  syncForecastTolerateLastSuccessFor: number
-  syncForecastInterval: number
-  relayCooldown: number
   recuperationWaitForDirectionChange: number
   recuperationCycleDuration: number
+  recuperationMode: number,
+  recuperationPower: number,
+  ventilatorPower: number,
+  durationMillis: number,
 }
 
 export interface SettingsState {
   settings: Settings
+  counter: number
+  connected: boolean
 }
 
 interface SettingsActionType<T, P> {
@@ -24,5 +28,5 @@ interface SettingsActionType<T, P> {
   payload: P;
 }
 
-export type SettingsAction =
-    | SettingsActionType<typeof SettingsActions.GET_SETTINGS, Settings>;
+export type SettingsAction = SettingsActionType<typeof SettingsActions.SET_SETTINGS, Settings>;
+export type ClearSettingsActions = SettingsActionType<typeof SettingsActions.CLEAR_SETTINGS, { connected: boolean }>;

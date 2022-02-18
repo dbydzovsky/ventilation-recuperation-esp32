@@ -60,20 +60,50 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkRecuperationRpm = c["checkRecuperationRpm"].as<bool>();
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<int>();
+  if (out->unblockingFansPeriod < 1000) {
+    if (IS_DEBUG) Serial.println("invalid unblockingFansPeriod");
+    return false;
+  }
   out->ventilatorMaxRpm = c["ventilatorMaxRpm"].as<int>();
+  if (out->ventilatorMaxRpm < 1000) {
+    if (IS_DEBUG) Serial.println("invalid ventilatorMaxRpm");
+    return false;
+  }
   out->recuperationMaxRpm = c["recuperationMaxRpm"].as<int>();
-  out->syncForecastTolerateLastSuccessFor = c["syncForecastTolerateLastSuccessFor"].as<int>();
-  out->syncForecastInterval = c["syncForecastInterval"].as<int>();
-  out->relayCooldown = c["relayCooldown"].as<int>();
-  if (out->relayCooldown < 2000 || out->relayCooldown > 15000) {
+  if (out->recuperationMaxRpm < 1000) {
+    if (IS_DEBUG) Serial.println("invalid recuperationMaxRpm");
     return false;
   }
   out->recuperationWaitForDirectionChange = c["recuperationWaitForDirectionChange"].as<int>();
   if (out->recuperationWaitForDirectionChange < 4000) {
+    if (IS_DEBUG) Serial.println("invalid recuperationWaitForDirectionChange");
     return false;
   }
   out->recuperationCycleDuration = c["recuperationCycleDuration"].as<int>();
-  if (out->recuperationCycleDuration < 30000) {
+  if (out->recuperationCycleDuration < 40000) {
+    if (IS_DEBUG) Serial.println("invalid recuperationCycleDuration");
+    return false;
+  }
+  out->recuperationMode = c["recuperationMode"].as<int>();
+  if (out->recuperationMode != RECUPERATION_MODE_RECYCLE &&
+      out->recuperationMode != RECUPERATION_MODE_INHALE &&
+      out->recuperationMode != RECUPERATION_MODE_EXHALE) {
+    if (IS_DEBUG) Serial.println("invalid recuperationMode");
+    return false;
+  }
+  out->recuperationPower = c["recuperationPower"].as<int>();
+  if (out->recuperationPower < 0 || out->recuperationPower > 100) {
+    if (IS_DEBUG) Serial.println("invalid recuperationPower");
+    return false;
+  }
+  out->ventilatorPower = c["ventilatorPower"].as<int>();
+  if (out->ventilatorPower < 0 || out->ventilatorPower > 100) {
+    if (IS_DEBUG) Serial.println("invalid ventilatorPower");
+    return false;
+  }
+  out->durationMillis = c["durationMillis"].as<int>();
+  if (out->durationMillis < 60000) {
+    if (IS_DEBUG) Serial.println("invalid durationMillis");
     return false;
   }
   return true;

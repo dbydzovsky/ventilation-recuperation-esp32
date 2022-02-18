@@ -29,8 +29,8 @@ class WeatherForecast {
     void setSyncInterval(int interval);
     void setTolerateLastSuccess(int interval);
   private:
-    int syncForecastTolerateLastSuccessFor = 0;
-    int syncForecastInterval = 0;
+    int syncForecastTolerateLastSuccessFor = 172800000;  // 2 days
+    int syncForecastInterval = 43200000; // 12 hours
     bool sync(WeatherDeps * deps);
     float feelsLikeToday = 0;
     short lastStatusCode = -100;

@@ -39,6 +39,7 @@ export function TrialPage() {
     const [duration, setDuration] = React.useState("300000");
     const [enabled, setEnabled] = React.useState(false);
     const currentState = useSelector((state: RootState) => state.state);
+    const settings = useSelector((state: RootState) => state.settings);
     useEffect(() => {
         if (currentState.trial) {
             setEnabled(currentState.trial.enabled);
@@ -100,13 +101,12 @@ export function TrialPage() {
         }
         trialAction.changeTrial(props)
     };
-    // todo
     const startPartyMod = () => {
         let props: ChangeTrialProps = {
-            ventilator: ventilatorPower,
-            duration: Number(duration),
-            recuperationMode: recuperationMode,
-            recuperation: recuperationPower,
+            ventilator: settings.settings.ventilatorPower,
+            duration: Number(settings.settings.durationMillis),
+            recuperationMode: settings.settings.recuperationMode,
+            recuperation: settings.settings.recuperationPower,
             on: true
         }
         trialAction.changeTrial(props)

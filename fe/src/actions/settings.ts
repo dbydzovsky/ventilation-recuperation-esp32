@@ -27,7 +27,7 @@ export async function getSettings(dispatch: Function, getState: Function) {
         const response = await fetch(baseurl + "/a/settings/", {method: "GET"});
         const obj = await response.json();
         console.log(JSON.stringify(obj))
-        dispatch({type: SettingsActions.GET_SETTINGS, payload: obj})
+        dispatch({type: SettingsActions.SET_SETTINGS, payload: obj})
     } finally {
         dispatch({type: LoaderActions.HIDE_LOADER})
     }
