@@ -15,6 +15,7 @@ export interface Settings {
   recuperationPower: number,
   ventilatorPower: number,
   durationMillis: number,
+  tempDisableDuration: number,
 }
 
 export interface SettingsState {

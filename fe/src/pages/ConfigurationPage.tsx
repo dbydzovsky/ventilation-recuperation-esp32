@@ -361,7 +361,8 @@ export function ConfigurationPage() {
                                     validate={winterOrderValidation}
                                     onChange={handleRuleChange('winterOnRules')}/>
                 </Grid>
-            </Grid></div>
+            </Grid>
+        </div>
         <div className={classes.summerSetting}>
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>

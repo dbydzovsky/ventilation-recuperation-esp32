@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => {
         },
         end: {
             marginBottom: 60,
+        },
+        quickaction: {
+            margin: 10
         }
     }
 });
@@ -111,6 +114,16 @@ export function TrialPage() {
         }
         trialAction.changeTrial(props)
     }
+    const tempDisableMode = () => {
+        let props: ChangeTrialProps = {
+            ventilator: 0,
+            duration: 1000*60*60*24,
+            recuperationMode: RecuperationMode.Recycle,
+            recuperation: settings.settings.tempDisableDuration,
+            on: true
+        }
+        trialAction.changeTrial(props)
+    }
     const activation = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         if (checked) {
             let props: ChangeTrialProps = {
@@ -133,9 +146,31 @@ export function TrialPage() {
         }
     }
     return <div className={classes.root} >
+
         <Paper className={classes.paper}>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12}>
+                    <FormLabel component="legend">Rychlé akce</FormLabel>
+                        <Button variant={"contained"}
+                                className={classes.quickaction}
+                                color={"secondary"}
+                                onClick={startPartyMod}
+                        >
+                            Párty mód
+                        </Button>
+                        <Button variant={"contained"}
+                                className={classes.quickaction}
+                            color={"primary"}
+                            onClick={tempDisableMode}
+                        >
+                        Dočasně vypnout
+                    </Button>
+                </Grid>
+            </Grid>
+        </Paper>
+        <Paper className={classes.paper}>
+            <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
                     <FormLabel component="legend">Spustit/vypnout manuální ovládání</FormLabel>
                     <Switch
                         checked={enabled}
@@ -144,14 +179,6 @@ export function TrialPage() {
                         name="checkedB"
                         inputProps={{ 'aria-label': 'secondary checkbox' }}
                     />
-                </Grid>
-                <Grid item xs>
-                    <Button variant={"contained"}
-                            color={"secondary"}
-                            onClick={startPartyMod}
-                    >
-                        Párty mód
-                    </Button>
                 </Grid>
             </Grid>
         </Paper>

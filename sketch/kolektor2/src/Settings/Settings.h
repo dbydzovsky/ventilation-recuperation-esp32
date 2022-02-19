@@ -28,6 +28,7 @@ struct SettingsData {
   int recuperationPower = 100;
   int ventilatorPower = 0;
   int durationMillis = 300000;
+  int tempDisableDuration = 10800000; // 3 hours
 };
 
 class Settings {

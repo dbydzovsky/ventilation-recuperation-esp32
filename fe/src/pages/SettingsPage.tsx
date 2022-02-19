@@ -5,8 +5,9 @@ import {RootState} from "../reducers";
 import {getSettings, saveSettings} from "../actions/settings";
 import {Settings} from "../model/settings";
 import Grid from "@material-ui/core/Grid";
-import {Button, Input, InputLabel, Paper} from "@material-ui/core";
+import {Button, Input, InputLabel, Paper, Select} from "@material-ui/core";
 import Switch from "@material-ui/core/Switch";
+import {msToTime} from "./CurrentStatePage";
 
 export interface Props {
 
@@ -14,6 +15,18 @@ export interface Props {
 const turnOffMotorCheck = "Zde je možné vypnout kontrolu otáček motoru. Je doporučeno toto nastavení nechat zapnuté. Motor se vypne v případě příliš vysokých otáček v případě vichřice, popř. vypne, pokud je porouchaný sensor otáček."
 const maxRpm = "Maximální povolený počet otáček za minutu pro motor. V případě příliš nízké hodnoty se může motor často blokovat, v případě příliš vysoké hodnoty hrozí poškození motoru v případě nevypnutí motoru při vysokých otáčkách."
 
+export interface ValueTransformation {
+    fromGui: (val: number) => number
+    toGui: (val: number) => number
+}
+const Divide1000Transformation: ValueTransformation = {
+    fromGui: (x) => x * 1000,
+    toGui: (x) => x / 1000
+}
+const EmptyTransformation: ValueTransformation = {
+    toGui: x => x,
+    fromGui: x => x
+}
 export function SettingsLoader() {
     const errorState = useSelector((state: RootState) => state.errorState);
     const dispatch = useDispatch();
@@ -34,6 +47,7 @@ export function SettingsPage(props: Props) {
     if (!values) {
         return <div>Loading..</div>
     }
+
     return <div className={classes.paper}>
         <h1>Pokročilé nastavení</h1>
         <Grid container>
@@ -49,8 +63,9 @@ export function SettingsPage(props: Props) {
                       property={"checkVentilatorRpm"}/>
             <Property values={values}
                       setValues={setValues}
+                      transform={Divide1000Transformation}
                       type="number"
-                      description={"Kolik milisekund se má čekat pro další pokus roztočení motoru v případě registrace neočekávaného chování."}
+                      description={"Kolik sekund se má čekat pro další pokus roztočení motoru v případě registrace neočekávaného chování."}
                       property={"unblockingFansPeriod"}/>
             <Property values={values}
                       setValues={setValues}
@@ -64,12 +79,14 @@ export function SettingsPage(props: Props) {
                       property={"recuperationMaxRpm"}/>
             <Property values={values}
                       setValues={setValues}
-                      description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4000 milisekund."}
+                      transform={Divide1000Transformation}
+                      description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4 sekundy."}
                       type="number"
                       property={"recuperationWaitForDirectionChange"}/>
             <Property values={values}
                       setValues={setValues}
-                      description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40000 milisekund."}
+                      transform={Divide1000Transformation}
+                      description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
                       type="number"
                       property={"recuperationCycleDuration"}/>
             <Group>
@@ -84,7 +101,8 @@ export function SettingsPage(props: Props) {
                                 type={"number"}/><br/>
                 <SingleProperty values={values} setValues={setValues}
                                 property={"durationMillis"}
-                                description={"Doba trvání párty módu v milisekundách, nejméně 60000."}
+                                transform={Divide1000Transformation}
+                                description={"Doba trvání párty módu v sekundách, nejméně 60 vteřin."}
                                 type={"number"}/>
             </Group>
             <Grid item xs={12}>
@@ -104,6 +122,7 @@ export interface PropertyProps {
     property: string
     description?: string
     type: "number" | "boolean"
+    transform?: ValueTransformation
 }
 
 
@@ -114,7 +133,7 @@ function toSentence(text: string): string {
 
 export function Group(props: {children: any | any[]}) {
     const classes = useStyles()
-    return <Grid item xs={4} md={6} sm={12}>
+    return <Grid item xs={12} md={6}>
         <Paper className={classes.paper}>
             {props.children}
         </Paper>
@@ -124,6 +143,10 @@ export function Group(props: {children: any | any[]}) {
 function SingleProperty(props: PropertyProps) {
     const classes = useStyles()
     const id = "standard-adornment-" + props.property
+    let transformation = EmptyTransformation
+    if (props.transform) {
+        transformation = props.transform
+    }
     return <div className={classes.item}>
         <InputLabel htmlFor={id} className={classes.label}>
             <b>{toSentence(props.property)}</b><br/>
@@ -144,7 +167,7 @@ function SingleProperty(props: PropertyProps) {
         {props.type == "number" &&
             <Input
                 id={id}
-                value={(props.values as any)[props.property] as string}
+                value={transformation.toGui((props.values as any)[props.property] as number)}
                 onChange={(e) => {
                     let value: any = e.target.value
                     // if (props.type == "number") {
@@ -152,7 +175,7 @@ function SingleProperty(props: PropertyProps) {
                     // } else if (props.type=="boolean") {
                     //     value = Boolean(value)
                     // }
-                    props.setValues({...props.values, [props.property]: value})
+                    props.setValues({...props.values, [props.property]: transformation.fromGui(value)})
                 }}
                 placeholder={props.property}
             />

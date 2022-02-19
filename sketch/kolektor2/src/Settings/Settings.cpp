@@ -106,5 +106,9 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     if (IS_DEBUG) Serial.println("invalid durationMillis");
     return false;
   }
+  out->tempDisableDuration = c["tempDisableDuration"].as<int>();
+  if (out->tempDisableDuration < 5000) {
+    return false;
+  }
   return true;
 }
