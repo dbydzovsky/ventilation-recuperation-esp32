@@ -29,6 +29,7 @@ struct SettingsData {
   int ventilatorPower = 0;
   int durationMillis = 300000;
   int tempDisableDuration = 10800000; // 3 hours
+  int brightness = 1024;
 };
 
 class Settings {

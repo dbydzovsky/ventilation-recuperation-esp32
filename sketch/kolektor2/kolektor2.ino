@@ -1,4 +1,3 @@
-
 #include "SPIFFS.h"
 #include <HTTPClient.h>
 
@@ -31,21 +30,23 @@
 #include "src/RPMChecker/RPMChecker.h"
 #include "src/Settings/Settings.h"
 #include "src/Restarter/Restarter.h"
+#include "src/Display/Display.h"
 
 HTTPClient httpClient;
 
 // PINS
-#define PWM_ventilator_PIN 5
-#define ventilatorSignal 19
+#define PWM_ventilator_PIN 16
+#define ventilatorSignal 35
 #define PWM_recuperation_PIN 26
-#define recuperationSignal 16
-#define BTN_PIN 15
-#define RELAY_PIN 13
-#define RED_DIODE_PIN 12
-#define GREEN_DIODE_PIN 3
-#define BLUE_DIODE_PIN 4
-#define rx_pin 18 // 16
-#define tx_pin 17
+#define recuperationSignal 13
+#define BTN_PIN 23
+#define RECUPERATION_RELAY_PIN 17
+#define VENTILATOR_RELAY_PIN 27
+#define RED_DIODE_PIN 18
+#define GREEN_DIODE_PIN 19
+#define BLUE_DIODE_PIN 24
+#define rx_pin 26 // 16
+#define tx_pin 18
 
 
 RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent");
@@ -54,16 +55,19 @@ int stateDiode = LED_BUILTIN;
 DewPoint * dewPoint = new DewPoint();
 #define PWM_1_CHANNEL 1
 #define PWM_2_CHANNEL 2
+#define PWM_3_CHANNEL 3
 PwmControl * pwmVent = new PwmControl(PWM_1_CHANNEL, PWM_ventilator_PIN);
 PwmControl * pwmRecuperation = new PwmControl(PWM_2_CHANNEL, PWM_recuperation_PIN);
-RGBDiode * diode = new RGBDiode(RED_DIODE_PIN, GREEN_DIODE_PIN, BLUE_DIODE_PIN);
+RGBDiode * diode = new RGBDiode(PWM_3_CHANNEL, RED_DIODE_PIN, GREEN_DIODE_PIN, BLUE_DIODE_PIN);
 Lock * httpsLock = new Lock();
 Lock * confLock = new Lock();
 Configuration * configuration = new Configuration();
 ProgrammeFactory * factory = new ProgrammeFactory();
-Ventilator * ventilator = new Ventilator(pwmVent, rpmVentilatorChecker);
-Relay * relay = new Relay(RELAY_PIN);
-Recuperation * recuperation = new Recuperation(relay, pwmRecuperation, rpmRecuperationChecker);
+
+Relay * recuperationRelay = new Relay(RECUPERATION_RELAY_PIN);
+Relay * ventilatorRelay = new Relay(VENTILATOR_RELAY_PIN);
+Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
+Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker);
 Restarter * restarter = new Restarter();
 Settings * settings = new Settings();
 TimeProvider * timeProvider = new TimeProvider();
@@ -76,17 +80,19 @@ Sensors * sensors = new Sensors(&mhz19);
 Average * outsideTemp = new Average(sensors->outsideTemp);
 Average * outsideHum = new Average(sensors->outsideHum);
 Average * insideTemp = new Average(sensors->insideTemp);
+Average * insideHum = new Average(sensors->insideHum);
 Average * co2Inside = new Average(sensors->co2Inside);
 
 Dependencies deps = { 
   ventilator, recuperation, confLock, httpsLock,
   factory, diode, configuration, 
-  outsideTemp, outsideHum, insideTemp, co2Inside, dewPoint,
+  outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPoint,
   forecast, timeProvider, &httpClient,
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
   restarter
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
+Display * display = new Display(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
 Button * button = new Button(BTN_PIN, orchestrator);
@@ -127,9 +133,8 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
-
   settings->setup();
-  Serial2.begin(9600, SERIAL_8N1, rx_pin, tx_pin);
+  display->setup();
   mhz19.begin(rx_pin, tx_pin);
   mhz19.setAutoCalibration(true);
 
@@ -145,9 +150,13 @@ void setup()
   SettingsData * settingsData = settings->getSettings();
   if (!settingsData->checkRecuperationRpm){ 
     rpmRecuperationChecker->deactivate();
+  } else {
+    attachVentilator();
   }
   if (!settingsData->checkVentilatorRpm){ 
     rpmVentilatorChecker->deactivate();
+  } else {
+    attachRecuperation();  
   }
   rpmRecuperationChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
   rpmRecuperationChecker->setMaxRpm(settingsData->recuperationMaxRpm);
@@ -155,47 +164,48 @@ void setup()
   rpmVentilatorChecker->setMaxRpm(settingsData->ventilatorMaxRpm);
   recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
   recuperation->setCycleDuration(settingsData->recuperationCycleDuration); 
+  diode->setBrightness(settingsData->brightness);
 }
 
 unsigned long last_sensor_reading = millis();
 #define averageReadingInterval 2000
 
 void loop() {
+  SettingsData * settingsData = settings->getSettings();
   restarter->act();
   if (millis() - last_sensor_reading > averageReadingInterval) {
-    digitalWrite(stateDiode, HIGH);
-    delay(15);
-    digitalWrite(stateDiode, LOW);
     last_sensor_reading = millis();
     outsideTemp->doReading();
     outsideHum->doReading();
     co2Inside->doReading();
     insideTemp->doReading();
+    insideHum->doReading();
     dewPoint->compute(outsideHum->getAverage(), outsideTemp->getAverage());
   }
   monitoring->act();
-  if (!IS_DEBUG) {
-//    button->act();
-  }
+  button->act();
   ventilator->act();
   recuperation->act();
-  relay->act();
+  recuperationRelay->act();
+  ventilatorRelay->act();
   dns.processNextRequest();
   orchestrator->act();
   filter->act();
-  if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
-    detachVentilator();
-    ventilatorTicks = 0;
-    attachVentilator();  
+  if (settingsData->checkVentilatorRpm){
+    if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
+      detachVentilator();
+      ventilatorTicks = 0;
+      attachVentilator();  
+    }
   }
-  if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
-    detachRecuperation();
-    recuperationTicks = 0;
-    attachRecuperation();  
+  if (settingsData->checkRecuperationRpm){
+    if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
+      detachRecuperation();
+      recuperationTicks = 0;
+      attachRecuperation();  
+    }
   }
-  
-  delay(30);
-  
+  display->act();
   if (IS_DEBUG) {
     if (Serial.available() > 0){ 
       String command = Serial.readStringUntil(':');

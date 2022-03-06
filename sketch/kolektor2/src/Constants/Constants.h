@@ -8,16 +8,10 @@
 #define TESTING_CO2_SENSOR true
 
 #define RPM_SAMPLING_DURATION 1000
-#define temporaryDisabledProgrammeDuration 3600000 // 1hour
-#define manual100ProgrammeDuration 900000 // 15 minutes
 #define updatingSensorStatsInterval 60000
 
 
-#if defined(IS_DEBUG)
-#define averageValuesCount 1
-#elif
 #define averageValuesCount 7
-#endif
 
 #define INVALID_VALUE -9999
 #define enablementTresholdMs 4000 // 4 seconds

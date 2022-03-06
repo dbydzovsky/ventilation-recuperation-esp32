@@ -3,7 +3,7 @@
 #include "../Constants/Constants.h"
 Relay::Relay(int pin)
 {
-  digitalWrite(pin, HIGH);
+  digitalWrite(pin, LOW);
   pinMode(pin, OUTPUT);
   this->_pin = pin;
 }
@@ -19,10 +19,10 @@ void Relay::act() {
       this->_state = this->_should_be_enabled;
       if (this->_state) {
         if (IS_DEBUG) Serial.println("Turning relay on.");
-        digitalWrite(this->_pin, LOW);
+        digitalWrite(this->_pin, HIGH);
       } else {
         if (IS_DEBUG) Serial.println("Turning relay off.");
-        digitalWrite(this->_pin, HIGH);
+        digitalWrite(this->_pin, LOW);
       }
     }
   }

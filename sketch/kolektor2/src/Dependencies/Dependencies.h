@@ -34,6 +34,7 @@ struct Dependencies {
   Average * outsideTemp;
   Average * outsideHum;
   Average * insideTemp;
+  Average * insideHum;
   Average * co2Inside;
   DewPoint * dewPoint;
   WeatherForecast * forecast;

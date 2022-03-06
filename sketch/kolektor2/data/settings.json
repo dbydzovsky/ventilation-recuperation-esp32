@@ -11,4 +11,5 @@
   "ventilatorPower": 0,
   "durationMillis": 300000,
   "tempDisableDuration": 10800000,
+  "brightness": 100
 }

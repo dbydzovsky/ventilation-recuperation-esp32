@@ -5,6 +5,7 @@
 #include "../Button/Button.h"
 #include "../Dependencies/Dependencies.h"
 #include "../Weather/Weather.h"
+#include "../Settings/Settings.h"
 
 int translateCode(byte code, char dest[50]) {
   if (code == 51) {
@@ -78,18 +79,21 @@ bool Orchestrator::handleClick(byte times) {
   if (times == 2) {
     ConfigurableProgramme * trialProgramme = this->deps->factory->Trial;
     PowerOutput output;
-    trialProgramme->setPower(output, (int) temporaryDisabledProgrammeDuration);
+    SettingsData * settings = this->deps->settings->getSettings();
+    trialProgramme->setPower(output, settings->tempDisableDuration);
     this->setProgramme(dynamic_cast<Programme*>(trialProgramme));
     return true;
   }
   if (times == 3) {
     ConfigurableProgramme * trialProgramme = this->deps->factory->Trial;
     PowerOutput output;
+    
+    SettingsData * settings = this->deps->settings->getSettings();
     output.mode = POWER_OUTPUT_MODE_BOTH;
-    output.ventilatorPower = 30;    
-    output.recuperationPower = 100;
-    output.recuperationMode = RECUPERATION_MODE_RECYCLE;
-    trialProgramme->setPower(output, manual100ProgrammeDuration);
+    output.ventilatorPower = settings->ventilatorPower;    
+    output.recuperationPower = settings->recuperationPower;
+    output.recuperationMode = settings->recuperationMode;
+    trialProgramme->setPower(output, settings->durationMillis);
     this->setProgramme(dynamic_cast<Programme*>(trialProgramme));
     return true;
   }

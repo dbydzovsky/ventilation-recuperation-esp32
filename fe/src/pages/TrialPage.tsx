@@ -117,9 +117,9 @@ export function TrialPage() {
     const tempDisableMode = () => {
         let props: ChangeTrialProps = {
             ventilator: 0,
-            duration: 1000*60*60*24,
+            duration: settings.settings.tempDisableDuration,
             recuperationMode: RecuperationMode.Recycle,
-            recuperation: settings.settings.tempDisableDuration,
+            recuperation: 0,
             on: true
         }
         trialAction.changeTrial(props)

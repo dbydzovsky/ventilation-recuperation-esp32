@@ -105,6 +105,17 @@ export function SettingsPage(props: Props) {
                                 description={"Doba trvání párty módu v sekundách, nejméně 60 vteřin."}
                                 type={"number"}/>
             </Group>
+            <Property values={values}
+                      setValues={setValues}
+                      transform={Divide1000Transformation}
+                      description={"Doba trvání dočasně vypnutého programu, ve vteřinách."}
+                      type="number"
+                      property={"tempDisableDuration"}/>
+            <Property values={values}
+                      setValues={setValues}
+                      description={"Intenzita LED v procentech (0-100)."}
+                      type="number"
+                      property={"brightness"}/>
             <Grid item xs={12}>
                 <Button variant={"contained"} color={"secondary"} onClick={() => {
                     dispatch(saveSettings(values))

@@ -16,6 +16,7 @@ export interface Settings {
   ventilatorPower: number,
   durationMillis: number,
   tempDisableDuration: number,
+  brightness: number
 }
 
 export interface SettingsState {

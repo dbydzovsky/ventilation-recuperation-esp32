@@ -54,7 +54,7 @@ void RPMChecker::deactivate() {
 }
 
 void RPMChecker::setup() {
-  pinMode(this->_pin, INPUT_PULLUP);
+  pinMode(this->_pin, INPUT);
   AlarmData data;
   read(this->_filename, &data);
   if (data.blocked || data.highRpm) {

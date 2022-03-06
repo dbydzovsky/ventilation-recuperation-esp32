@@ -22,6 +22,7 @@ class Sensors {
     Source * outsideTemp;
     Source * outsideHum;
     Source * insideTemp;
+    Source * insideHum;
     Source * co2Inside;
 };
 

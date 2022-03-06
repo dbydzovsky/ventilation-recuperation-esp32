@@ -110,5 +110,9 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   if (out->tempDisableDuration < 5000) {
     return false;
   }
+  out->brightness = c["brightness"].as<int>();
+  if (out->brightness < 0 || out->brightness > 100) {
+    return false;
+  }
   return true;
 }

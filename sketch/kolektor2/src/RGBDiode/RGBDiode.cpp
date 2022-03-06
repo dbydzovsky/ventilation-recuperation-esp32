@@ -2,43 +2,67 @@
 #include "RGBDiode.h"
 #include <Ticker.h>
 
-RGBDiode::RGBDiode(int a, int b, int c) {
+RGBDiode::RGBDiode(int channel, int a, int b, int c) {
   this->_a = a;
   this->_b = b;
   this->_c = c;
+  this->_channel = channel;
   pinMode(a, OUTPUT);
   pinMode(b, OUTPUT);
   pinMode(c, OUTPUT);
+  ledcSetup(channel, 25000, 8);
+  ledcWrite(this->_channel, 255);
 }
+
+void RGBDiode::setBrightness(int brightness) {
+  this->_brightness = brightness;
+  int duty = map(this->_brightness, 0, 100, 0, 254);
+  ledcWrite(this->_channel, duty);
+}
+
 void RGBDiode::aOn() {
   if (this->_previous != 1) {
-    digitalWrite(this->_b, LOW);
-    digitalWrite(this->_c, LOW);
-    digitalWrite(this->_a, HIGH);
+    ledcDetachPin(this->_b);
+    ledcDetachPin(this->_c);
+    ledcAttachPin(this->_a, this->_channel);
+    //digitalWrite(this->_b, LOW);
+    //digitalWrite(this->_c, LOW);
+    //digitalWrite(this->_a, HIGH);
     this->_previous = 1;
   }  
 }
 void RGBDiode::bOn() {
   if (this->_previous != 2) {
-    digitalWrite(this->_c, LOW);
-    digitalWrite(this->_a, LOW);
-    digitalWrite(this->_b, HIGH);
+
+    ledcDetachPin(this->_c);
+    ledcDetachPin(this->_a);
+    ledcAttachPin(this->_b, this->_channel);
+    // digitalWrite(this->_c, LOW);
+    // digitalWrite(this->_a, LOW);
+    // digitalWrite(this->_b, HIGH);
     this->_previous = 2;
   } 
 }
 void RGBDiode::cOn() {
   if (this->_previous != 3) {
-    digitalWrite(this->_a, LOW);
-    digitalWrite(this->_b, LOW);
-    digitalWrite(this->_c, HIGH);
+    ledcDetachPin(this->_a);
+    ledcDetachPin(this->_b);
+    ledcAttachPin(this->_c, this->_channel);
+    
+    // digitalWrite(this->_a, LOW);
+    // digitalWrite(this->_b, LOW);
+    // digitalWrite(this->_c, HIGH);
     this->_previous = 3;
   } 
 }
 void RGBDiode::off() {
   if (this->_previous != 0) {
-    digitalWrite(this->_a, LOW);
-    digitalWrite(this->_b, LOW);
-    digitalWrite(this->_c, LOW);
+    ledcDetachPin(this->_a);
+    ledcDetachPin(this->_b);
+    ledcDetachPin(this->_c);
+    // digitalWrite(this->_a, LOW);
+    // digitalWrite(this->_b, LOW);
+    // digitalWrite(this->_c, LOW);
     this->_previous = 0;
   }  
 }

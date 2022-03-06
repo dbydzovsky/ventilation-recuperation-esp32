@@ -68,7 +68,9 @@ void Recuperation::act() {
     this->_changingDirection = false;
     return;
   }
-  this->_relay->enable();
+  if (this->_power != 0) {
+    this->_relay->enable();
+  }
   if (millis() - this->_last_direction_change > (this->_cycleDuration + this->_durationChangeWait)) {
     bool previousDirection = this->_directionIn;
     if (this->_mode == RECUPERATION_MODE_EXHALE) {

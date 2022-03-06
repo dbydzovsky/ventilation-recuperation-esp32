@@ -16,7 +16,8 @@ let settingsState: SettingsState = {
         recuperationPower: 100,
         ventilatorPower: 0,
         durationMillis: 300000,
-        tempDisableDuration: 10800000
+        tempDisableDuration: 10800000,
+        brightness: 100,
     },
     counter: 1,
     connected: true,

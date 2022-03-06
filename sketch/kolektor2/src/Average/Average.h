@@ -19,6 +19,7 @@ class Average {
     float getValue();
     void takeReading(int newval);
     void doReading();
+    bool isInitialized();
   private:
     Source *source;
     int values[7] = {0, 0, 0, 0, 0, 0, 0};

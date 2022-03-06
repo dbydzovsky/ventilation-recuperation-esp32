@@ -18,10 +18,11 @@ typedef struct {
 
 class RGBDiode {
   public:
-    RGBDiode(int colorA, int colorB, int colorC);
+    RGBDiode(int channel, int colorA, int colorB, int colorC);
     void detach();
     void configure(void (*configuration)(TickingConfiguration *out));
     void important(void (*configuration)(TickingConfiguration *out));
+    void setBrightness(int brightness);
   private:
     Ticker ticker;
     static void staticTickerCallbackLed(RGBDiode *pThis);
@@ -34,6 +35,8 @@ class RGBDiode {
     int _a;
     int _b;
     int _c;
+    int _channel;
+    int _brightness = 1024;
     byte _previous = 0;
     byte _tickingConf[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     byte _tickingIndex = 0;

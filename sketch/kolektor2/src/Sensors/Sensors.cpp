@@ -2,25 +2,43 @@
 #include "Sensors.h"
 #include <MHZ19_uart.h>
 #include "../Constants/Constants.h"
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
+#include "uFire_SHT20.h"
 
 class OutsideSensor {
+  private:
+    uFire_SHT20 * _sht20;
   public:
-    OutsideSensor() {
-
+    OutsideSensor(uFire_SHT20 * sht20) {
+      this->_sht20 = sht20;
     }
     float readHum() {
-      return 50;
+      float result = this->_sht20->humidity();
+      if (result > 100 || result < 0) {
+        return INVALID_VALUE;
+      }
+      return result;
     } 
     float readTemp() {
-      return 20;
+      float temperature = this->_sht20->temperature();
+      if (temperature > 125 || temperature < -80) {
+        return INVALID_VALUE;
+      }
+      return temperature;
     }
 };
 
+
+// zelená V+
+// modrá V-
+// pwm červená
+// txd černá
+// rxd žlutá
 class Co2Sensor: public Source {
   private:
     MHZ19_uart * _mhz19;
   public:
-    
     Co2Sensor(MHZ19_uart * mhz19) {
       this->_mhz19 = mhz19;
     }
@@ -34,7 +52,7 @@ class Co2Sensor: public Source {
     };
     
     int getToleration() {
-      return 300;
+      return 1000;
     };
 
     void setValue(float newVal) {
@@ -44,23 +62,50 @@ class Co2Sensor: public Source {
 
 class TempInsideSensor: public Source {
   private:
-    MHZ19_uart * _mhz19;
+    Adafruit_SHT31 * sht31;
   public:
-    TempInsideSensor(MHZ19_uart * mhz19) {
-      this->_mhz19 = mhz19;
+    TempInsideSensor(Adafruit_SHT31 * sht31) {
+      this->sht31 = sht31;
+      sht31->begin(0x45);
+      sht31->heater(false);
     }
     float getValue() {
-      int temp = this->_mhz19->getTemperature();
-      if (temp == -1) {
+      float t = this->sht31->readTemperature();
+      if (isnan(t)) {
         return INVALID_VALUE;
       }
-      if (temp < -20 || temp > 60) {
+      if (t < -20 || t > 60) {
         return INVALID_VALUE;
       }
-      return temp;
+      return t;
     };
     int getToleration() {
       return 5;
+    };
+    void setValue(float newVal) {
+      
+    }
+};
+
+class HumInsideSensor: public Source {
+  private:
+    Adafruit_SHT31 * sht31;
+  public:
+    HumInsideSensor(Adafruit_SHT31 * sht31) {
+      this->sht31 = sht31;
+    }
+    float getValue() {
+      float h = this->sht31->readHumidity();
+      if (isnan(h)) {
+        return INVALID_VALUE;
+      }
+      if (h < 0 || h > 100) {
+        return INVALID_VALUE;
+      }
+      return h;
+    };
+    int getToleration() {
+      return 30;
     };
     void setValue(float newVal) {
       
@@ -74,7 +119,8 @@ class TempOutsideSensor: public Source {
       this->_sensor = sensor;
     }
     float getValue() {
-      return 20;
+      delay(10);
+      return this->_sensor->readTemp();
     };
     int getToleration() {
       return 10;
@@ -92,7 +138,8 @@ class HumOutsideSensor: public Source {
       this->_sensor = sensor;
     }
     float getValue() {
-      return 5;
+      delay(10);
+      return this->_sensor->readHum();
     };
     int getToleration() {
       return 15;
@@ -121,20 +168,18 @@ class TestingSensor: public Source {
 };
 
 Sensors::Sensors(MHZ19_uart * mhz19) {
-  if (TESTING_CO2_SENSOR) {
-    this->co2Inside = new TestingSensor(1000);
-    this->insideTemp = new TestingSensor(20);
-  } else {
-    this->co2Inside = new Co2Sensor(mhz19);
-    this->insideTemp = new TempInsideSensor(mhz19);
-  }
-  if (IS_DEBUG) {
-    Serial.println("Configuring testing sensors");
-    this->outsideHum = new TestingSensor(5);
-    this->outsideTemp = new TestingSensor(20);
-  } else {
-    OutsideSensor * outside = new OutsideSensor();
-    this->outsideHum = new HumOutsideSensor(outside);
-    this->outsideTemp = new TempOutsideSensor(outside);
-  } 
+  Adafruit_SHT31 * sht31 = new Adafruit_SHT31();
+  uFire_SHT20 * sht20 = new uFire_SHT20();
+
+  this->insideTemp = new TempInsideSensor(sht31);
+  this->insideHum = new HumInsideSensor(sht31);
+  // this->co2Inside = new TestingSensor(1000);
+  // this->insideTemp = new TestingSensor(20);
+  this->co2Inside = new Co2Sensor(mhz19);
+    // Serial.println("Configuring testing sensors");
+  this->outsideHum = new TestingSensor(5);
+  this->outsideTemp = new TestingSensor(20);
+  // OutsideSensor * outside = new OutsideSensor(sht20);
+  // this->outsideHum = new HumOutsideSensor(outside);
+  // this->outsideTemp = new TempOutsideSensor(outside);
 }
