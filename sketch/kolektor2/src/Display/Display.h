@@ -8,6 +8,7 @@
 #define Display_h
 #include "Arduino.h"
 
+#include <Ticker.h>
 #include <Adafruit_SSD1306.h>
 #include "Arduino.h"
 #include "../Dependencies/Dependencies.h"
@@ -18,8 +19,14 @@ class Display {
     void setup();
     void act();
   private:
+    Ticker ticker;
+    void tick();
+    static void staticTickerCallbackLed(Display *pThis);
     Adafruit_SSD1306 * d;
+    void showWarningScreen(const char *x);
+    void showBaseScreen(int seconds);
     Dependencies * deps;
+    bool initialized = false;
     int index = 0;
 };
 

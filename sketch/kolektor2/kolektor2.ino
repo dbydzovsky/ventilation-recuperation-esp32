@@ -37,12 +37,12 @@ HTTPClient httpClient;
 // PINS
 #define PWM_ventilator_PIN 16
 #define ventilatorSignal 35
-#define PWM_recuperation_PIN 26
+#define PWM_recuperation_PIN 33 // 26
 #define recuperationSignal 13
 #define BTN_PIN 23
 #define RECUPERATION_RELAY_PIN 17
 #define VENTILATOR_RELAY_PIN 27
-#define RED_DIODE_PIN 18
+#define RED_DIODE_PIN 39
 #define GREEN_DIODE_PIN 19
 #define BLUE_DIODE_PIN 24
 #define rx_pin 26 // 16
@@ -92,9 +92,9 @@ Dependencies deps = {
   restarter
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
-Display * display = new Display(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
+Display * display = new Display(&deps);
 Button * button = new Button(BTN_PIN, orchestrator);
 
 DNSServer dns;
@@ -130,13 +130,13 @@ void setup()
 {
   pinMode(stateDiode, OUTPUT);
   digitalWrite(stateDiode, HIGH);
+  mhz19.begin(rx_pin, tx_pin);
+  mhz19.setAutoCalibration(true);
+  display->setup();
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
   settings->setup();
-  display->setup();
-  mhz19.begin(rx_pin, tx_pin);
-  mhz19.setAutoCalibration(true);
 
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
@@ -172,6 +172,8 @@ unsigned long last_sensor_reading = millis();
 
 void loop() {
   SettingsData * settingsData = settings->getSettings();
+  delay(10);
+  display->act();
   restarter->act();
   if (millis() - last_sensor_reading > averageReadingInterval) {
     last_sensor_reading = millis();
@@ -205,7 +207,7 @@ void loop() {
       attachRecuperation();  
     }
   }
-  display->act();
+
   if (IS_DEBUG) {
     if (Serial.available() > 0){ 
       String command = Serial.readStringUntil(':');
