@@ -94,8 +94,8 @@ Dependencies deps = {
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
-Display * display = new Display(&deps);
-Button * button = new Button(BTN_PIN, orchestrator);
+Display * display = new Display(&deps, orchestrator);
+Button * button = new Button(BTN_PIN, display);
 
 DNSServer dns;
 AsyncWebServer server(80);
@@ -141,6 +141,7 @@ void setup()
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
   configuration->setup();
+  display->wifiConnecting();
   httpServer->setup();
   filter->setup();
   rpmVentilatorChecker->setup();

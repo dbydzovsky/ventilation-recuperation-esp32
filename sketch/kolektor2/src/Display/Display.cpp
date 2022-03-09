@@ -7,94 +7,113 @@
 #include "TimeLib.h"
 #define OLED_RESET 0
 #include "../Dependencies/Dependencies.h"
+#include "../Orchestrator/Orchestrator.h"
+#include "../DisplayScreen/ScreenFactory.h"
 
 // http://adafruit.github.io/Adafruit-GFX-Library/html/class_adafruit___g_f_x.html
 // https://diyusthad.com/image2cpp
 
-void drawCircle(Adafruit_SSD1306 * d) {
-  for (int16_t i=0; i<d->height(); i+=2) {
-    d->drawCircle(d->width()/2, d->height()/2, i, WHITE);
-    d->display();
-    delay(1);
+
+bool Display::shouldBeDimmed() {
+  return this->actual->canBeDimmed(this->screenProps) && millis() - this->last_interaction > KEEP_DISPLAY_BRIGHT_FOR;
+}
+
+bool Display::handleHold(int duration_ms, bool finished) {
+	if (!this->actual->hasActiveButton()) {
+	  return false;
+	}
+	if (IS_DEBUG) Serial.print("handleHold,duration: ");
+	if (IS_DEBUG) Serial.print(duration_ms);
+	if (IS_DEBUG) Serial.print(" ,finished");
+	if (IS_DEBUG) Serial.println(finished);
+	this->last_interaction = millis();
+	if (!this->btnPressDone) {
+		this->isButtonPress = !finished;
+		if (this->screenFactory->pressButtonScreen->isFinished(this->screenProps)) {
+			this->btnPressDone = true;
+			this->isButtonPress = false;
+			this->actual->handleHold(this->screenProps, duration_ms, finished);
+			this->screenIndex = 0;
+			this->actual = this->getDefaultScreen();
+			this->actual->setup(this->screenProps);
+			this->actual->tick(this->screenProps);
+			this->last_tick = millis();
+		}
+	}
+	return false;
+}
+
+Screen* Display::getDefaultScreen() {
+  if (this->deps->factory->Trial->isValid(this->deps->conf->getData())) {
+	return this->screenFactory->trialScreen;
   }
+  return this->screenFactory->mainScreen;
+}
+
+#define SCREEN_COUNT 3
+
+Screen* Display::getActualScreen() {
+  Screen * newOne;
+  if (this->screenIndex == 0) {
+    newOne = this->getDefaultScreen();
+  } else if (this->screenIndex == 1) {
+    newOne = this->screenFactory->disableScreen;
+  } else if (this->screenIndex == 2) {
+    newOne = this->screenFactory->boostScreen;
+  }
+  return newOne;
+}
+
+bool Display::handleClick(byte times) {
+	if (IS_DEBUG) Serial.print("handleClick");
+	if (IS_DEBUG) Serial.println(times);
+	this->last_interaction = millis();
+	this->screenIndex = (this->screenIndex + times) % SCREEN_COUNT;
+	this->actual = this->getActualScreen();
+	this->actual->setup(this->screenProps);
+	this->last_tick = millis();
+	this->actual->tick(this->screenProps);
+	return true;
+}
+
+void Display::onPressDown() {
+	if (!this->actual->hasActiveButton()) {
+	  return;
+	}
+	if (IS_DEBUG) Serial.println("onPressDown");
+	this->btnPressDone = false;
+	this->screenFactory->pressButtonScreen->setup(this->screenProps);
+	this->last_interaction = millis();
+	this->actual->onPressDown(this->screenProps);
 }
 
 #define LOGO16_GLCD_HEIGHT 16
 #define LOGO16_GLCD_WIDTH  16
-static const unsigned char PROGMEM logo48_glcd_bmp_0[] ={
-0x00, 0x00, 0x07, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xff, 
-	0x80, 0x00, 0x00, 0x00, 0x3f, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xc0, 0x00, 0x00, 0x00, 
-	0x7f, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xc0, 0x00, 
-	0x00, 0x00, 0x7f, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x7f, 0xff, 
-	0x80, 0x00, 0x00, 0x00, 0x7f, 0xff, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xfc, 0x00, 0x00, 0x00, 0x00, 
-	0x7f, 0xf8, 0x00, 0x00, 0x1f, 0xc0, 0x7f, 0xf0, 0x00, 0x00, 0x3f, 0xe0, 0x3f, 0xf0, 0x00, 0x00, 
-	0x7f, 0xe0, 0x3f, 0xe0, 0x00, 0x00, 0x7f, 0xf0, 0x1f, 0xf0, 0x7f, 0xf0, 0xff, 0xf8, 0x1f, 0xf9, 
-	0xff, 0xf8, 0xff, 0xfc, 0x3f, 0xff, 0xff, 0xfc, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xfe, 0xff, 0xff, 
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xfc, 0x3f, 0xff, 0xff, 
-	0xff, 0xff, 0xfc, 0x3f, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-	0xff, 0xff, 0x7f, 0xff, 0xff, 0xfe, 0xff, 0xff, 0x3f, 0xff, 0xff, 0xfc, 0x3f, 0xff, 0x1f, 0xff, 
-	0x9f, 0xf8, 0x1f, 0xff, 0x0f, 0xfe, 0x0f, 0xf8, 0x0f, 0xfe, 0x00, 0x00, 0x07, 0xfc, 0x07, 0xfe, 
-	0x00, 0x00, 0x0f, 0xfc, 0x07, 0xfc, 0x00, 0x00, 0x0f, 0xfe, 0x01, 0xf8, 0x00, 0x00, 0x1f, 0xfe, 
-	0x00, 0x00, 0x00, 0x00, 0x3f, 0xfe, 0x00, 0x00, 0x00, 0x00, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x01, 
-	0xff, 0xfe, 0x00, 0x00, 0x00, 0x03, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x03, 0xff, 0xfe, 0x00, 0x00, 
-	0x00, 0x03, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x03, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x03, 0xff, 0xfe, 
-	0x00, 0x00, 0x00, 0x03, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x03, 0xff, 0xfc, 0x00, 0x00, 0x00, 0x01, 
-	0xff, 0xf8, 0x00, 0x00, 0x00, 0x00, 0xff, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x3f, 0xe0, 0x00, 0x00
-	};
-static const unsigned char PROGMEM logo48_glcd_bmp_30[] ={
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0xe0, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xfc, 0x00, 0x00, 0x70, 
-	0x00, 0x1f, 0xff, 0x00, 0x00, 0xfc, 0x00, 0x3f, 0xff, 0x80, 0x03, 0xfe, 0x00, 0x7f, 0xff, 0x80, 
-	0x07, 0xff, 0x80, 0x7f, 0xff, 0xc0, 0x07, 0xff, 0x80, 0xff, 0xff, 0xe0, 0x0f, 0xff, 0x80, 0xff, 
-	0xff, 0xe0, 0x0f, 0xff, 0x81, 0xff, 0xff, 0xe0, 0x1f, 0xff, 0x81, 0xff, 0xff, 0xc0, 0x3f, 0xff, 
-	0x81, 0xff, 0xff, 0xc0, 0x3f, 0xff, 0x81, 0xff, 0xff, 0x80, 0x3f, 0xff, 0xc1, 0xff, 0xff, 0x00, 
-	0x1f, 0xff, 0xe1, 0xff, 0xff, 0x00, 0x1f, 0xff, 0xef, 0xff, 0x80, 0x00, 0x1f, 0xff, 0xff, 0xff, 
-	0x00, 0x00, 0x1f, 0xff, 0xff, 0xfc, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x03, 0xff, 
-	0xff, 0xfe, 0x00, 0x00, 0x01, 0xff, 0xfe, 0x7e, 0x00, 0x00, 0x00, 0x7f, 0xfc, 0x3f, 0xf8, 0x00, 
-	0x00, 0x1f, 0xfc, 0x3f, 0xfe, 0x00, 0x00, 0x00, 0x7e, 0x7f, 0xff, 0x80, 0x00, 0x00, 0x7f, 0xff, 
-	0xff, 0xc0, 0x00, 0x00, 0x7f, 0xff, 0xff, 0xf0, 0x00, 0x00, 0x3f, 0xff, 0xff, 0xf8, 0x00, 0x00, 
-	0xff, 0xff, 0xff, 0xf8, 0x00, 0x01, 0xff, 0xf7, 0xff, 0xf8, 0x00, 0xff, 0xff, 0x87, 0xff, 0xf8, 
-	0x00, 0xff, 0xff, 0x83, 0xff, 0xfc, 0x01, 0xff, 0xff, 0x81, 0xff, 0xfc, 0x03, 0xff, 0xff, 0x81, 
-	0xff, 0xfc, 0x03, 0xff, 0xff, 0x81, 0xff, 0xf8, 0x07, 0xff, 0xff, 0x81, 0xff, 0xf0, 0x07, 0xff, 
-	0xff, 0x01, 0xff, 0xf0, 0x07, 0xff, 0xff, 0x01, 0xff, 0xe0, 0x03, 0xff, 0xfe, 0x00, 0xff, 0xe0, 
-	0x01, 0xff, 0xfe, 0x00, 0x7f, 0xc0, 0x01, 0xff, 0xfc, 0x00, 0x3f, 0x00, 0x00, 0xff, 0xf8, 0x00, 
-	0x0e, 0x00, 0x00, 0x3f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x07, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-		};
-static const unsigned char PROGMEM logo48_glcd_bmp_60[] ={
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x07, 0xfe, 0x00, 
-	0x00, 0x00, 0x00, 0x0f, 0xff, 0x00, 0x00, 0x00, 0x00, 0x3f, 0xff, 0x00, 0x00, 0x00, 0x00, 0x7f, 
-	0xff, 0x80, 0x00, 0x00, 0x00, 0x7f, 0xff, 0x80, 0x00, 0x00, 0x00, 0x7f, 0xff, 0x80, 0x00, 0x00, 
-	0x00, 0x7f, 0xff, 0x80, 0x06, 0x00, 0x00, 0xff, 0xff, 0x00, 0x1f, 0xe0, 0x00, 0xff, 0xff, 0x00, 
-	0x7f, 0xf0, 0x00, 0x7f, 0xfe, 0x01, 0xff, 0xf0, 0x00, 0x7f, 0xfe, 0x03, 0xff, 0xf8, 0x00, 0x3f, 
-	0xfe, 0x07, 0xff, 0xfc, 0x00, 0x3f, 0xfe, 0x0f, 0xff, 0xfc, 0x00, 0x1f, 0xfe, 0x0f, 0xff, 0xfe, 
-	0x00, 0x1f, 0xff, 0x9f, 0xff, 0xfe, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xfe, 0x00, 0x07, 0xff, 0xff, 
-	0xff, 0xfe, 0x00, 0x03, 0xff, 0xff, 0xff, 0xfe, 0x00, 0x00, 0xff, 0xff, 0xff, 0xfe, 0x00, 0x00, 
-	0x7f, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x7e, 0x7f, 0xff, 0xfe, 0x07, 0x80, 0xfc, 0x3f, 0x07, 0xf8, 
-	0x1f, 0xe0, 0xfc, 0x3f, 0x01, 0xe0, 0x7f, 0xff, 0xfe, 0x7e, 0x00, 0x00, 0x7f, 0xff, 0xff, 0xfe, 
-	0x00, 0x00, 0x7f, 0xff, 0xff, 0xff, 0x00, 0x00, 0x7f, 0xff, 0xff, 0xff, 0xc0, 0x00, 0x7f, 0xff, 
-	0xff, 0xff, 0xe0, 0x00, 0x7f, 0xff, 0xff, 0xff, 0xf0, 0x00, 0x7f, 0xff, 0xf9, 0xff, 0xf8, 0x00, 
-	0x7f, 0xff, 0xf0, 0x7f, 0xf8, 0x00, 0x3f, 0xff, 0xf0, 0x7f, 0xfc, 0x00, 0x3f, 0xff, 0xe0, 0x7f, 
-	0xfc, 0x00, 0x1f, 0xff, 0xc0, 0x7f, 0xfe, 0x00, 0x0f, 0xff, 0x80, 0x7f, 0xfe, 0x00, 0x0f, 0xfe, 
-	0x00, 0xff, 0xff, 0x00, 0x07, 0xf8, 0x00, 0xff, 0xff, 0x00, 0x00, 0x60, 0x01, 0xff, 0xfe, 0x00, 
-	0x00, 0x00, 0x01, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x01, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x01, 0xff, 
-	0xfe, 0x00, 0x00, 0x00, 0x00, 0xff, 0xfc, 0x00, 0x00, 0x00, 0x00, 0xff, 0xf0, 0x00, 0x00, 0x00, 
-	0x00, 0x7f, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x7f, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
-	};
-
-
-Display::Display(Dependencies * deps){
+Display::Display(Dependencies * deps, Orchestrator * orchestrator){
   Adafruit_SSD1306 * display = new Adafruit_SSD1306(OLED_RESET);
   this->d = display;
   this->deps = deps;
+  this->orchestrator = orchestrator;
+  this->screenFactory = new ScreenFactory();
+  this->actual = this->screenFactory->logoScreen;
+  this->screenProps = new ScreenProps();
+  screenProps->d = display;
+  screenProps->deps = deps;
+  screenProps->orchestrator = orchestrator;
 }
 
+void Display::wifiConnecting() {
+  this->actual = this->screenFactory->wifiScreen;
+  this->actual->setup(this->screenProps);
+}
 
 void Display::setup() {
   this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
   this->d->clearDisplay();
   this->d->display();
+  this->actual->setup(this->screenProps);
+  this->last_tick = millis();
   this->ticker.attach_ms(100, &Display::staticTickerCallbackLed, this);
 }
 
@@ -102,168 +121,12 @@ void Display::staticTickerCallbackLed(Display *pThis){
     pThis->tick();
 }
 
- unsigned char wifi2_icon12x10[] = {
-	0b00011111, 0b10000000, //    ######       
-	0b00111111, 0b11000000, //   ########      
-	0b01100000, 0b01100000, //  ##      ##     
-	0b00001111, 0b00000000, //     ####        
-	0b00011111, 0b10000000, //    ######       
-	0b00010000, 0b10000000, //    #    #       
-	0b00000110, 0b00000000, //      ##         
-	0b00000110, 0b00000000, //      ##         
-	0b00000000, 0b00000000, //                 
-	0b00000000, 0b00000000, //
-};
-
- unsigned char temperature_icon16x16[] =
-{
-	0b00000001, 0b11000000, //        ###      
-	0b00000011, 0b11100000, //       #####     
-	0b00000111, 0b00100000, //      ###  #     
-	0b00000111, 0b11100000, //      ######     
-	0b00000111, 0b00100000, //      ###  #     
-	0b00000111, 0b11100000, //      ######     
-	0b00000111, 0b00100000, //      ###  #     
-	0b00000111, 0b11100000, //      ######     
-	0b00000111, 0b00100000, //      ###  #     
-	0b00001111, 0b11110000, //     ########    
-	0b00011111, 0b11111000, //    ##########   
-	0b00011111, 0b11111000, //    ##########   
-	0b00011111, 0b11111000, //    ##########   
-	0b00011111, 0b11111000, //    ##########   
-	0b00001111, 0b11110000, //     ########    
-	0b00000111, 0b11100000, //      ######     
-};
-
- unsigned char warning_icon16x16[] =
-{
-	0b00000000, 0b10000000, //         #       
-	0b00000001, 0b11000000, //        ###      
-	0b00000001, 0b11000000, //        ###      
-	0b00000011, 0b11100000, //       #####     
-	0b00000011, 0b01100000, //       ## ##     
-	0b00000111, 0b01110000, //      ### ###    
-	0b00000110, 0b00110000, //      ##   ##    
-	0b00001110, 0b10111000, //     ### # ###   
-	0b00001100, 0b10011000, //     ##  #  ##   
-	0b00011100, 0b10011100, //    ###  #  ###  
-	0b00011000, 0b10001100, //    ##   #   ##  
-	0b00111000, 0b00001110, //   ###       ### 
-	0b00110000, 0b10000110, //   ##    #    ## 
-	0b01111111, 0b11111111, //  ###############
-	0b01111111, 0b11111111, //  ###############
-	0b00000000, 0b00000000, //                 
-};
-
- unsigned char nocon_icon16x12[] =
-{
-	0b00000111, 0b11110000, //      #######    
-	0b00011111, 0b11111100, //    ###########  
-	0b00111110, 0b00111110, //   #####   ##### 
-	0b00111000, 0b01111110, //   ###    ###### 
-	0b01110000, 0b11111111, //  ###    ########
-	0b01110001, 0b11110111, //  ###   ##### ###
-	0b01110011, 0b11000111, //  ###  ####   ###
-	0b01110111, 0b10000111, //  ### ####    ###
-	0b00111111, 0b00001110, //   ######    ### 
-	0b00111110, 0b00011110, //   #####    #### 
-	0b00011111, 0b11111100, //    ###########  
-	0b00000111, 0b11110000, //      #######    
-};
- unsigned char humidity_icon16x16[] =
-{
-	0b00000000, 0b00000000, //                 
-	0b00000001, 0b10000000, //        ##       
-	0b00000011, 0b11000000, //       ####      
-	0b00000111, 0b11100000, //      ######     
-	0b00001110, 0b01110000, //     ###  ###    
-	0b00001100, 0b00110000, //     ##    ##    
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011000, 0b00011000, //    ##      ##   
-	0b00111000, 0b00011100, //   ###      ###  
-	0b00111000, 0b00011100, //   ###      ###  
-	0b00111000, 0b00011100, //   ###      ###  
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011111, 0b11111000, //    ##########   
-	0b00001111, 0b11110000, //     ########    
-	0b00000011, 0b11000000, //       ####      
-	0b00000000, 0b00000000, //                 
-};
-
- unsigned char arrow_down_icon16x16[] =
-{
-	0b00001111, 0b11110000, //     ########    
-	0b00011111, 0b11111000, //    ##########   
-	0b00011111, 0b11111000, //    ##########   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b01111100, 0b00111110, //  #####    ##### 
-	0b11111100, 0b00111111, // ######    ######
-	0b11111100, 0b00111111, // ######    ######
-	0b01111000, 0b00011110, //  ####      #### 
-	0b00111100, 0b00111100, //   ####    ####  
-	0b00011110, 0b01111000, //    ####  ####   
-	0b00001111, 0b11110000, //     ########    
-	0b00000111, 0b11100000, //      ######     
-	0b00000011, 0b11000000, //       ####      
-	0b00000001, 0b10000000, //        ##       
-};
-
- unsigned char heart_icon16x16[] =
-{                
-	0b00000000, 0b00000000, //                 
-	0b00000000, 0b00000000, //                 
-	0b00111100, 0b01111000, //   ####   ####   
-	0b01111110, 0b11111100, //  ###### ######  
-	0b11111111, 0b11111110, // ############### 
-	0b11111111, 0b11111110, // ############### 
-	0b11111111, 0b11111110, // ############### 
-	0b11111111, 0b11111110, // ############### 
-	0b01111111, 0b11111100, //  #############  
-	0b01111111, 0b11111100, //  #############  
-	0b00111111, 0b11111000, //   ###########   
-	0b00011111, 0b11110000, //    #########    
-	0b00001111, 0b11100000, //     #######     
-	0b00000111, 0b11000000, //      #####      
-	0b00000011, 0b10000000, //       ###    
-	0b00000001, 0b00000000, //    	  #
-};
-
- unsigned char co2_icon16x16[] =
-{
-	0b00001111, 0b11110000, //     ########    
-	0b00011111, 0b11111000, //    ##########   
-	0b00011111, 0b11111000, //    ##########   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b00011100, 0b00111000, //    ###    ###   
-	0b01111100, 0b00111110, //  #####    ##### 
-	0b11111100, 0b00111111, // ######    ######
-	0b11111100, 0b00111111, // ######    ######
-	0b01111000, 0b00011110, //  ####      #### 
-	0b00111100, 0b00111100, //   ####    ####  
-	0b00011110, 0b01111000, //    ####  ####   
-	0b00001111, 0b11110000, //     ########    
-	0b00000111, 0b11100000, //      ######     
-	0b00000011, 0b11000000, //       ####      
-	0b00000001, 0b10000000, //        ##       
-};
 void Display::tick() {
   if (!this->initialized) {
-	this->d->clearDisplay();
-	if (this->index % 3 == 0) {
-		this->d->drawBitmap(6, 0, logo48_glcd_bmp_30, 48, 48, WHITE);
-	} else if (this->index % 3 == 1) {
-		this->d->drawBitmap(6, 0, logo48_glcd_bmp_60, 48, 48, WHITE);
-	} else {
-		this->d->drawBitmap(6, 0, logo48_glcd_bmp_0, 48, 48, WHITE);
+	if (millis() - this->last_tick < this->actual->getDelayMs(this->screenProps)) {
+	  return;
 	}
-	if (this->index % 50 == 0) {
-		this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
-	}
-	this->d->display();
-	this->index += 1;
+	this->actual->tick(this->screenProps);
   }
 }
 
@@ -273,85 +136,40 @@ void Display::act(){
   	this->ticker.detach();
   	delay(200);
   	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+	this->actual->finish();
+  }
+  if (this->shouldBeDimmed()) {
+	  this->d->dim(true);
+  } else {
+	  this->d->dim(false);
+  }
+  if (this->isButtonPress) {
+	if (millis() - this->last_tick > this->screenFactory->pressButtonScreen->getDelayMs(this->screenProps)) {
+      if (IS_DEBUG) Serial.println("ticking button");
+	  this->screenFactory->pressButtonScreen->tick(this->screenProps);
+	}
 	return;
   }
-  this->d->clearDisplay();
-  // if (digitalRead(btnpin)) {
-  //   testdrawcircle();
-  //   delay(2000);
-  //   this->d->clearDisplay();
-  // }
-  int seconds = (int) millis() / 1000;
-  
-  // if (seconds % 2 == 1) {
-  //  this->showWarningScreen("");
-  // } else {
-  this->showBaseScreen(seconds);
-  //}
-  this->d->display();
-}
 
-void Display::showBaseScreen(int seconds){
-  if (WiFi.status() == WL_CONNECTED) {
-    this->d->drawBitmap(52, 0, wifi2_icon12x10, 12, 10, WHITE);
-  } else {  
-    this->d->drawBitmap(52, 0, nocon_icon16x12, 12, 10, WHITE);
+  if (this->actual->isFinished(this->screenProps)) {
+	this->screenIndex = 0;
+	this->actual = this->getDefaultScreen();
+	this->actual->setup(this->screenProps);
+	this->actual->tick(this->screenProps);
+	this->last_tick = millis();
+  } else {
+	// if not finished, check its time
+	if (millis() - this->last_tick < this->actual->getDelayMs(this->screenProps)) {
+	  return;
+	}
   }
 
-  this->d->setTextSize(1);
-  this->d->setTextColor(WHITE);
-  
-  if (this->deps->timeProvider->isTimeSet()) {
-    char hourBuffer[3];
-    if (hour() < 10) {
-      sprintf(hourBuffer, "0%d", hour());
-    } else {
-      sprintf(hourBuffer, "%d", hour());
-    }
-    char minuteBuffer[3];
-    if (minute() < 10) {
-      sprintf(minuteBuffer, "0%d", minute());
-    } else {
-      sprintf(minuteBuffer, "%d", minute());
-    }
-    char timeBuffer[6];
-    if (seconds % 2 == 1) {
-      sprintf(timeBuffer, "%s:%s", hourBuffer, minuteBuffer);
-    } else {
-      sprintf(timeBuffer, "%s %s", hourBuffer, minuteBuffer);
-    }
-    this->d->setCursor(1,0);
-    this->d->print(timeBuffer);
-	}
-	this->d->setTextSize(2);
-	this->d->drawBitmap(0,12, temperature_icon16x16, 16, 12, WHITE);
-	this->d->setCursor(18,12);
-	if (this->deps->outsideTemp->isInitialized()) {  
-		this->d->print((int) this->deps->outsideTemp->getAverage());
-	} else {
-		this->d->print("..");
-	}
-
-	
-
-	this->d->drawBitmap(0,30, heart_icon16x16, 16,16, WHITE);
-	this->d->setCursor(16, 30);
-	// this->d->drawLine(18, 46, 62, 46, WHITE); // x, height, width
-	if (this->deps->co2Inside->isInitialized()) {
-		this->d->print((int) this->deps->co2Inside->getAverage());
-	} else {
-		this->d->print("....");
-	}
-	// this->d->setTextColor(BLACK, WHITE); // 'inverted' text
-	// this->d->print("hum:");
-	// this->d->println(hum);
-	// this->d->setTextSize(1);
-	// this->d->setTextColor(WHITE);
-	// this->d->print("co2:");
-	// this->d->println(ppm);
-	// this->d->display();
-	
-}
-void Display::showWarningScreen(const char *x) {
-  this->d->drawBitmap(24, 14, warning_icon16x16, 16,16,WHITE);
+  if (IS_DEBUG) Serial.println("ticking screen");
+  Screen * newOne = this->getActualScreen();
+  if (newOne != this->actual) {
+	this->actual = newOne;
+	this->actual->setup(this->screenProps);
+  }
+  this->last_tick = millis();
+  this->actual->tick(this->screenProps);
 }

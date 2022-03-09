@@ -45,6 +45,11 @@ class TrialProgramme: public ConfigurableProgramme {
       return sprintf(dest, "Manuální provoz. Zbývá %d sekund", remaining);
     }
 
+    int remainingSeconds() {
+      int waitingFor = millis() - this->started;
+      return (this->durationMillis - waitingFor) / 1000;
+    }
+
     bool handleHold(int duration_ms, bool finished) {
       return false;
     }

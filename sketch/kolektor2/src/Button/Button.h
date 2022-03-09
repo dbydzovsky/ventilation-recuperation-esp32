@@ -7,24 +7,24 @@
 #ifndef Button_h
 #define Button_h
 #include "Arduino.h"
-#include "../Orchestrator/Orchestrator.h"
+#include "../Display/Display.h"
 
 #ifndef BUTTON_COOLDOWN_MS
-#define BUTTON_COOLDOWN_MS 1000
+#define BUTTON_COOLDOWN_MS 300
 #endif
 
 #ifndef BUTTON_HOLD_THRESHOLD
-#define BUTTON_HOLD_THRESHOLD 3000
+#define BUTTON_HOLD_THRESHOLD 500
 #endif
 
 class Button {
   public:
-    Button(int pin, Orchestrator *orchestrator);
+    Button(int pin, Display *display);
     bool isPressed();
     void act();
   private:
     void resetState();
-    Orchestrator *_handler;
+    Display *_handler;
     int _pin;
     bool _last_value = false;
     unsigned long _btn_pressed_time = 0;

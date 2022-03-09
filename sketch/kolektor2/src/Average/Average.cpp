@@ -17,7 +17,6 @@ Average::Average(Source *source) {
 
 int Average::readSingle() {
   float newVal = this->source->getValue();
-  Serial.println(newVal);
   if (newVal == INVALID_VALUE) {
     this->error = true;
     return NAN;

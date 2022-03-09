@@ -49,6 +49,7 @@ class ConfigurableProgramme: public Programme {
     virtual void setPower(PowerOutput output, int duration) = 0;
     virtual PowerOutput getActualSetting() = 0;
     virtual int getDuration() = 0;
+    virtual int remainingSeconds() = 0;
 };
 
 class ProgrammeFactory {

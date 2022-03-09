@@ -1,8 +1,8 @@
 #include "Arduino.h"
 #include "Button.h"
-#include "../Orchestrator/Orchestrator.h"
+#include "../Display/Display.h"
 
-Button::Button(int pin, Orchestrator *handler) {
+Button::Button(int pin, Display *handler) {
   this->_pin = pin;
   this->_handler = handler;
   pinMode(pin, INPUT);
@@ -26,6 +26,7 @@ void Button::act() {
   unsigned long aNow = millis();
   // press down edge
   if (pressed && !this->_last_value) {
+    this->_handler->onPressDown();
     this->_btn_pressed_time = aNow;
   }
 
