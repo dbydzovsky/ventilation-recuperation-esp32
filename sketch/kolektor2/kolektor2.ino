@@ -83,17 +83,17 @@ Average * insideTemp = new Average(sensors->insideTemp);
 Average * insideHum = new Average(sensors->insideHum);
 Average * co2Inside = new Average(sensors->co2Inside);
 
+FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
 Dependencies deps = { 
   ventilator, recuperation, confLock, httpsLock,
   factory, diode, configuration, 
   outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPoint,
   forecast, timeProvider, &httpClient,
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
-  restarter
+  restarter, filter
 };
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
-FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
 Display * display = new Display(&deps, orchestrator);
 Button * button = new Button(BTN_PIN, display);
 

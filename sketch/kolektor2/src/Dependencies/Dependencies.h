@@ -22,7 +22,7 @@
 #include "../RPMChecker/RPMChecker.h"
 #include "../Settings/Settings.h"
 #include "../Restarter/Restarter.h"
-
+#include "../FilterMonitor/FilterMonitor.h"
 struct Dependencies {
   Ventilator * ventilation;
   Recuperation * recuperation;
@@ -44,6 +44,7 @@ struct Dependencies {
   RPMChecker * recuperationChecker;
   Settings * settings;
   Restarter * restarter;
+  FilterMonitor * filter;
 };
 
 #endif

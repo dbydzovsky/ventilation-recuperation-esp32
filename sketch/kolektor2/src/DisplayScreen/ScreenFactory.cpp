@@ -8,6 +8,8 @@
 #include "DisableScreen.cpp"
 #include "BoostScreen.cpp"
 #include "ManualScreen.cpp"
+#include "Co2HistoryScreen.cpp"
+#include "TempHistoryScreen.cpp"
 
 ScreenFactory::ScreenFactory() {
 	this->logoScreen = new LogoScreen();
@@ -17,4 +19,6 @@ ScreenFactory::ScreenFactory() {
     this->disableScreen = new DisableScreen();
     this->boostScreen = new BoostScreen();
     this->trialScreen = new ManualScreen();
+    this->co2History = new Co2HistoryScreen();
+    this->tempHistory = new TempHistoryScreen();
 }

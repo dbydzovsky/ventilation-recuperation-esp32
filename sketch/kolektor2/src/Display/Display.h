@@ -42,6 +42,7 @@ class Display {
 
     unsigned long last_interaction = millis();
     unsigned long last_tick;
+    unsigned long last_sync = millis();
     static void staticTickerCallbackLed(Display *pThis);
     void tick();
     bool initialized = false;

@@ -26,6 +26,11 @@ class Screen {
         virtual bool hasActiveButton() = 0;
 };
 
+class HistoryScreen: public Screen {
+  public:
+    virtual void updateHistory(ScreenProps * props) = 0;
+};
+
 class ScreenFactory {
   public:
     ScreenFactory();
@@ -37,6 +42,8 @@ class ScreenFactory {
     
     Screen * disableScreen;
     Screen * boostScreen;
+    HistoryScreen * co2History;
+    HistoryScreen * tempHistory;
     // Screen * ManualControlScreen;
 };
 

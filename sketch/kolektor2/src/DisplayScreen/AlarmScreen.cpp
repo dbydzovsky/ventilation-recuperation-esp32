@@ -35,9 +35,13 @@ static const unsigned char PROGMEM warning_icon16x16[] =
 
 class AlarmScreen: public Screen {
   private:
-    const char text[12] = "";
+    const char* line1 = "";
+    const char* line2 = "";
+    const char* line3 = "";
+    byte index = 0;
   public:
     void setup(ScreenProps * deps){
+      this->index = 0;
 	    if (IS_DEBUG) Serial.println("Alarm screen setup");
     }
     bool isFinished(ScreenProps * deps) {
@@ -46,20 +50,36 @@ class AlarmScreen: public Screen {
     void finish() {
       
     };
+    void setText(const char* line1,const char* line2,const char* line3) {
+      this->line1 = line1;
+      this->line2 = line2;
+      this->line3 = line3;
+    };
+    void printCenter(ScreenProps * props, const char * line) {
+      int size = (sizeof(line)) / (sizeof(line[0]));  
+      int startSpaces = (9-size) / 2;
+      for (int i = 0; i < startSpaces; i++) {
+        props->d->print(" ");
+      }
+      props->d->print(line);
+    };
     void tick(ScreenProps * props){ 
+      this->index += 1;
       props->d->clearDisplay();
-      props->d->drawBitmap(0, 0, warning_icon16x16, 16, 16, WHITE);
-      props->d->drawBitmap(48, 0, warning_icon16x16, 16, 16, WHITE);
+      if (this->index % 2 == 1) {
+        props->d->drawBitmap(0, 0, warning_icon16x16, 16, 16, WHITE);
+        props->d->drawBitmap(48, 0, warning_icon16x16, 16, 16, WHITE);
+      }
       props->d->setTextSize(1);
       props->d->setTextColor(WHITE);
       props->d->setCursor(18,2);
       props->d->print("ALARM");
       props->d->setCursor(0,20);
-      props->d->print(" Nevalidni ");
+      this->printCenter(props, this->line1);
       props->d->setCursor(0,30);
-      props->d->print("  Hodnota  ");
+      this->printCenter(props, this->line2);
       props->d->setCursor(0,40);
-      props->d->print("   cidla   ");
+      this->printCenter(props, this->line3);
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

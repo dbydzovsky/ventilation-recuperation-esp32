@@ -9,6 +9,7 @@
 #include "../Dependencies/Dependencies.h"
 #include "../Orchestrator/Orchestrator.h"
 #include "AlarmScreen.cpp"
+
 static const unsigned char PROGMEM heart_icon16x16[] =
 {                
 	0b00000000, 0b00000000, //                 
@@ -27,22 +28,6 @@ static const unsigned char PROGMEM heart_icon16x16[] =
 	0b00000111, 0b11000000, //      #####      
 	0b00000011, 0b10000000, //       ###    
 	0b00000001, 0b00000000, //    	  #
-};
-
-static const unsigned char PROGMEM nocon_icon16x12[] =
-{
-	0b00000111, 0b11110000, //      #######    
-	0b00011111, 0b11111100, //    ###########  
-	0b00111110, 0b00111110, //   #####   ##### 
-	0b00111000, 0b01111110, //   ###    ###### 
-	0b01110000, 0b11111111, //  ###    ########
-	0b01110001, 0b11110111, //  ###   ##### ###
-	0b01110011, 0b11000111, //  ###  ####   ###
-	0b01110111, 0b10000111, //  ### ####    ###
-	0b00111111, 0b00001110, //   ######    ### 
-	0b00111110, 0b00011110, //   #####    #### 
-	0b00011111, 0b11111100, //    ###########  
-	0b00000111, 0b11110000, //      #######    
 };
 
 static const unsigned char PROGMEM temperature_icon16x16[] =
@@ -65,6 +50,20 @@ static const unsigned char PROGMEM temperature_icon16x16[] =
 	0b00000111, 0b11100000, //      ######     
 };
 
+static const unsigned char PROGMEM nocon_icon12x10[] =
+{
+	0b00001111, 0b10000000, //      #####    
+	0b00111000, 0b11100000, //    ###   ###  
+	0b01110001, 0b11110000, //   ###   ##### 
+	0b01100011, 0b11110000, //  ###   #######
+	0b01100111, 0b00110000, //  ###  ###  ###
+	0b01101110, 0b00110000, //  ### ###   ###
+	0b01111100, 0b01110000, //   #####   ### 
+	0b00111000, 0b11100000, //    ###   ###  
+	0b00001111, 0b10000000, //      ##### 
+	0b00000000, 0b00000000, //
+};
+
 static const unsigned char PROGMEM wifi2_icon12x10[] = {
 	0b00011111, 0b10000000, //    ######       
 	0b00111111, 0b11000000, //   ########      
@@ -78,7 +77,7 @@ static const unsigned char PROGMEM wifi2_icon12x10[] = {
 	0b00000000, 0b00000000, //
 };
 
-#define MAX_INDEX 10
+#define MAX_INDEX 15
 class MainScreen: public Screen {
   private:
     int index = 0;
@@ -101,15 +100,43 @@ class MainScreen: public Screen {
     }
     void tick(ScreenProps * props){
       this->index = (this->index +1) % MAX_INDEX;
+      bool isProblem = true;
       if (this->index > 5) {
-        this->alarmScreen->tick(props);
-        return;
+        FilterReport ventReport;
+        props->deps->filter->report(FAN_TYPE_VENTILATOR, &ventReport);
+        FilterReport recReport;
+        props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
+        if (props->deps->recuperationChecker->shouldStop()) {
+          this->alarmScreen->setText("", "Chyba", "rekuperace");
+        } else if (props->deps->ventilatorChecker->shouldStop()) {
+          this->alarmScreen->setText("", "Chyba", "ventilatoru");
+        } else if (!props->deps->outsideTemp->isInitialized()) {
+          this->alarmScreen->setText("Venkovni", "cidlo", "teploty");
+        } else if (!props->deps->outsideHum->isInitialized()) {
+          this->alarmScreen->setText("Venkovni", "cidlo", "vlhkosti");
+        } else if (!props->deps->co2Inside->isInitialized()) {
+          this->alarmScreen->setText("", "Cidlo", "CO2");
+        } else if (!props->deps->insideTemp->isInitialized()) {
+          this->alarmScreen->setText("Vnitrni", "cidlo", "teploty");
+        } else if (!props->deps->insideHum->isInitialized()) {
+          this->alarmScreen->setText("Vnitrni", "cidlo", "vlhkosti");
+        } else if (recReport.needCleaning) {
+          this->alarmScreen->setText("Vycistit", "FILTR", "rekuperace");
+        } else if (ventReport.needCleaning) {
+          this->alarmScreen->setText("Vycistit", "FILTR", "ventilace");
+        } else {
+          isProblem = false;
+        }
+        if (isProblem) {
+          this->alarmScreen->tick(props);
+          return;
+        }
       }
       props->d->clearDisplay();
       if (WiFi.status() == WL_CONNECTED) {
         props->d->drawBitmap(52, 0, wifi2_icon12x10, 12, 10, WHITE);
       } else {  
-        props->d->drawBitmap(52, 0, nocon_icon16x12, 12, 10, WHITE);
+        props->d->drawBitmap(52, 0, nocon_icon12x10, 12, 10, WHITE);
       }
 
       props->d->setTextSize(1);

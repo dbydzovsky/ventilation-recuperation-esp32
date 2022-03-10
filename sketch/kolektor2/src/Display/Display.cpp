@@ -50,16 +50,20 @@ Screen* Display::getDefaultScreen() {
   return this->screenFactory->mainScreen;
 }
 
-#define SCREEN_COUNT 3
+#define SCREEN_COUNT 5
 
 Screen* Display::getActualScreen() {
   Screen * newOne;
   if (this->screenIndex == 0) {
     newOne = this->getDefaultScreen();
   } else if (this->screenIndex == 1) {
-    newOne = this->screenFactory->disableScreen;
+    newOne = this->screenFactory->co2History;
   } else if (this->screenIndex == 2) {
+    newOne = this->screenFactory->tempHistory;
+  } else if (this->screenIndex == 3) {
     newOne = this->screenFactory->boostScreen;
+  } else if (this->screenIndex == 4) {
+	newOne = this->screenFactory->disableScreen;
   }
   return newOne;
 }
@@ -126,6 +130,7 @@ void Display::tick() {
 	if (millis() - this->last_tick < this->actual->getDelayMs(this->screenProps)) {
 	  return;
 	}
+	this->last_tick = millis();
 	this->actual->tick(this->screenProps);
   }
 }
@@ -142,6 +147,11 @@ void Display::act(){
 	  this->d->dim(true);
   } else {
 	  this->d->dim(false);
+  }
+  if (millis() - this->last_sync > 60000) {
+	this->last_sync = millis();
+	this->screenFactory->co2History->updateHistory(this->screenProps);
+	this->screenFactory->tempHistory->updateHistory(this->screenProps);
   }
   if (this->isButtonPress) {
 	if (millis() - this->last_tick > this->screenFactory->pressButtonScreen->getDelayMs(this->screenProps)) {

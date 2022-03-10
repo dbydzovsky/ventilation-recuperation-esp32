@@ -31,14 +31,14 @@ static const unsigned char PROGMEM powerbutton_icon16x16[] =
 	0b00000011, 0b11100000, //       #####     
 	0b00000000, 0b00000000, //                 
 };
-#define DISABLED_SCREEN_INTERVAL_VALIDITY 60000 // 1 minute
+#define DISABLED_SCREEN_INTERVAL_VALIDITY 5000 // 5 seconds
 
 class DisableScreen: public Screen {
   private:
 	unsigned long opened_since = millis(); 
   public:
     void setup(ScreenProps * deps){
-	  this->opened_since = millis();
+	    this->opened_since = millis();
     }
     bool isFinished(ScreenProps * deps) {
       return millis() - this->opened_since > DISABLED_SCREEN_INTERVAL_VALIDITY;

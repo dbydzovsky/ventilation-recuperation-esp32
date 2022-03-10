@@ -31,7 +31,7 @@ static const unsigned char PROGMEM dring_icon16x16[] =
 	0b00111111, 0b11111100, 
 	0b00000000, 0b00000000, 
 };
-#define BOOST_SCREEN_INTERVAL_VALIDITY 60000 // 1 minute
+#define BOOST_SCREEN_INTERVAL_VALIDITY 5000
 
 class BoostScreen: public Screen {
   private:
