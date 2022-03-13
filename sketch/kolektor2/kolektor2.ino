@@ -143,6 +143,7 @@ void setup()
   configuration->setup();
   display->wifiConnecting();
   httpServer->setup();
+  sensors->setup();
   filter->setup();
   rpmVentilatorChecker->setup();
   rpmRecuperationChecker->setup();

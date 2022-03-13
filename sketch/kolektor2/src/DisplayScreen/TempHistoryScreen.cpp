@@ -11,7 +11,7 @@
 #include "../Constants/Constants.h"
 #include "../Weather/Weather.h"
 #include "../Settings/Settings.h"
-#define TEMP_SCREEN_INTERVAL_VALIDITY 60000
+
 
 class TempHistoryScreen: public HistoryScreen {
   private:
@@ -25,7 +25,7 @@ class TempHistoryScreen: public HistoryScreen {
 	    this->opened_since = millis();
     }
     bool isFinished(ScreenProps * deps) {
-      return millis() - this->opened_since > TEMP_SCREEN_INTERVAL_VALIDITY;
+      return millis() - this->opened_since > KEEP_SCREEN_LONG;
     }
     void finish() {
       
@@ -56,10 +56,9 @@ class TempHistoryScreen: public HistoryScreen {
       props->d->setCursor(0,0);
       int minimum = min(this->_min, this->_max);
       int maximum = max(this->_min, this->_max);
-      props->d->print(minimum / 10);
-      props->d->setCursor(24,0);
-      props->d->print("..");
-      props->d->print(maximum / 10);
+      props->d->print("Teplota");
+      props->d->setCursor(50, 0);
+      props->d->print("1h");
       props->d->drawLine(0, 10, 0, 47, WHITE);
       props->d->drawLine(0, 47, 64, 47, WHITE);
       for (int i = 0; i < 63; i++) {
@@ -73,15 +72,11 @@ class TempHistoryScreen: public HistoryScreen {
           props->d->drawLine(i, value, i, nextValue, WHITE);
         }  
       }
-      int lastValue = this->values[(this->index - 1) % 63];
-      int fromMax = this->_max - lastValue;
-      int fromMin = lastValue - this->_min;
-      if (fromMax > fromMin) {
-        props->d->setCursor(38, 10); //x,y
-      } else {
-        props->d->setCursor(38, 38); //x,y
-      }
-      props->d->print("temp");
+      props->d->setTextColor(WHITE, BLACK);
+      props->d->setCursor(2, 10); //x,y
+      props->d->print(maximum/10);
+      props->d->setCursor(2, 38); //x,y
+      props->d->print(minimum/10);
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

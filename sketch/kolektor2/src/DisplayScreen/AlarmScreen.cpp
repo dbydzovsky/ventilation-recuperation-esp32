@@ -56,11 +56,6 @@ class AlarmScreen: public Screen {
       this->line3 = line3;
     };
     void printCenter(ScreenProps * props, const char * line) {
-      int size = (sizeof(line)) / (sizeof(line[0]));  
-      int startSpaces = (9-size) / 2;
-      for (int i = 0; i < startSpaces; i++) {
-        props->d->print(" ");
-      }
       props->d->print(line);
     };
     void tick(ScreenProps * props){ 

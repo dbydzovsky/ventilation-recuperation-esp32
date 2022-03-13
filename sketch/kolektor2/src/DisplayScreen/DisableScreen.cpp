@@ -31,7 +31,6 @@ static const unsigned char PROGMEM powerbutton_icon16x16[] =
 	0b00000011, 0b11100000, //       #####     
 	0b00000000, 0b00000000, //                 
 };
-#define DISABLED_SCREEN_INTERVAL_VALIDITY 5000 // 5 seconds
 
 class DisableScreen: public Screen {
   private:
@@ -41,18 +40,21 @@ class DisableScreen: public Screen {
 	    this->opened_since = millis();
     }
     bool isFinished(ScreenProps * deps) {
-      return millis() - this->opened_since > DISABLED_SCREEN_INTERVAL_VALIDITY;
+      return millis() - this->opened_since > KEEP_SCREEN_SHORT;
     }
     void finish() {
       
     };
     void tick(ScreenProps * props){ 
-	  props->d->clearDisplay();
-      props->d->drawBitmap(24, 32, powerbutton_icon16x16, 16, 16, WHITE);
-	  props->d->setTextSize(2);
+	    props->d->clearDisplay();
+      
+      props->d->setTextSize(2);
       props->d->setTextColor(WHITE);
-	  props->d->setCursor(16,10);
-	  props->d->print("OFF");
+      props->d->setCursor(12,0);
+      props->d->print("TEMP");
+      props->d->setCursor(16,16);
+      props->d->print("OFF");
+      props->d->drawBitmap(24, 32, powerbutton_icon16x16, 16, 16, WHITE);
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

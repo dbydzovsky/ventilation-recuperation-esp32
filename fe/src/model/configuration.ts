@@ -27,6 +27,7 @@ export interface Configuration {
   summerOnRules: Rule[]
   co2Rules: Rule[]
   summerMinInsideTemp: number
+  minimumFeelsLike: number
   monitoring: Monitoring
   weatherApiKey: string
   lat: string

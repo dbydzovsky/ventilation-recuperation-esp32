@@ -10,7 +10,9 @@
 #include "ManualScreen.cpp"
 #include "Co2HistoryScreen.cpp"
 #include "TempHistoryScreen.cpp"
-
+#include "InHouseScreen.cpp"
+#include "DebugScreen.cpp"
+#include "OutHouseScreen.cpp"
 ScreenFactory::ScreenFactory() {
 	this->logoScreen = new LogoScreen();
 	this->mainScreen = new MainScreen();
@@ -21,4 +23,7 @@ ScreenFactory::ScreenFactory() {
     this->trialScreen = new ManualScreen();
     this->co2History = new Co2HistoryScreen();
     this->tempHistory = new TempHistoryScreen();
+    this->inHouseScreen = new InHouseScreen();
+    this->debugScreen = new DebugScreen();
+    this->outHouseScreen = new OutHouseScreen();
 }

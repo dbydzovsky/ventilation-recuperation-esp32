@@ -13,6 +13,9 @@ class OutsideSensor {
     OutsideSensor(uFire_SHT20 * sht20) {
       this->_sht20 = sht20;
     }
+    void setup(){
+
+    }
     float readHum() {
       float result = this->_sht20->humidity();
       if (result > 100 || result < 0) {
@@ -42,7 +45,9 @@ class Co2Sensor: public Source {
     Co2Sensor(MHZ19_uart * mhz19) {
       this->_mhz19 = mhz19;
     }
-    
+    void setup(){
+
+    }
     float getValue() {
       int ppm = this->_mhz19->getCO2PPM();
       if (ppm < 400 || ppm > 5000) {
@@ -66,6 +71,8 @@ class TempInsideSensor: public Source {
   public:
     TempInsideSensor(Adafruit_SHT31 * sht31) {
       this->sht31 = sht31;
+    }
+    void setup() {
       sht31->begin(0x45);
       sht31->heater(false);
     }
@@ -94,6 +101,9 @@ class HumInsideSensor: public Source {
     HumInsideSensor(Adafruit_SHT31 * sht31) {
       this->sht31 = sht31;
     }
+    void setup(){
+
+    }
     float getValue() {
       float h = this->sht31->readHumidity();
       if (isnan(h)) {
@@ -118,6 +128,9 @@ class TempOutsideSensor: public Source {
     TempOutsideSensor(OutsideSensor * sensor) {
       this->_sensor = sensor;
     }
+    void setup() {
+
+    }
     float getValue() {
       delay(10);
       return this->_sensor->readTemp();
@@ -137,6 +150,9 @@ class HumOutsideSensor: public Source {
     HumOutsideSensor(OutsideSensor * sensor) {
       this->_sensor = sensor;
     }
+    void setup() {
+
+    }
     float getValue() {
       delay(10);
       return this->_sensor->readHum();
@@ -155,6 +171,9 @@ class TestingSensor: public Source {
   public:
     TestingSensor(float initial) {
       this->_value = initial;
+    }
+    void setup() {
+      
     }
     float getValue() {
       return this->_value;
@@ -185,4 +204,12 @@ Sensors::Sensors(MHZ19_uart * mhz19) {
   // OutsideSensor * outside = new OutsideSensor(sht20);
   // this->outsideHum = new HumOutsideSensor(outside);
   // this->outsideTemp = new TempOutsideSensor(outside);
+}
+
+void Sensors::setup() {
+  this->insideHum->setup();
+  this->insideTemp->setup();
+  this->outsideTemp->setup();
+  this->outsideHum->setup();
+  this->co2Inside->setup();
 }

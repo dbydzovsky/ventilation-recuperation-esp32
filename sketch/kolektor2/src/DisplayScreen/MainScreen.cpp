@@ -107,23 +107,23 @@ class MainScreen: public Screen {
         FilterReport recReport;
         props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
         if (props->deps->recuperationChecker->shouldStop()) {
-          this->alarmScreen->setText("", "Chyba", "rekuperace");
+          this->alarmScreen->setText("", "   Chyba   ", "rekuperace");
         } else if (props->deps->ventilatorChecker->shouldStop()) {
-          this->alarmScreen->setText("", "Chyba", "ventilatoru");
+          this->alarmScreen->setText("", "   Chyba   ", "ventilatoru");
         } else if (!props->deps->outsideTemp->isInitialized()) {
-          this->alarmScreen->setText("Venkovni", "cidlo", "teploty");
+          this->alarmScreen->setText("  Venkovni ", "   cidlo   ", "  teploty  ");
         } else if (!props->deps->outsideHum->isInitialized()) {
-          this->alarmScreen->setText("Venkovni", "cidlo", "vlhkosti");
+          this->alarmScreen->setText("  Venkovni ", "   cidlo   ", "  vlhkosti ");
         } else if (!props->deps->co2Inside->isInitialized()) {
-          this->alarmScreen->setText("", "Cidlo", "CO2");
+          this->alarmScreen->setText("", "   Cidlo   ", "    CO2");
         } else if (!props->deps->insideTemp->isInitialized()) {
-          this->alarmScreen->setText("Vnitrni", "cidlo", "teploty");
+          this->alarmScreen->setText("  Vnitrni", "   cidlo   ", "  teploty  ");
         } else if (!props->deps->insideHum->isInitialized()) {
-          this->alarmScreen->setText("Vnitrni", "cidlo", "vlhkosti");
+          this->alarmScreen->setText("  Vnitrni", "   cidlo   ", "  vlhkosti ");
         } else if (recReport.needCleaning) {
-          this->alarmScreen->setText("Vycistit", "FILTR", "rekuperace");
+          this->alarmScreen->setText("  Vycistit ", "   FILTR   ", "rekuperace");
         } else if (ventReport.needCleaning) {
-          this->alarmScreen->setText("Vycistit", "FILTR", "ventilace");
+          this->alarmScreen->setText("  Vycistit ", "   FILTR   ", " ventilace");
         } else {
           isProblem = false;
         }
@@ -165,15 +165,15 @@ class MainScreen: public Screen {
         props->d->print(timeBuffer);
       }
       props->d->setTextSize(2);
-      props->d->drawBitmap(0,12, temperature_icon16x16, 16, 12, WHITE);
-      props->d->setCursor(18,12);
+      props->d->drawBitmap(0,12, temperature_icon16x16, 16, 16, WHITE);
+      props->d->setCursor(16,12);
       if (props->deps->outsideTemp->isInitialized()) {  
         props->d->print((int) props->deps->outsideTemp->getAverage());
       } else {
         props->d->print("..");
       }
       props->d->drawBitmap(0,30, heart_icon16x16, 16,16, WHITE);
-      props->d->setCursor(16, 30);
+      props->d->setCursor(16, 32);
       // this->d->drawLine(18, 46, 62, 46, WHITE); // x, height, width
       if (props->deps->co2Inside->isInitialized()) {
         props->d->print((int) props->deps->co2Inside->getAverage());

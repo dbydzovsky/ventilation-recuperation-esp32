@@ -44,20 +44,20 @@ class PressButtonScreen: public Screen {
       this->finished = true;
     };
     void tick(ScreenProps * props){
+      int height = props->d->height();
+      int width = props->d->width();
+      if (this->index > height) {
+        this->finished = true;
+      }
       if (this->finished) {
         props->d->clearDisplay();
         props->d->drawBitmap(24, 16, check_icon16x16, 16, 16, WHITE);
         props->d->display();
         return;
       }
-      int height = props->d->height();
-      int width = props->d->width();
       props->d->clearDisplay();
       props->d->drawCircle(width/2, height/2, this->index, WHITE);
       props->d->display();
-      if (this->index > height) {
-        this->finished = true;
-      }
       this->index += 2;
     }
     bool canBeDimmed(ScreenProps * deps) {

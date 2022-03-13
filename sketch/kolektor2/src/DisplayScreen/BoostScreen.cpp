@@ -31,7 +31,6 @@ static const unsigned char PROGMEM dring_icon16x16[] =
 	0b00111111, 0b11111100, 
 	0b00000000, 0b00000000, 
 };
-#define BOOST_SCREEN_INTERVAL_VALIDITY 5000
 
 class BoostScreen: public Screen {
   private:
@@ -41,7 +40,7 @@ class BoostScreen: public Screen {
 	    this->opened_since = millis();
     }
     bool isFinished(ScreenProps * deps) {
-      return millis() - this->opened_since > BOOST_SCREEN_INTERVAL_VALIDITY;
+      return millis() - this->opened_since > KEEP_SCREEN_SHORT;
     }
     void finish() {
       

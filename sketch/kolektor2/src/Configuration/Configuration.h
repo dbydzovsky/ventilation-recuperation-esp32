@@ -37,6 +37,7 @@ struct ConfigurationData {
   byte mode = INACTIVE_MODE;
   float winterMaxInsideTemp = 0;
   float summerMinInsideTemp = 0;
+  float minimumFeelsLike = 50;
   Rules *winterOnRules;
   Rules *summerOnRules;
   Rules *co2Rules; 

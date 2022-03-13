@@ -10,6 +10,8 @@
 #define RPM_SAMPLING_DURATION 1000
 #define updatingSensorStatsInterval 60000
 
+#define KEEP_SCREEN_SHORT 5000
+#define KEEP_SCREEN_LONG 600000
 
 #define averageValuesCount 7
 

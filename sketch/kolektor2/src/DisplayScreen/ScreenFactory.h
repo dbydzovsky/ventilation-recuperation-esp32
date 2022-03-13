@@ -42,6 +42,9 @@ class ScreenFactory {
     
     Screen * disableScreen;
     Screen * boostScreen;
+    Screen * inHouseScreen;
+    Screen * outHouseScreen;
+    Screen * debugScreen;
     HistoryScreen * co2History;
     HistoryScreen * tempHistory;
     // Screen * ManualControlScreen;

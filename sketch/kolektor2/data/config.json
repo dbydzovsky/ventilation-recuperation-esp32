@@ -2,6 +2,7 @@
   "mode": 3,
   "winterMaxInsideTemp": 29.0,
   "summerMinInsideTemp": 19.0,
+  "minimumFeelsLike": 50.0,
   "winterOnRules": [
     {
       "tv": 35,

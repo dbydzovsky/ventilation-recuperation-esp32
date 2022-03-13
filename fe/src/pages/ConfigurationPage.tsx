@@ -122,6 +122,7 @@ export function ConfigurationPage() {
         mode: 0,
         winterMaxInsideTemp: 24.0,
         summerMinInsideTemp: 18.0,
+        minimumFeelsLike: 35,
         winterOnRules: [],
         summerOnRules: [],
         co2Rules: [],
@@ -367,6 +368,7 @@ export function ConfigurationPage() {
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><WbSunnyIcon/> Nastavení chladícího programu</h2>
+                    <p>Větrání se vypne, pokud hrozí dle výpočtu rosného bodu vznik kondenzace.</p>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper className={classes.properties}>
@@ -389,6 +391,28 @@ export function ConfigurationPage() {
 
                     </Paper>
                 </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Paper className={classes.properties}>
+                        <InputLabel className={classes.label}>
+                            <WbSunnyIcon/>
+                            Zapnout chlazení pokud je pocitová teplota (podle předpovědi) větší než:
+                        </InputLabel>
+                        <Input
+                            error={maxInsideTemperatureInvalid}
+                            id="standard-adornment-minimumFeelsLike"
+                            type={"number"}
+                            value={values.minimumFeelsLike}
+                            className={classes.input}
+                            onChange={handleChange('minimumFeelsLike', temperatureValidator, (val: string) => {
+                                console.log(val);
+                                return Math.round(Number(val) * 100) / 100
+                            })}
+                            startAdornment={<InputAdornment position="start">°C</InputAdornment>}
+                        />
+
+                    </Paper>
+                </Grid>
+
                 <Grid item xs={12} sm={12} md={12}>
                     <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší teploty po nejmenší):"}
                                     adornment={"°C"}

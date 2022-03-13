@@ -26,6 +26,7 @@ bool WeatherForecast::sync(WeatherDeps * deps){
   HTTPClient * httpClientForecast = deps->httpClient;
   if (IS_DEBUG) Serial.println(url);
   httpClientForecast->begin(url);
+  this->last_retrival = millis();
   this->lastStatusCode = httpClientForecast->GET();
   if (IS_DEBUG) Serial.println(this->last_success);
   if (this->lastStatusCode >= 200 && this->lastStatusCode < 300) {
@@ -41,6 +42,7 @@ bool WeatherForecast::sync(WeatherDeps * deps){
     this->feelsLikeToday = doc["daily"][0]["feels_like"]["day"].as<float>();
     if (IS_DEBUG) Serial.print("Feels like: ");
     if (IS_DEBUG) Serial.println(this->feelsLikeToday);
+    this->last_success = millis();
     httpClientForecast->end();
     deps->httpsLock->readUnlock();
     return true;
@@ -51,7 +53,12 @@ bool WeatherForecast::sync(WeatherDeps * deps){
   }
 }
 
-
+float WeatherForecast::howDoesItFeelLike(){ 
+  return this->feelsLikeToday;
+}
+short WeatherForecast::getLastStatusCode() {
+  return this->lastStatusCode;
+}
 void WeatherForecast::setSyncInterval(int interval) {
   this->syncForecastInterval = interval;
 }
@@ -67,8 +74,19 @@ void WeatherForecast::act(WeatherDeps * deps) {
     if (IS_DEBUG) Serial.println("It is time to sync forecast");
     this->sync(deps);
   }
+  if (this->hasValidForecast()) {
+    if (this->feelsLikeToday > deps->data->minimumFeelsLike) {
+      this->shouldCool = true;
+    }
+    return;
+  } else {
+    unsigned long since_last_success = millis() - this->last_success;
+    if (since_last_success > this->syncForecastTolerateLastSuccessFor) {
+      this->last_success = millis() - since_last_success;
+    }
+  }
+  this->shouldCool = false;
 }
 bool WeatherForecast::shouldCoolInsides(){
-  // todo
-  return true;
+  return this->shouldCool;
 }

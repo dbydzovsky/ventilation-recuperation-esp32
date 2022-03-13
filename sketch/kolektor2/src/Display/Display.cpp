@@ -14,6 +14,7 @@
 // https://diyusthad.com/image2cpp
 
 
+
 bool Display::shouldBeDimmed() {
   return this->actual->canBeDimmed(this->screenProps) && millis() - this->last_interaction > KEEP_DISPLAY_BRIGHT_FOR;
 }
@@ -50,22 +51,26 @@ Screen* Display::getDefaultScreen() {
   return this->screenFactory->mainScreen;
 }
 
-#define SCREEN_COUNT 5
+#define SCREEN_COUNT 8
 
 Screen* Display::getActualScreen() {
-  Screen * newOne;
-  if (this->screenIndex == 0) {
-    newOne = this->getDefaultScreen();
-  } else if (this->screenIndex == 1) {
-    newOne = this->screenFactory->co2History;
+  if (this->screenIndex == 1) {
+    return this->screenFactory->disableScreen;
   } else if (this->screenIndex == 2) {
-    newOne = this->screenFactory->tempHistory;
+    return this->screenFactory->boostScreen;
   } else if (this->screenIndex == 3) {
-    newOne = this->screenFactory->boostScreen;
+    return this->screenFactory->co2History;
   } else if (this->screenIndex == 4) {
-	newOne = this->screenFactory->disableScreen;
+	return this->screenFactory->tempHistory;
+  } else if (this->screenIndex == 5) {
+	return this->screenFactory->inHouseScreen;
+  } else if (this->screenIndex == 6) {
+	return this->screenFactory->outHouseScreen;
+  } else if (this->screenIndex == 7) {
+	return this->screenFactory->debugScreen;
+  } else {
+	return this->getDefaultScreen();
   }
-  return newOne;
 }
 
 bool Display::handleClick(byte times) {

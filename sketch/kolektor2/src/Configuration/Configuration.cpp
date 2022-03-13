@@ -134,6 +134,10 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (out->summerMinInsideTemp < 0 || out->summerMinInsideTemp > 1000) {
     return false;
   }
+  out->minimumFeelsLike = c["minimumFeelsLike"].as<float>();
+  if (out->minimumFeelsLike < 0 || out->minimumFeelsLike > 1000) {
+    return false;
+  }
   if (IS_DEBUG) Serial.println("Parsing monitoring");
   MonitoringData * monitoring = new MonitoringData();
   out->monitoring = monitoring;

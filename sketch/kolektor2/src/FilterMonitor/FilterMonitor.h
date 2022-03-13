@@ -20,8 +20,6 @@ struct FilterData {
   long minutes = 0;
 };
 
-// todo filter required cleaning signalization !!
-
 class FilterMonitor {
   public:
     FilterMonitor(Ventilator * ventilator, Recuperation *recuperation);

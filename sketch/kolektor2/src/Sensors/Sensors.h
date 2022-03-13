@@ -11,6 +11,7 @@
 
 class Source {
   public:
+    virtual void setup() = 0;
     virtual float getValue() = 0;
     virtual void setValue(float newOne) = 0;
     virtual int getToleration() = 0;
@@ -19,6 +20,7 @@ class Source {
 class Sensors {
   public:
     Sensors(MHZ19_uart * mhz19);
+    void setup();
     Source * outsideTemp;
     Source * outsideHum;
     Source * insideTemp;

@@ -28,7 +28,10 @@ class WeatherForecast {
     bool shouldCoolInsides();
     void setSyncInterval(int interval);
     void setTolerateLastSuccess(int interval);
+    float howDoesItFeelLike();
+    short getLastStatusCode();
   private:
+    bool shouldCool = false;
     int syncForecastTolerateLastSuccessFor = 172800000;  // 2 days
     int syncForecastInterval = 43200000; // 12 hours
     bool sync(WeatherDeps * deps);
