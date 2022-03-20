@@ -51,6 +51,7 @@ export interface CurrentState {
   recuperation?: number,
   recuperationRPM: number,
   insideTemp?: Sensor,
+  insideHum?: Sensor,
   outsideTemp?: Sensor,
   outsideHum?: Sensor,
   co2Inside?: Sensor,

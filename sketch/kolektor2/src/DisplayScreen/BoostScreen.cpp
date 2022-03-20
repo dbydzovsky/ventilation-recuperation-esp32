@@ -73,7 +73,7 @@ class BoostScreen: public Screen {
       output.ventilatorPower = settings->ventilatorPower;    
       output.recuperationPower = settings->recuperationPower;
       output.recuperationMode = settings->recuperationMode;
-      trialProgramme->setPower(output, settings->tempDisableDuration);
+      trialProgramme->setPower(output, settings->durationMillis);
       props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
       return true;
     }

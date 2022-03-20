@@ -141,29 +141,38 @@ class MainScreen: public Screen {
 
       props->d->setTextSize(1);
       props->d->setTextColor(WHITE);
-      
-      if (props->deps->timeProvider->isTimeSet()) {
-        char hourBuffer[3];
-        if (hour() < 10) {
-          sprintf(hourBuffer, "0%d", hour());
+      if (this->index > 7 || !props->deps->forecast->hasValidForecast()) {
+        if (props->deps->timeProvider->isTimeSet()) {
+          char hourBuffer[3];
+          if (hour() < 10) {
+            sprintf(hourBuffer, "0%d", hour());
+          } else {
+            sprintf(hourBuffer, "%d", hour());
+          }
+          char minuteBuffer[3];
+          if (minute() < 10) {
+            sprintf(minuteBuffer, "0%d", minute());
+          } else {
+            sprintf(minuteBuffer, "%d", minute());
+          }
+          char timeBuffer[6];
+          if (this->index % 2 == 1) {
+            sprintf(timeBuffer, "%s:%s", hourBuffer, minuteBuffer);
+          } else {
+            sprintf(timeBuffer, "%s %s", hourBuffer, minuteBuffer);
+          }
+          props->d->setCursor(1,0);
+          props->d->print(timeBuffer);
         } else {
-          sprintf(hourBuffer, "%d", hour());
+          props->d->setCursor(1,0);
+          props->d->print("notime");
         }
-        char minuteBuffer[3];
-        if (minute() < 10) {
-          sprintf(minuteBuffer, "0%d", minute());
-        } else {
-          sprintf(minuteBuffer, "%d", minute());
-        }
-        char timeBuffer[6];
-        if (this->index % 2 == 1) {
-          sprintf(timeBuffer, "%s:%s", hourBuffer, minuteBuffer);
-        } else {
-          sprintf(timeBuffer, "%s %s", hourBuffer, minuteBuffer);
-        }
+      } else {
         props->d->setCursor(1,0);
-        props->d->print(timeBuffer);
+        props->d->print((int) props->deps->forecast->howDoesItFeelLike());
+        props->d->print(" C");
       }
+      
       props->d->setTextSize(2);
       props->d->drawBitmap(0,12, temperature_icon16x16, 16, 16, WHITE);
       props->d->setCursor(16,12);
@@ -198,15 +207,12 @@ class MainScreen: public Screen {
       return 1000;
     }
     bool handleClick(ScreenProps * deps, byte times) {
-      // todo
       return true;
     }
     bool handleHold(ScreenProps * deps, int duration_ms, bool finished) {
-      // todo
       return false;
     }
     void onPressDown(ScreenProps * deps) {
-      // todo;
     }
     bool hasActiveButton() {
       return false;

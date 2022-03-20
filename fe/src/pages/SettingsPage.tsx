@@ -55,51 +55,73 @@ export function SettingsPage(props: Props) {
                       setValues={setValues}
                       description={turnOffMotorCheck}
                       type="boolean"
+                      title={"Kontrolovat otáčky Rekuperace"}
                       property={"checkRecuperationRpm"}/>
             <Property values={values}
                       setValues={setValues}
                       description={turnOffMotorCheck}
                       type="boolean"
+                      title={"Kontrolovat otáčky Ventilace"}
                       property={"checkVentilatorRpm"}/>
+            <Property values={values}
+                      setValues={setValues}
+                      description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
+                      type="boolean"
+                      title={"Schovat CO2 hodnoty"}
+                      property={"hideCo2"}/>
+            <Property values={values}
+                      setValues={setValues}
+                      description={"Neposílat do monitorovacích služeb údaje o hodnotách vnitřní teploty a vlhkosti."}
+                      type="boolean"
+                      title={"Schovat vnitřní teplotu a vlhkost"}
+                      property={"hideInternalTempHum"}/>
             <Property values={values}
                       setValues={setValues}
                       transform={Divide1000Transformation}
                       type="number"
+                      title={"Perioda odblokování ventilátorů"}
                       description={"Kolik sekund se má čekat pro další pokus roztočení motoru v případě registrace neočekávaného chování."}
                       property={"unblockingFansPeriod"}/>
             <Property values={values}
                       setValues={setValues}
                       description={maxRpm}
                       type="number"
+                      title={"Maximální otáčky Ventilace"}
                       property={"ventilatorMaxRpm"}/>
             <Property values={values}
                       description={maxRpm}
                       setValues={setValues}
                       type="number"
+                      title={"Maximální otáčky Rekuperace"}
                       property={"recuperationMaxRpm"}/>
             <Property values={values}
                       setValues={setValues}
                       transform={Divide1000Transformation}
                       description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4 sekundy."}
                       type="number"
+                      title={"Změna směru rekuperace"}
                       property={"recuperationWaitForDirectionChange"}/>
             <Property values={values}
                       setValues={setValues}
                       transform={Divide1000Transformation}
                       description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
                       type="number"
+                      title={"Rekuperační cyklus"}
                       property={"recuperationCycleDuration"}/>
             <Group>
                 <h2>Defaultní nastavení párty módu</h2>
                 <SingleProperty values={values} setValues={setValues}
                                 property={"recuperationPower"}
+                                title={"Výkon rekuperace"}
                                 description={"Výkon rekuperační jednotky (od 0 do 100)."}
                                 type={"number"}/><br/>
                 <SingleProperty values={values} setValues={setValues}
+                                title={"Výkon ventilace"}
                                 property={"ventilatorPower"}
                                 description={"Výkon ventilátoru (od 0 do 100)."}
                                 type={"number"}/><br/>
                 <SingleProperty values={values} setValues={setValues}
+                                title={"Doba trvání"}
                                 property={"durationMillis"}
                                 transform={Divide1000Transformation}
                                 description={"Doba trvání párty módu v sekundách, nejméně 60 vteřin."}
@@ -107,6 +129,7 @@ export function SettingsPage(props: Props) {
             </Group>
             <Property values={values}
                       setValues={setValues}
+                      title={"Deaktivovaný program"}
                       transform={Divide1000Transformation}
                       description={"Doba trvání dočasně vypnutého programu, ve vteřinách."}
                       type="number"
@@ -129,6 +152,7 @@ export function SettingsPage(props: Props) {
 
 export interface PropertyProps {
     values: Settings
+    title: string
     setValues: Dispatch<SetStateAction<Settings>>
     property: string
     description?: string
@@ -160,7 +184,7 @@ function SingleProperty(props: PropertyProps) {
     }
     return <div className={classes.item}>
         <InputLabel htmlFor={id} className={classes.label}>
-            <b>{toSentence(props.property)}</b><br/>
+            <b>{toSentence(props.title)}</b><br/>
             <p>{props.description}</p>
         </InputLabel>
         {props.type == "boolean" &&

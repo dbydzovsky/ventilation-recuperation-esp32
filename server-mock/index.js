@@ -68,6 +68,7 @@ module.exports = () => {
             "description": "xxxx",
             "heap": 207348,
             "insideTemp": {"v": 20, "avg": 20, "err": 0, "warn": 0},
+            "insideHum": {"v": 20, "avg": 20, "err": 0, "warn": 0},
             "co2Inside": {"v": 1000, "avg": 1000, "err": 0, "warn": 0},
             "outsideTemp": {"v": 20, "avg": 20, "err": 0, "warn": 0},
             "outsideHum": {"v": 5, "avg": 5, "err": 0, "warn": 0}

@@ -137,7 +137,6 @@ void setup()
   SPIFFS.begin();
   delay(2000);
   settings->setup();
-
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
   configuration->setup();
@@ -159,6 +158,12 @@ void setup()
     rpmVentilatorChecker->deactivate();
   } else {
     attachRecuperation();  
+  }
+  if (settingsData->hideCo2) {
+    monitoring->hideCo2();
+  }
+  if (settingsData->hideInternalTempHum) {
+    monitoring->hideInternalTempHum();  
   }
   rpmRecuperationChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
   rpmRecuperationChecker->setMaxRpm(settingsData->recuperationMaxRpm);

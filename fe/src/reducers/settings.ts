@@ -7,6 +7,8 @@ let settingsState: SettingsState = {
     settings: {
         checkRecuperationRpm: true,
         checkVentilatorRpm: true,
+        hideCo2: false,
+        hideInternalTempHum: false,
         unblockingFansPeriod: 0,
         ventilatorMaxRpm: 0,
         recuperationMaxRpm: 0,

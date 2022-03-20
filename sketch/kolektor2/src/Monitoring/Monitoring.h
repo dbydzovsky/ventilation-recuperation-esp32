@@ -12,9 +12,13 @@
 class Monitoring {
   public:
     Monitoring(Orchestrator* orchestrator, Dependencies * deps);
+    void hideInternalTempHum();
+    void hideCo2();
     void act();
   private:
     unsigned long last_retrival = millis();
+    bool _hideCo2 = false;
+    bool _hideInternalTempHum = false;
     void doReport();
     Dependencies * _deps;
     Orchestrator * _orchestrator;

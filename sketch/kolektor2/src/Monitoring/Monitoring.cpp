@@ -11,45 +11,65 @@ Monitoring::Monitoring(Orchestrator* orchestrator, Dependencies * deps){
   this->_orchestrator = orchestrator;
 }
 
+
+void Monitoring::hideInternalTempHum() {
+    this->_hideInternalTempHum = true;
+}
+
+
+void Monitoring::hideCo2() {
+    this->_hideCo2 = true;
+}
+
 void Monitoring::doReport() {
     if (WiFi.status() != WL_CONNECTED) {
         if (IS_DEBUG) Serial.println("Wifi is not connected to send sensor statistics");
+        return;
     }
     if (!this->_deps->httpLock->readLock()) {
         if (IS_DEBUG) Serial.println("Unable to get http read lock to send sensor stats.");
+        return;
     }
     if (!this->_deps->confLock->readLock()) {
         this->_deps->httpLock->readUnlock();
         if (IS_DEBUG) Serial.println("Unable to get conf read lock to send sensor stats.");
+        return;
     }
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<1024> doc;
     JsonObject data = doc.createNestedObject("data");
-    float outsideTemperature = this->_deps->outsideTemp->getAverage();
-    if (!isnan(outsideTemperature)) {
-        data["Teplota"][0]["value"] = outsideTemperature;
+
+    if (this->_deps->outsideTemp->isInitialized()) {
+        data["Teplota"][0]["value"] = this->_deps->outsideTemp->getAverage();
     }
-    float outsideHumidity = this->_deps->outsideHum->getAverage();
-    if (!isnan(outsideHumidity)) {
-        data["Vlhkost"][0]["value"] = outsideHumidity;
+    if (this->_deps->outsideHum->isInitialized()) {
+        data["Vlhkost"][0]["value"] = this->_deps->outsideHum->getAverage();
     }
-    float insideCo2 = this->_deps->co2Inside->getAverage();
-    if (!isnan(insideCo2)) {
-        data["CO2"][0]["value"] = insideCo2;
+    if (!this->_hideCo2) {
+        float insideCo2 = this->_deps->co2Inside->getAverage();
+        if (!isnan(insideCo2)) {
+            data["CO2"][0]["value"] = insideCo2;
+        }    
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
     data["VentilatorBlocked"][0]["value"] = this->_deps->ventilatorChecker->shouldStop();
     data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
     data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
     data["Code"][0]["value"] = this->_orchestrator->getProgrammeCode() / 10;
-    float insideTemperature = this->_deps->insideTemp->getAverage();
-    if (!isnan(insideTemperature)) {
-        data["TeplotaVnitrni"][0]["value"] = insideTemperature;
-    }
+    if (!this->_hideInternalTempHum) {
+        if (this->_deps->insideTemp->isInitialized()) {
+            data["TeplotaVnitrni"][0]["value"] = this->_deps->insideTemp->getAverage();
+        }
+        if (this->_deps->insideHum->isInitialized()) {
+            data["VlhkostVnitrni"][0]["value"] = this->_deps->insideHum->getAverage();
+        }    
+    } 
     float dewPoint = this->_deps->dewPoint->getDewPoint();
     if (!isnan(dewPoint)) {
         data["RosnyBod"][0]["value"] = dewPoint;
     }
     data["Heap"][0]["value"] = ESP.getFreeHeap();
+    data["Forecast"][0]["value"] = (int) this->_deps->forecast->howDoesItFeelLike();
+    data["ForecastStatus"][0]["value"] = this->_deps->forecast->getLastStatusCode();
     // data["Warnings"][0]["value"] = (outsideTemperatureSensor->getWarnings() + outsideHumiditySensor->getWarnings() + insideTemperatureSensor->getWarnings());
     // data["Errors"][0]["value"] = (outsideTemperatureSensor->getErrors() + outsideHumiditySensor->getErrors() + insideTemperatureSensor->getErrors());
     char requestBody[1024];

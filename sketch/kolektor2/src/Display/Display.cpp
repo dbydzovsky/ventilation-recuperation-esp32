@@ -54,14 +54,17 @@ Screen* Display::getDefaultScreen() {
 #define SCREEN_COUNT 8
 
 Screen* Display::getActualScreen() {
+  if (this->deps->factory->Trial->isValid(this->deps->conf->getData())) {
+	return this->screenFactory->trialScreen;
+  }
   if (this->screenIndex == 1) {
-    return this->screenFactory->disableScreen;
-  } else if (this->screenIndex == 2) {
-    return this->screenFactory->boostScreen;
-  } else if (this->screenIndex == 3) {
     return this->screenFactory->co2History;
+  } else if (this->screenIndex == 2) {
+    return this->screenFactory->tempHistory;
+  } else if (this->screenIndex == 3) {
+    return this->screenFactory->disableScreen;
   } else if (this->screenIndex == 4) {
-	return this->screenFactory->tempHistory;
+	return this->screenFactory->boostScreen;
   } else if (this->screenIndex == 5) {
 	return this->screenFactory->inHouseScreen;
   } else if (this->screenIndex == 6) {

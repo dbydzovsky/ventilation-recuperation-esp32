@@ -37,7 +37,7 @@ export function CurrentStatePage() {
             </Grid>
             <Grid item xs={12} md={4} lg={4} className={classes.sensor}>
                 <Paper className={classes.sensorInside}>
-                    <TempCo2SensorComp temp={currentState.insideTemp|| {}} co2={currentState.co2Inside|| {}} label={"Vnitřní čidlo"} />
+                    <TempCo2SensorComp hum={currentState.insideHum || {}} temp={currentState.insideTemp|| {}} co2={currentState.co2Inside|| {}} label={"Vnitřní čidlo"} />
                 </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={4} className={classes.sensor}>

@@ -104,9 +104,6 @@ bool Orchestrator::handleHold(int duration_ms, bool finished) {
   if (this->actual->handleHold(duration_ms, finished)) {
     return true;
   }
-  if (duration_ms > 10000) {
-    // todo restart();
-  }
   if (finished) {
     this->deps->diode->detach();
     if (duration_ms > enablementTresholdMs) {

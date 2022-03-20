@@ -32,16 +32,21 @@ bool WeatherForecast::sync(WeatherDeps * deps){
   if (this->lastStatusCode >= 200 && this->lastStatusCode < 300) {
     int contentLength = httpClientForecast->getSize();
     if (contentLength == -1) {
-      contentLength = 6000;
+      contentLength = 10000;
     }
     DynamicJsonDocument doc(contentLength);
     deserializeJson(doc, httpClientForecast->getStream());
     int offset = doc["timezone_offset"].as<int>();
-    unsigned long unixTime = doc["current"]["dt"].as<unsigned long>();
-    deps->timeProvider->updateTime(unixTime, offset);
-    this->feelsLikeToday = doc["daily"][0]["feels_like"]["day"].as<float>();
+    unsigned long currentTime = doc["current"]["dt"].as<unsigned long>();
+    unsigned long firstItemTime = doc["daily"][0]["dt"].as<unsigned long>();
+    if (currentTime < firstItemTime) {
+      this->feelsLikeTomorrow = doc["daily"][0]["feels_like"]["day"].as<float>();
+    } else {
+      this->feelsLikeTomorrow = doc["daily"][1]["feels_like"]["day"].as<float>();
+    }
+    deps->timeProvider->updateTime(currentTime, offset);
     if (IS_DEBUG) Serial.print("Feels like: ");
-    if (IS_DEBUG) Serial.println(this->feelsLikeToday);
+    if (IS_DEBUG) Serial.println(this->feelsLikeTomorrow);
     this->last_success = millis();
     httpClientForecast->end();
     deps->httpsLock->readUnlock();
@@ -54,7 +59,7 @@ bool WeatherForecast::sync(WeatherDeps * deps){
 }
 
 float WeatherForecast::howDoesItFeelLike(){ 
-  return this->feelsLikeToday;
+  return this->feelsLikeTomorrow;
 }
 short WeatherForecast::getLastStatusCode() {
   return this->lastStatusCode;
@@ -67,7 +72,7 @@ void WeatherForecast::setTolerateLastSuccess(int interval) {
 }
 
 bool WeatherForecast::hasValidForecast(){
-  return !(this->lastStatusCode != -100) && (millis() - this->last_success > this->syncForecastTolerateLastSuccessFor);
+  return this->lastStatusCode >= 200 && this->lastStatusCode < 300 && (millis() - this->last_success < this->syncForecastTolerateLastSuccessFor);
 }
 void WeatherForecast::act(WeatherDeps * deps) {
   if ((this->lastStatusCode == -100) || (millis() - this->last_retrival > this->syncForecastInterval)) {
@@ -75,7 +80,7 @@ void WeatherForecast::act(WeatherDeps * deps) {
     this->sync(deps);
   }
   if (this->hasValidForecast()) {
-    if (this->feelsLikeToday > deps->data->minimumFeelsLike) {
+    if (this->feelsLikeTomorrow > deps->data->minimumFeelsLike) {
       this->shouldCool = true;
     }
     return;

@@ -35,7 +35,7 @@ class WeatherForecast {
     int syncForecastTolerateLastSuccessFor = 172800000;  // 2 days
     int syncForecastInterval = 43200000; // 12 hours
     bool sync(WeatherDeps * deps);
-    float feelsLikeToday = 0;
+    float feelsLikeTomorrow = 0;
     short lastStatusCode = -100;
     unsigned long last_retrival;
     unsigned long last_success;

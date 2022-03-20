@@ -59,6 +59,8 @@ bool Settings::save(JsonVariant &json) {
 bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkRecuperationRpm = c["checkRecuperationRpm"].as<bool>();
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
+  out->hideCo2 = c["hideCo2"].as<bool>();
+  out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<int>();
   if (out->unblockingFansPeriod < 1000) {
     if (IS_DEBUG) Serial.println("invalid unblockingFansPeriod");

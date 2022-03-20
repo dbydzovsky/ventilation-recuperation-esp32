@@ -96,6 +96,11 @@ void HttpServer::setup() {
         insideTemp["avg"] = this->_deps->insideTemp->getAverage();
         insideTemp["err"] = this->_deps->insideTemp->getErrors();
         insideTemp["warn"] = this->_deps->insideTemp->getWarnings();
+        JsonObject insideHum = root.createNestedObject("insideHum");
+        insideHum["v"] = this->_deps->insideHum->getValue();
+        insideHum["avg"] = this->_deps->insideHum->getAverage();
+        insideHum["err"] = this->_deps->insideHum->getErrors();
+        insideHum["warn"] = this->_deps->insideHum->getWarnings();
         JsonObject co2Inside = root.createNestedObject("co2Inside");
         co2Inside["v"] = this->_deps->co2Inside->getValue();
         co2Inside["avg"] = this->_deps->co2Inside->getAverage();

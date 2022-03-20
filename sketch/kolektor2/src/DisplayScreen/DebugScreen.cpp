@@ -33,13 +33,11 @@ class DebugScreen: public Screen {
       props->d->setTextSize(2);
       props->d->setTextColor(WHITE);
       props->d->setCursor(0,0);
-      props->d->print("Debug");
+      props->d->print("v1.0");
       props->d->setTextSize(1);
       props->d->setCursor(0, 16);
-      int code = props->orchestrator->getProgrammeCode();
-      props->d->print(code);
-      props->d->print("-");
       props->d->print(ESP.getFreeHeap());
+      props->d->print("b");
       props->d->setCursor(2, 24);
       unsigned long secondsAlive = millis() / 1000;
       int days = secondsAlive / 86400; // a day
@@ -47,12 +45,21 @@ class DebugScreen: public Screen {
       int minutes = (secondsAlive / 60) % 60;
       props->d->print(days);
       props->d->print("d ");
+      if (hours < 10) {
+        props->d->print("0");  
+      }
       props->d->print(hours);
       props->d->print(":");
+      if (minutes < 10) {
+        props->d->print("0");  
+      }
       props->d->print(minutes);
 
       props->d->setCursor(2, 34);
-      props->d->print("v1.0 @2022");
+      int code = props->orchestrator->getProgrammeCode();
+      props->d->print(code);
+      props->d->setCursor(32, 34);
+      props->d->print("@2022");
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

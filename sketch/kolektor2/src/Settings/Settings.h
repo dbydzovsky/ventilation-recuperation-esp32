@@ -19,6 +19,8 @@
 struct SettingsData {
   bool checkRecuperationRpm = true;
   bool checkVentilatorRpm = true;
+  bool hideCo2 = false;
+  bool hideInternalTempHum = false;
   int unblockingFansPeriod = 172800000;  // 2 days
   int ventilatorMaxRpm = 7600;
   int recuperationMaxRpm = 6000;

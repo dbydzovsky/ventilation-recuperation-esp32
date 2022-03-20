@@ -30,7 +30,14 @@ class OutHouseScreen: public Screen {
       props->d->setCursor(0, 0);
 	    props->d->setTextSize(1);
       props->d->setTextColor(WHITE);
-      props->d->print("Venku");
+      props->d->print("OUT ");
+
+      if (props->deps->forecast->hasValidForecast()) {
+        props->d->print((int) props->deps->forecast->howDoesItFeelLike());
+        props->d->print(" C");
+      } else {
+        props->d->print(" NaN");
+      }
 	    props->d->setCursor(2, 12);
 	  
       props->d->print(props->deps->outsideTemp->getAverage());

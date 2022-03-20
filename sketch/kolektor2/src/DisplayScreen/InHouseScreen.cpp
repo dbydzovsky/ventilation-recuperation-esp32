@@ -26,20 +26,20 @@ class InHouseScreen: public Screen {
       
     };
     void tick(ScreenProps * props){ 
-	  props->d->clearDisplay();
+	    props->d->clearDisplay();
       props->d->setCursor(0, 0);
-	  props->d->setTextSize(1);
+	    props->d->setTextSize(1);
       props->d->setTextColor(WHITE);
-      props->d->print("Vevnitr");
-	  props->d->setCursor(2, 12);
+      props->d->print("IN");
+	    props->d->setCursor(2, 12);
 	  
       props->d->print(props->deps->insideTemp->getAverage());
       props->d->print(" C");
-	  props->d->setCursor(2, 24);
-	  props->d->print(props->deps->insideHum->getAverage());
+	    props->d->setCursor(2, 24);
+	    props->d->print(props->deps->insideHum->getAverage());
       props->d->print(" %");
-	  props->d->setCursor(2, 36);
-	  props->d->print((int) props->deps->co2Inside->getAverage());
+	    props->d->setCursor(2, 36);
+	    props->d->print((int) props->deps->co2Inside->getAverage());
       props->d->print(" PPM");
       props->d->display();
     }
