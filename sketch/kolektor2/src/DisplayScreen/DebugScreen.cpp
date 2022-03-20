@@ -33,7 +33,7 @@ class DebugScreen: public Screen {
       props->d->setTextSize(2);
       props->d->setTextColor(WHITE);
       props->d->setCursor(0,0);
-      props->d->print("v1.0");
+      props->d->print("v2.0");
       props->d->setTextSize(1);
       props->d->setCursor(0, 16);
       props->d->print(ESP.getFreeHeap());

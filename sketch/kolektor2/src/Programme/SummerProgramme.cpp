@@ -86,7 +86,7 @@ class SummerProgramme: public Programme {
         this->_recuperation->getPower(context, out);
         return;
       }
-    
+
       if (isnan(context->dewPoint)) {
         this->markError(114);
         return;

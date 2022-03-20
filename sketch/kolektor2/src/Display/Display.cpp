@@ -80,7 +80,13 @@ bool Display::handleClick(byte times) {
 	if (IS_DEBUG) Serial.print("handleClick");
 	if (IS_DEBUG) Serial.println(times);
 	this->last_interaction = millis();
-	this->screenIndex = (this->screenIndex + times) % SCREEN_COUNT;
+	if (times == 1) {
+	  this->screenIndex = (this->screenIndex + 1) % SCREEN_COUNT;
+	} else if (times == 2) {
+	  this->screenIndex = (this->screenIndex - 1) % SCREEN_COUNT;
+	} else {
+		return true;
+	}
 	this->actual = this->getActualScreen();
 	this->actual->setup(this->screenProps);
 	this->last_tick = millis();

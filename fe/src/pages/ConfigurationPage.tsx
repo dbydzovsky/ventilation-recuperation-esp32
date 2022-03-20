@@ -335,7 +335,7 @@ export function ConfigurationPage() {
                     <Paper className={classes.properties}>
                         <InputLabel className={classes.label}>
                             <PanToolIcon/>
-                            Deaktivovat při teplotě větší než:
+                            Deaktivovat při vnitřní teplotě větší než:
                         </InputLabel>
                         <Input
                             error={maxInsideTemperatureInvalid}
@@ -352,7 +352,7 @@ export function ConfigurationPage() {
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
-                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší teploty po největší):"}
+                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší vnější teploty po největší):"}
                                     adornment={"°C"}
                                     placeholder={"Teplota"}
                                     requiredDifference={3}
@@ -414,7 +414,7 @@ export function ConfigurationPage() {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12}>
-                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší teploty po nejmenší):"}
+                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší vnější teploty po nejmenší):"}
                                     adornment={"°C"}
                                     placeholder={"Teplota"}
                                     newDefault={20}

@@ -74,61 +74,48 @@ export function HelpPage() {
         <div className={classes.center}>
             <h1>Nápověda - ovládání rekuperace</h1>
         </div>
-        <h2 className={classes.header}>Význam světelné signalizace</h2>
-        <Grid container className={classes.group}>
-            <Row label={<DiodeSignalization data={WiFiConnectingSignal}/>}
-                 value="Zařízení se připojuje k WiFi nebo se nachází v módu Access Point, aby mohlo být nakonfigurováno."/>
-            <Row label={<DiodeSignalization data={WarmingUpSignal}/>}
-                 value="Zařízení bylo právě zapnuto a zahřívají se sensory"/>
-            <Row label={<DiodeSignalization data={WinterDeviceOperationalWifiOnSignal}/>}
-                 value="Zařízení je aktivní (a připojené k WiFi), a to v módu vyhřívání"/>
-            <Row label={<DiodeSignalization data={WinterDeviceOperationalWifiOffSignal}/>}
-                 value="Zařízení je aktivní (ale odpojené od WiFi), a to v módu vyhřívání"/>
-            <Row label={<DiodeSignalization data={SummerDeviceOperationalWifiOnSignal}/>}
-                 value="Zařízení je aktivní (a připojené k WiFi), a to v módu chlazení"/>
-            <Row label={<DiodeSignalization data={SummerDeviceOperationalWifiOffSignal}/>}
-                 value="Zařízení je aktivní (ale odpojené od WiFi), a to v módu chlazení"/>
-            <Row label={<DiodeSignalization data={DeviceDisabledWifiOnSignal}/>}
-                 value="Zařízení je neaktivní (ale připojené k WiFi) a nedojde k automatickému spuštění"/>
-            <Row label={<DiodeSignalization data={DeviceDisabledWifiOffSignal}/>}
-                 value="Zařízení je neaktivní (a odpojené od WiFi) a nedojde k automatickému spuštění"/>
-            <Row label={<DiodeSignalization data={TrialSignal}/>}
-                 value="Zařízení je dočasně ovládáno manuálně z webového rozhraní"/>
-            <Row label={<DiodeSignalization data={DisabledDueToConditions}/>}
-                 value="Ventilátor je vypnutý kvůli nastaveným podmínkám."/>
-            <Row label={<DiodeSignalization data={CriticalSignal}/>}
-                 value="Chybná konfigurace. Vytvořte a uložte novou konfiguraci ve webovém rozhraní."/>
-            <Row label={<DiodeSignalization data={NotValidSensorValues}/>}
-                 value="Nelze přečíst hodnoty ze sensorů. Zkontrolujte webové rozhraní a hodnoty čidel."/>
-        </Grid>
-
+        <h2 className={classes.header}>Display</h2>
+        {/*<h2 className={classes.header}>Význam světelné signalizace</h2>*/}
+        {/*<Grid container className={classes.group}>*/}
+        {/*    <Row label={<DiodeSignalization data={WiFiConnectingSignal}/>}*/}
+        {/*         value="Zařízení se připojuje k WiFi nebo se nachází v módu Access Point, aby mohlo být nakonfigurováno."/>*/}
+        {/*    <Row label={<DiodeSignalization data={WarmingUpSignal}/>}*/}
+        {/*         value="Zařízení bylo právě zapnuto a zahřívají se sensory"/>*/}
+        {/*    <Row label={<DiodeSignalization data={WinterDeviceOperationalWifiOnSignal}/>}*/}
+        {/*         value="Zařízení je aktivní (a připojené k WiFi), a to v módu vyhřívání"/>*/}
+        {/*    <Row label={<DiodeSignalization data={WinterDeviceOperationalWifiOffSignal}/>}*/}
+        {/*         value="Zařízení je aktivní (ale odpojené od WiFi), a to v módu vyhřívání"/>*/}
+        {/*    <Row label={<DiodeSignalization data={SummerDeviceOperationalWifiOnSignal}/>}*/}
+        {/*         value="Zařízení je aktivní (a připojené k WiFi), a to v módu chlazení"/>*/}
+        {/*    <Row label={<DiodeSignalization data={SummerDeviceOperationalWifiOffSignal}/>}*/}
+        {/*         value="Zařízení je aktivní (ale odpojené od WiFi), a to v módu chlazení"/>*/}
+        {/*    <Row label={<DiodeSignalization data={DeviceDisabledWifiOnSignal}/>}*/}
+        {/*         value="Zařízení je neaktivní (ale připojené k WiFi) a nedojde k automatickému spuštění"/>*/}
+        {/*    <Row label={<DiodeSignalization data={DeviceDisabledWifiOffSignal}/>}*/}
+        {/*         value="Zařízení je neaktivní (a odpojené od WiFi) a nedojde k automatickému spuštění"/>*/}
+        {/*    <Row label={<DiodeSignalization data={TrialSignal}/>}*/}
+        {/*         value="Zařízení je dočasně ovládáno manuálně z webového rozhraní"/>*/}
+        {/*    <Row label={<DiodeSignalization data={DisabledDueToConditions}/>}*/}
+        {/*         value="Ventilátor je vypnutý kvůli nastaveným podmínkám."/>*/}
+        {/*    <Row label={<DiodeSignalization data={CriticalSignal}/>}*/}
+        {/*         value="Chybná konfigurace. Vytvořte a uložte novou konfiguraci ve webovém rozhraní."/>*/}
+        {/*    <Row label={<DiodeSignalization data={NotValidSensorValues}/>}*/}
+        {/*         value="Nelze přečíst hodnoty ze sensorů. Zkontrolujte webové rozhraní a hodnoty čidel."/>*/}
+        {/*</Grid>*/}
+        Display zobrazuje aktuální hodnoty čidel. Umožňuje také zapnutí tzv. "párty" módu, popř. ventilaci a rekuperaci na chvíli deaktivaci.
+        Retrospektivně také ukazuje hodnoty CO2 a vnější teploty.
         <br/>
         <br/>
         <br/>
         <h2 className={classes.header}>Ovládání dotykového tlačítka</h2>
         <Grid container className={classes.group}>
             <Row label={<><LooksOneIcon/> kliknutí</>}
-                 value={<>
-                     a) Zařízení přeruší manuálně spuštěný program (včetně vypnutého programu)<br/>
-                     b) Pokud není zapnutá světelná signalizace, poté se dočasně signalizace spustí<br/>
-                 </>}/>
-            <Row label={<><LooksTwo/> 2 kliknutí</>}
-                 value={<>
-                     Zařízení se deaktivuje na 1 hodinu.
-                 </>}/>
-            <Row label={<><Looks3Icon/> 3 kliknutí</>}
-                 value={<>
-                     Zařízení spustí ventilaci na 100% na 5 minut. Lze přerušit jedním dotykem.
-                 </>}/>
+                 value={<>Při kliknutí se přepne obrazovka na následující.</>}/>
+            <Row label={<><LooksTwo/> 2kliknutí</>}
+                 value={<>Při kliknutí se přepne obrazovka na předchozí.</>}/>
             <Row label={<><TimerIcon/> Podržet 4s</>}
                  value={<>
-                     Tlačítko pusťte, až začne střídavě blikat.
-                     Zařízení se aktivuje/deaktivuje.
-                 </>}/>
-            <Row label={<><TimerIcon/> Podržet 10s</>}
-                 value={<>
-                     Zařízení se restartuje.
-                     Tlačítko držte do té doby, dokud se zařízení nerestartuje.
+                     Při potvržení tlačítka se aktivuje akce, která přísluší dané obrazovce.
                  </>}/>
         </Grid>
         <h2 className={classes.header}>Změna WiFi připojení</h2>
@@ -136,8 +123,8 @@ export function HelpPage() {
         <p>Zařízení se po restartu nepodaří připojit k síti a proto přejde do módu Access Point, kdy je možné ho opět konfigurovat.</p>
         <p>
             <ul>
-                <li>Default SSID: SolarAirCollector</li>
-                <li>Default heslo: 5498189851</li>
+                <li>Default SSID: SolarAirCollectorV2</li>
+                <li>Default heslo: 123456789</li>
             </ul>
         </p>
         <br/>
@@ -163,11 +150,11 @@ export function HelpPage() {
             <Row label={12.2} value={"Vyhřívací program - teplota v kolektoru pomalu klesá"}/>
             <Row label={12.3} value={"Vyhřívací program - rosný bod překračuje vnitřní teplotu"}/>
         </Grid>
-        <br/>
-            <div className={classes.center}>
-            <h1>Schéma</h1>
-            <GitHubIcon/> Více o projektu na <a href={"https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266"}>https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266</a><br/>
-        </div>
+        {/*<br/>*/}
+        {/*    <div className={classes.center}>*/}
+        {/*    <h1>Schéma</h1>*/}
+        {/*    <GitHubIcon/> Více o projektu na <a href={"https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266"}>https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266</a><br/>*/}
+        {/*</div>*/}
     </div>
 }
 
