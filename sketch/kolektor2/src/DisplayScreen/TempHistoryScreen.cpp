@@ -58,7 +58,7 @@ class TempHistoryScreen: public HistoryScreen {
       int maximum = max(this->_min, this->_max);
       props->d->print("Teplota");
       props->d->setCursor(50, 0);
-      props->d->print("1h");
+      props->d->print("2h");
       props->d->drawLine(0, 10, 0, 47, WHITE);
       props->d->drawLine(0, 47, 64, 47, WHITE);
       for (int i = 0; i < 63; i++) {

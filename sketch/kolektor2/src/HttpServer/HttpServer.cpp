@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "ArduinoJson.h"
+#include "SPIFFS.h"
 #include "HttpServer.h"
 #include "../RGBDiode/RGBDiode.h"
 #include <WiFiClientSecure.h>
@@ -13,9 +14,12 @@
 #include "SPIFFS.h"
 #include "TimeLib.h"
 #include "../RPMChecker/RPMChecker.h"
+#include <AsyncElegantOTA.h> // https://randomnerdtutorials.com/esp32-ota-over-the-air-arduino/
 
 void setCors(AsyncWebServerResponse *response) {
-  response->addHeader("Access-Control-Allow-Origin", "*");
+    if (IS_DEBUG) {
+        response->addHeader("Access-Control-Allow-Origin", "*");
+    }
 }
 void setCache(AsyncWebServerResponse *response) {
   response->addHeader("Cache-Control", "public, max-age=31536000, immutable");
@@ -25,7 +29,6 @@ void notNotFound(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_OPTIONS) {
         AsyncWebServerResponse *response = request->beginResponse(204);
         setCors(response);
-        setCache(response);
         request->send(response);
     } else if (request->method() == HTTP_GET) {
         AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/index.html");
@@ -256,6 +259,9 @@ void HttpServer::setup() {
     this->_server->addHandler(saveSettingsHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
+    // todo change password
+    AsyncElegantOTA.begin(this->_server, "admin", "pass");
+    this->_server->serveStatic("/static/js/", SPIFFS, "/static/js/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
 }

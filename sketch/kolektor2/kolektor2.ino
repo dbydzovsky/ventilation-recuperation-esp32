@@ -37,7 +37,7 @@ HTTPClient httpClient;
 // PINS
 #define PWM_ventilator_PIN 16
 #define ventilatorSignal 35
-#define PWM_recuperation_PIN 33 // 26
+#define PWM_recuperation_PIN 33 // 33-for screen, 26 for wood
 #define recuperationSignal 13
 #define BTN_PIN 23
 #define RECUPERATION_RELAY_PIN 17
@@ -45,7 +45,7 @@ HTTPClient httpClient;
 #define RED_DIODE_PIN 39
 #define GREEN_DIODE_PIN 19
 #define BLUE_DIODE_PIN 24
-#define rx_pin 26 // 16
+#define rx_pin 26 // 26 for screen co2, 33 for wood
 #define tx_pin 18
 
 

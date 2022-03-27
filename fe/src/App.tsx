@@ -35,6 +35,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import {useSelector} from "react-redux";
 import {RootState} from "./reducers";
 import {TrialPage} from "./pages/TrialPage";
+import {FirmwarePage} from "./pages/FirmwarePage";
 import ControlCameraIcon from '@material-ui/icons/ControlCamera';
 import {FilterPage} from "./pages/FilterPage";
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
@@ -42,6 +43,8 @@ import {AlarmPage} from "./pages/AlarmPage";
 import {MaintenancePage} from "./pages/MaintenancePage";
 import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
+// https://v4.mui.com/components/material-icons/#material-icons
 
 function Routes() {
 	const classes = useStyles();
@@ -58,6 +61,7 @@ function Routes() {
 			<Route exact={true} path="/maintenance" component={MaintenancePage} />
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
+			<Route exact={true} path="/firmware" component={FirmwarePage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
 		</div>
 	);
@@ -126,6 +130,15 @@ function Drawer(props: {  }) {
 						<SettingsEthernetIcon />
 					</ListItemIcon>
 					<ListItemText primary="Pokročilé" />
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem button onClick={() => history.push("/firmware")}>
+					<ListItemIcon>
+						<SystemUpdateAltIcon />
+					</ListItemIcon>
+					<ListItemText primary="Firmware" />
 				</ListItem>
 			</List>
 			<Divider />

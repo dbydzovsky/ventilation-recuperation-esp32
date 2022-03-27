@@ -162,7 +162,7 @@ void Display::act(){
   } else {
 	  this->d->dim(false);
   }
-  if (millis() - this->last_sync > 60000) {
+  if (millis() - this->last_sync > 120000) {
 	this->last_sync = millis();
 	this->screenFactory->co2History->updateHistory(this->screenProps);
 	this->screenFactory->tempHistory->updateHistory(this->screenProps);

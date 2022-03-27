@@ -191,16 +191,16 @@ Sensors::Sensors(MHZ19_uart * mhz19) {
   uFire_SHT20 * sht20 = new uFire_SHT20();
 
   this->insideTemp = new TempInsideSensor(sht31);
-  // this->insideTemp = new TestingSensor(20);
+  //this->insideTemp = new TestingSensor(20);
   this->insideHum = new HumInsideSensor(sht31);
-  // this->insideHum = new TestingSensor(60);
-  // this->co2Inside = new TestingSensor(1000);
-  // this->insideTemp = new TestingSensor(20);
+  //this->insideHum = new TestingSensor(60);
+  //this->co2Inside = new TestingSensor(1000);
   this->co2Inside = new Co2Sensor(mhz19);
     // Serial.println("Configuring testing sensors");
   this->outsideHum = new TestingSensor(5);
   this->outsideTemp = new TestingSensor(20);
-  this->outsideTemp = this->insideTemp;
+  // this->outsideTemp = this->insideTemp;
+  
   // OutsideSensor * outside = new OutsideSensor(sht20);
   // this->outsideHum = new HumOutsideSensor(outside);
   // this->outsideTemp = new TempOutsideSensor(outside);

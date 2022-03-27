@@ -22,7 +22,7 @@
 	"scripts": {
 		"dev": "react-scripts start",
 		"start": "react-scripts start",
-		"build": "react-scripts build && npx gulp && rm -rf ./build/static && cp ./build/index.html ../sketch/kolektor2/data/index.html"
+		"build": "react-scripts build && npx gulp && cp ./build/index.html ../sketch/kolektor2/data/index.html"
 	},
 	"browserslist": [
 		">0.2%",
@@ -44,6 +44,7 @@
 		"eslint-plugin-react": "7.17.0",
 		"gulp": "^4.0.2",
 		"gulp-inline-source": "^4.0.0",
-		"gulp-replace": "^1.0.0"
+		"gulp-replace": "^1.0.0",
+		"gulp-concat": "^1.0.0"
 	}
 }
