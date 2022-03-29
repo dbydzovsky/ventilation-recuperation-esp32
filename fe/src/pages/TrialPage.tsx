@@ -12,7 +12,6 @@ import {RootState} from "../reducers";
 import Switch from '@material-ui/core/Switch';
 
 
-
 const useStyles = makeStyles((theme) => {
     return {
         root: {
@@ -33,6 +32,7 @@ const useStyles = makeStyles((theme) => {
         }
     }
 });
+
 export function TrialPage() {
     const trialAction = useActions(TrialActions);
     const classes = useStyles();
@@ -42,6 +42,7 @@ export function TrialPage() {
     const [duration, setDuration] = React.useState("300000");
     const [enabled, setEnabled] = React.useState(false);
     const currentState = useSelector((state: RootState) => state.state);
+    const recuperationEnabled = currentState.recuperationEnabled;
     const settings = useSelector((state: RootState) => state.settings);
     useEffect(() => {
         if (currentState.trial) {
@@ -54,10 +55,10 @@ export function TrialPage() {
             setEnabled(false);
         }
     }, [currentState.trial]);
-    const handleVentilatorPowerChange = (event: any, newPower: number|number[]) => {
+    const handleVentilatorPowerChange = (event: any, newPower: number | number[]) => {
         setVentilator(newPower as number)
     };
-    const handleVentilatorPowerChangeCommited = (event: any, newPower: number|number[]) => {
+    const handleVentilatorPowerChangeCommited = (event: any, newPower: number | number[]) => {
         setVentilator(newPower as number)
         let props: ChangeTrialProps = {
             ventilator: Number(newPower),
@@ -68,10 +69,10 @@ export function TrialPage() {
         }
         trialAction.changeTrial(props)
     };
-    const handleRecuperationPowerChange = (event: any, newPower: number|number[]) => {
+    const handleRecuperationPowerChange = (event: any, newPower: number | number[]) => {
         setRecuperation(newPower as number)
     };
-    const handleRecuperationPowerChangeCommited = (event: any, newPower: number|number[]) => {
+    const handleRecuperationPowerChangeCommited = (event: any, newPower: number | number[]) => {
         setRecuperation(newPower as number)
         let props: ChangeTrialProps = {
             ventilator: ventilatorPower,
@@ -145,24 +146,24 @@ export function TrialPage() {
             trialAction.changeTrial(props)
         }
     }
-    return <div className={classes.root} >
+    return <div className={classes.root}>
 
         <Paper className={classes.paper}>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={12}>
                     <FormLabel component="legend">Rychlé akce</FormLabel>
-                        <Button variant={"contained"}
-                                className={classes.quickaction}
-                                color={"secondary"}
-                                onClick={startPartyMod}
-                        >
-                            Párty mód
-                        </Button>
-                        <Button variant={"contained"}
-                                className={classes.quickaction}
+                    <Button variant={"contained"}
+                            className={classes.quickaction}
+                            color={"secondary"}
+                            onClick={startPartyMod}
+                    >
+                        Párty mód
+                    </Button>
+                    <Button variant={"contained"}
+                            className={classes.quickaction}
                             color={"primary"}
                             onClick={tempDisableMode}
-                        >
+                    >
                         Dočasně vypnout
                     </Button>
                 </Grid>
@@ -177,54 +178,68 @@ export function TrialPage() {
                         onChange={activation}
                         color="secondary"
                         name="checkedB"
-                        inputProps={{ 'aria-label': 'secondary checkbox' }}
+                        inputProps={{'aria-label': 'secondary checkbox'}}
                     />
                 </Grid>
             </Grid>
         </Paper>
         <Paper className={classes.paper + " " + classes.end}>
-                <FormControl component="fieldset">
-                    <Grid container spacing={2} direction={"column"}>
-                        <Grid item>
-                            <FormLabel component="legend">Doba trvání manuálního spuštění</FormLabel>
-                        </Grid>
-                        <Grid item>
-                            <RadioGroup aria-label={"trvani"} name="duration" value={duration} onChange={handleDurationChange}>
-                                <Grid container spacing={2} direction={"row"}>
-                                    <FormControlLabel disabled={!enabled} value="300000" control={<Radio />} label="5 minut" />
-                                    <FormControlLabel disabled={!enabled} value="600000" control={<Radio />} label="10 minut" />
-                                    <FormControlLabel disabled={!enabled} value="1800000" control={<Radio />} label="30 minut" />
-                                    <FormControlLabel disabled={!enabled} value="3600000" control={<Radio />} label="1 hodina" />
-                                    <FormControlLabel disabled={!enabled} value="7200000" control={<Radio />} label="2 hodiny" />
-                                    <FormControlLabel disabled={!enabled} value="10800000" control={<Radio />} label="3 hodiny" />
-                                    <FormControlLabel disabled={!enabled} value="21600000" control={<Radio />} label="6 hodin" />
-                                    <FormControlLabel disabled={!enabled} value="43200000" control={<Radio />} label="12 hodin" />
-                                    <FormControlLabel disabled={!enabled} value="86400000" control={<Radio />} label="1 den" />
-                                </Grid>
-                            </RadioGroup>
-                        </Grid>
+            <FormControl component="fieldset">
+                <Grid container spacing={2} direction={"column"}>
+                    <Grid item>
+                        <FormLabel component="legend">Doba trvání manuálního spuštění</FormLabel>
                     </Grid>
-                </FormControl>
+                    <Grid item>
+                        <RadioGroup aria-label={"trvani"} name="duration" value={duration}
+                                    onChange={handleDurationChange}>
+                            <Grid container spacing={2} direction={"row"}>
+                                <FormControlLabel disabled={!enabled} value="300000" control={<Radio/>}
+                                                  label="5 minut"/>
+                                <FormControlLabel disabled={!enabled} value="600000" control={<Radio/>}
+                                                  label="10 minut"/>
+                                <FormControlLabel disabled={!enabled} value="1800000" control={<Radio/>}
+                                                  label="30 minut"/>
+                                <FormControlLabel disabled={!enabled} value="3600000" control={<Radio/>}
+                                                  label="1 hodina"/>
+                                <FormControlLabel disabled={!enabled} value="7200000" control={<Radio/>}
+                                                  label="2 hodiny"/>
+                                <FormControlLabel disabled={!enabled} value="10800000" control={<Radio/>}
+                                                  label="3 hodiny"/>
+                                <FormControlLabel disabled={!enabled} value="21600000" control={<Radio/>}
+                                                  label="6 hodin"/>
+                                <FormControlLabel disabled={!enabled} value="43200000" control={<Radio/>}
+                                                  label="12 hodin"/>
+                                <FormControlLabel disabled={!enabled} value="86400000" control={<Radio/>}
+                                                  label="1 den"/>
+                            </Grid>
+                        </RadioGroup>
+                    </Grid>
+                </Grid>
+            </FormControl>
             <br/>
             <br/>
             <br/>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <FormLabel component="legend">Nastavení výkonu ventilátoru (aktuálně { ventilatorPower }%)</FormLabel>
+                    <FormLabel component="legend">Nastavení výkonu ventilátoru (aktuálně {ventilatorPower}%)</FormLabel>
                 </Grid>
                 <Grid item>
                     <VentilatorIcon disabled={!enabled} percentage={0}/>
                 </Grid>
                 <Grid item xs>
-                    <Slider color={"secondary"} disabled={!enabled} value={ventilatorPower} step={5} max={100} min={0} onChange={handleVentilatorPowerChange} onChangeCommitted={handleVentilatorPowerChangeCommited} aria-labelledby="continuous-slider" />
+                    <Slider color={"secondary"} disabled={!enabled} value={ventilatorPower} step={5} max={100} min={0}
+                            onChange={handleVentilatorPowerChange}
+                            onChangeCommitted={handleVentilatorPowerChangeCommited}
+                            aria-labelledby="continuous-slider"/>
                 </Grid>
                 <Grid item>
                     <VentilatorIcon disabled={!enabled} percentage={100}/>
                 </Grid>
             </Grid>
-            <Grid container spacing={2}>
+            {recuperationEnabled && <><Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <FormLabel component="legend">Nastavení výkonu rekuperace (aktuálně { recuperationPower }%)</FormLabel>
+                    <FormLabel component="legend">Nastavení výkonu rekuperace
+                        (aktuálně {recuperationPower}%)</FormLabel>
                 </Grid>
                 <Grid item>
                     <VentilatorIcon disabled={!enabled} percentage={0}/>
@@ -245,22 +260,27 @@ export function TrialPage() {
                     <VentilatorIcon disabled={!enabled} percentage={100}/>
                 </Grid>
             </Grid>
-            <FormControl component="fieldset">
-                <Grid container spacing={2} direction={"column"}>
-                    <Grid item>
-                        <FormLabel component="legend">Směr rekuperační jednotky</FormLabel>
+                <FormControl component="fieldset">
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item>
+                            <FormLabel component="legend">Směr rekuperační jednotky</FormLabel>
+                        </Grid>
+                        <Grid item>
+                            <RadioGroup aria-label={"smer"} name="direction" value={recuperationMode}
+                                        onChange={handleRecuperationModeChange}>
+                                <Grid container spacing={2} direction={"row"}>
+                                    <FormControlLabel disabled={!enabled} value={RecuperationMode.Recycle}
+                                                      control={<Radio/>} label="Recyklovat vzduch"/>
+                                    <FormControlLabel disabled={!enabled} value={RecuperationMode.Inhale}
+                                                      control={<Radio/>} label="Pouze dovnitř"/>
+                                    <FormControlLabel disabled={!enabled} value={RecuperationMode.Exhale}
+                                                      control={<Radio/>} label="Pouze ven"/>
+                                </Grid>
+                            </RadioGroup>
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <RadioGroup aria-label={"smer"} name="direction" value={recuperationMode} onChange={handleRecuperationModeChange}>
-                            <Grid container spacing={2} direction={"row"}>
-                                <FormControlLabel disabled={!enabled} value={RecuperationMode.Recycle} control={<Radio />} label="Recyklovat vzduch" />
-                                <FormControlLabel disabled={!enabled} value={RecuperationMode.Inhale} control={<Radio />} label="Pouze dovnitř" />
-                                <FormControlLabel disabled={!enabled} value={RecuperationMode.Exhale} control={<Radio />} label="Pouze ven" />
-                            </Grid>
-                        </RadioGroup>
-                    </Grid>
-                </Grid>
-            </FormControl>
+                </FormControl>
+            </>}
         </Paper>
     </div>
 }

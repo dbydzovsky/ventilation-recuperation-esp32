@@ -52,8 +52,10 @@ void Monitoring::doReport() {
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
     data["VentilatorBlocked"][0]["value"] = this->_deps->ventilatorChecker->shouldStop();
-    data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
-    data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
+    if (IS_RECUPERATION_ENABLED) {
+        data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
+        data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
+    }
     data["Code"][0]["value"] = this->_orchestrator->getProgrammeCode() / 10;
     if (!this->_hideInternalTempHum) {
         if (this->_deps->insideTemp->isInitialized()) {
@@ -74,7 +76,7 @@ void Monitoring::doReport() {
     // data["Errors"][0]["value"] = (outsideTemperatureSensor->getErrors() + outsideHumiditySensor->getErrors() + insideTemperatureSensor->getErrors());
     char requestBody[1024];
     serializeJson(doc, requestBody);
-    char url[100] = "";
+    char url[110] = "";
     if (IS_DEBUG) Serial.println(url);
     sprintf(url, "https://iotplotter.com/api/v2/feed/%s", this->_deps->conf->getData()->monitoring->feed);
     HTTPClient * httpClient = this->_deps->httpClient;

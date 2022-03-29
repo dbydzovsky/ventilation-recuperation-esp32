@@ -193,7 +193,7 @@ Sensors::Sensors(MHZ19_uart * mhz19) {
   this->insideTemp = new TempInsideSensor(sht31);
   //this->insideTemp = new TestingSensor(20);
   this->insideHum = new HumInsideSensor(sht31);
-  //this->insideHum = new TestingSensor(60);
+  // this->insideHum = new TestingSensor(60);
   //this->co2Inside = new TestingSensor(1000);
   this->co2Inside = new Co2Sensor(mhz19);
     // Serial.println("Configuring testing sensors");

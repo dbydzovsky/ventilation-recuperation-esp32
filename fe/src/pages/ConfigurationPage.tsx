@@ -41,7 +41,7 @@ export const summerOrderValidation = (previous: Rule, actual: Rule) => {
     return previous.tv < (actual.tv + 3);
 }
 export const co2OrderValidation = (previous: Rule, actual: Rule) => {
-    return previous.tv > (actual.tv + 50);
+    return previous.tv > (actual.tv - 50);
 }
 export const weatherKeys = [
     {key: "lat", label: "Zeměpisná šírka (např. 50.25)", max: 5},
@@ -108,6 +108,7 @@ export function ConfigurationPage() {
     const configurationAction = useActions(ConfigurationActions);
     const currentState = useSelector((state: RootState) => state.state);
     const state = useSelector((state: RootState) => state.configuration);
+    const recuperationEnabled = currentState.recuperationEnabled;
     const dispatch = useDispatch();
     const [reloadCounter, setReloadId] = React.useState(0);
     useEffect(() => {
@@ -156,10 +157,18 @@ export function ConfigurationPage() {
         })
             .some((previous) => summerOrderValidation(previous, item))
     })
+    let co2RulesInvalid = values.co2Rules && values.co2Rules.some((item, index) => {
+        return values.co2Rules.filter((_, i) => {
+            return i < index;
+        }).some((previous) => co2OrderValidation(previous, item))
+    });
     let rulesInvalid = winterRulesInvalid
         || summerRulesInvalid
         || (values.winterOnRules && values.winterOnRules.length > rulesMaxCount)
         || (values.summerOnRules && values.summerOnRules.length > rulesMaxCount);
+    if (recuperationEnabled) {
+        rulesInvalid = rulesInvalid || co2RulesInvalid || (values.co2Rules && values.co2Rules.length > rulesMaxCount);
+    }
     const isOverlapping = (a: number, b: number, c: number, d: number):boolean => {
         if (a < b && c < d) {
             return a < d && c < b;
@@ -197,6 +206,11 @@ export function ConfigurationPage() {
     const setMode = (e: ChangeEvent<HTMLInputElement>, value: string) => {
         setValues({...values, mode: Number(value)})
     }
+    let monitoringUrl = "https://iotplotter.com/user/feed/";
+    if (values.monitoring) {
+        monitoringUrl += values.monitoring.feed;
+    }
+
     return <div className={classes.header}>
         <Grid container>
             <Grid item xs={12} sm={6} md={6}>
@@ -226,6 +240,7 @@ export function ConfigurationPage() {
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <Grid container>
+                            <a target="_blank" href={monitoringUrl}>{monitoringUrl}</a>
                             Zařízení každou minutu odesílá hodnoty ze sensorů na webovou stránku iotplotter.com.
                             Využívá k tomu šifrovanou komunikaci.
 
@@ -426,7 +441,7 @@ export function ConfigurationPage() {
                 </Grid>
             </Grid>
         </div>
-        <div className={classes.co2Setting}>
+        { recuperationEnabled && <div className={classes.co2Setting}>
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><CompareArrowsIcon/> Nastavení řízeného větrání</h2>
@@ -446,7 +461,7 @@ export function ConfigurationPage() {
                                     onChange={handleRuleChange('co2Rules')}/>
                 </Grid>
             </Grid>
-        </div>
+        </div> }
         <div className={classes.autoSetting}>
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>

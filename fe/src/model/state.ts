@@ -50,6 +50,7 @@ export interface CurrentState {
   ventilatorRPM: number,
   recuperation?: number,
   recuperationRPM: number,
+  recuperationEnabled: boolean,
   insideTemp?: Sensor,
   insideHum?: Sensor,
   outsideTemp?: Sensor,

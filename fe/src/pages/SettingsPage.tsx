@@ -38,6 +38,7 @@ export function SettingsLoader() {
 export function SettingsPage(props: Props) {
     const classes = useStyles()
     const state = useSelector((state: RootState) => state.settings);
+    const recuperationEnabled = useSelector((state: RootState) => state.state.recuperationEnabled);
     const dispatch = useDispatch();
     const [values, setValues] = React.useState({...state.settings} as Settings);
     useEffect(() => {
@@ -51,30 +52,34 @@ export function SettingsPage(props: Props) {
     return <div className={classes.paper}>
         <h1>Pokročilé nastavení</h1>
         <Grid container>
-            <Property values={values}
+            { recuperationEnabled && <Property values={values}
                       setValues={setValues}
                       description={turnOffMotorCheck}
                       type="boolean"
                       title={"Kontrolovat otáčky Rekuperace"}
-                      property={"checkRecuperationRpm"}/>
+                      property={"checkRecuperationRpm"}/> }
             <Property values={values}
                       setValues={setValues}
                       description={turnOffMotorCheck}
                       type="boolean"
                       title={"Kontrolovat otáčky Ventilace"}
                       property={"checkVentilatorRpm"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
-                      type="boolean"
-                      title={"Schovat CO2 hodnoty"}
-                      property={"hideCo2"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      description={"Neposílat do monitorovacích služeb údaje o hodnotách vnitřní teploty a vlhkosti."}
-                      type="boolean"
-                      title={"Schovat vnitřní teplotu a vlhkost"}
-                      property={"hideInternalTempHum"}/>
+
+            <Group>
+                <h2>Soukromí</h2>
+                <SingleProperty values={values}
+                          setValues={setValues}
+                          description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
+                          type="boolean"
+                          title={"Schovat CO2 hodnoty"}
+                          property={"hideCo2"}/>
+                <SingleProperty values={values}
+                          setValues={setValues}
+                          description={"Neposílat do monitorovacích služeb údaje o hodnotách vnitřní teploty a vlhkosti."}
+                          type="boolean"
+                          title={"Schovat vnitřní teplotu a vlhkost"}
+                          property={"hideInternalTempHum"}/>
+            </Group>
             <Property values={values}
                       setValues={setValues}
                       transform={Divide1000Transformation}
@@ -88,33 +93,37 @@ export function SettingsPage(props: Props) {
                       type="number"
                       title={"Maximální otáčky Ventilace"}
                       property={"ventilatorMaxRpm"}/>
-            <Property values={values}
+            { recuperationEnabled && <>
+                <Property values={values}
                       description={maxRpm}
                       setValues={setValues}
                       type="number"
                       title={"Maximální otáčky Rekuperace"}
                       property={"recuperationMaxRpm"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      transform={Divide1000Transformation}
-                      description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4 sekundy."}
-                      type="number"
-                      title={"Změna směru rekuperace"}
-                      property={"recuperationWaitForDirectionChange"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      transform={Divide1000Transformation}
-                      description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
-                      type="number"
-                      title={"Rekuperační cyklus"}
-                      property={"recuperationCycleDuration"}/>
+                <Property values={values}
+                          setValues={setValues}
+                          transform={Divide1000Transformation}
+                          description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4 sekundy."}
+                          type="number"
+                          title={"Změna směru rekuperace"}
+                          property={"recuperationWaitForDirectionChange"}/>
+                <Property values={values}
+                          setValues={setValues}
+                          transform={Divide1000Transformation}
+                          description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
+                          type="number"
+                          title={"Rekuperační cyklus"}
+                          property={"recuperationCycleDuration"}/>
+            </>}
             <Group>
                 <h2>Defaultní nastavení párty módu</h2>
-                <SingleProperty values={values} setValues={setValues}
+                {
+                    recuperationEnabled && <><SingleProperty values={values} setValues={setValues}
                                 property={"recuperationPower"}
                                 title={"Výkon rekuperace"}
                                 description={"Výkon rekuperační jednotky (od 0 do 100)."}
-                                type={"number"}/><br/>
+                                type={"number"}/><br/></>
+                }
                 <SingleProperty values={values} setValues={setValues}
                                 title={"Výkon ventilace"}
                                 property={"ventilatorPower"}

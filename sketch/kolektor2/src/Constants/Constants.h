@@ -4,6 +4,7 @@
 #define DEFAULT_SSID "SolarAirCollectorV2"
 #define DEFAULT_PASSWORD "123456789"
 
+#define IS_RECUPERATION_ENABLED true
 #define IS_DEBUG true
 #define TESTING_CO2_SENSOR true
 

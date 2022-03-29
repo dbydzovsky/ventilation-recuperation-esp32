@@ -7,6 +7,7 @@ let initialState: CurrentState = {
     alive: 0,
     mode: Mode.INACTIVE,
     restarts: 0,
+    recuperationEnabled: false,
     insideTemp: {v: 0, avg: 0, err: 0, warn: 0},
     outsideTemp: {v: 0, avg: 0, err: 0, warn: 0},
     outsideHum: {v: 0, avg: 0, err: 0, warn: 0},

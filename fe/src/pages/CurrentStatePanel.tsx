@@ -53,7 +53,8 @@ export function CurrentStatePanel() {
 
     const dispatch = useDispatch();
     const currentState = useSelector((state: RootState) => state.state);
-    const cleaningNeeded = currentState.filterRecuperation.needCleaning || currentState.filterVentilator.needCleaning;
+    const recuperationEnabled = currentState.recuperationEnabled;
+    const cleaningNeeded = (recuperationEnabled && currentState.filterRecuperation.needCleaning) || currentState.filterVentilator.needCleaning;
     const connectionState = useSelector((state: RootState) => state.errorState).state;
     let clazz = classes.connected;
     if (connectionState == ConnectionState.Disconnected) {
@@ -78,25 +79,27 @@ export function CurrentStatePanel() {
             Ventilátor ({currentState.ventilatorRPM} RPM) {currentState.ventilator}%
         </div>
         <BorderLinearProgress variant="determinate" className={classes.progress} value={currentState.ventilator} />
-        <div className={clazz}>
-            <VentilatorIcon
-                highRPM={currentState.alarmRecuperation.highRpm}
-                blocked={currentState.alarmRecuperation.blocked}
-                percentage={recuperationPower} />
-            Rekuperace ({currentState.recuperationRPM} RPM) {recuperationPower}%
-        </div>
-        <Grid container>
-            <Grid item xs={6} >
-                <BorderLinearProgress variant="determinate"
-                                      className={classes.progress+ " " + classes.rotated}
-                                      value={Math.abs(Math.min(recuperationPower, 0))} />
+        { recuperationEnabled && <>
+            <div className={clazz}>
+                <VentilatorIcon
+                    highRPM={currentState.alarmRecuperation.highRpm}
+                    blocked={currentState.alarmRecuperation.blocked}
+                    percentage={recuperationPower} />
+                Rekuperace ({currentState.recuperationRPM} RPM) {recuperationPower}%
+            </div>
+            <Grid container>
+                <Grid item xs={6} >
+                    <BorderLinearProgress variant="determinate"
+                                          className={classes.progress+ " " + classes.rotated}
+                                          value={Math.abs(Math.min(recuperationPower, 0))} />
+                </Grid>
+                <Grid item xs={6}>
+                    <BorderLinearProgress variant="determinate"
+                                          className={classes.progress}
+                                          value={Math.max(recuperationPower, 0)} />
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <BorderLinearProgress variant="determinate"
-                                      className={classes.progress}
-                                      value={Math.max(recuperationPower, 0)} />
-            </Grid>
-        </Grid>
+        </>}
         {currentState.time}
     </div>
 }

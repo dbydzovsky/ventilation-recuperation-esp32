@@ -149,15 +149,15 @@ void setup()
   attachRecuperation();
 
   SettingsData * settingsData = settings->getSettings();
-  if (!settingsData->checkRecuperationRpm){ 
+  if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 
     rpmRecuperationChecker->deactivate();
   } else {
-    attachVentilator();
+    attachRecuperation();
   }
   if (!settingsData->checkVentilatorRpm){ 
     rpmVentilatorChecker->deactivate();
   } else {
-    attachRecuperation();  
+    attachVentilator();  
   }
   if (settingsData->hideCo2) {
     monitoring->hideCo2();
@@ -194,8 +194,10 @@ void loop() {
   monitoring->act();
   button->act();
   ventilator->act();
-  recuperation->act();
-  recuperationRelay->act();
+  if (IS_RECUPERATION_ENABLED) {
+    recuperation->act();
+    recuperationRelay->act();
+  }
   ventilatorRelay->act();
   dns.processNextRequest();
   orchestrator->act();
@@ -207,7 +209,7 @@ void loop() {
       attachVentilator();  
     }
   }
-  if (settingsData->checkRecuperationRpm){
+  if (settingsData->checkRecuperationRpm && IS_RECUPERATION_ENABLED){
     if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
       detachRecuperation();
       recuperationTicks = 0;

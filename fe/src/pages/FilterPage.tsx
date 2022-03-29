@@ -14,17 +14,17 @@ import {FilterState} from "../model/state";
 export function FilterPage() {
     const ventilatorFilter = useSelector((state: RootState) => state.state.filterVentilator);
     const recuperationFilter = useSelector((state: RootState) => state.state.filterRecuperation);
-
-    return <Grid container>
-            <FilterShowcase filter={FanType.ventilator}
-                            state={ventilatorFilter}
-                            title={"Filtr ventilátoru"}
-            />
-            <FilterShowcase filter={FanType.recuperation}
-                            state={recuperationFilter}
-                            title={"Filtr rekuperace"}
-            />
-        </Grid>
+    const recuperationEnabled = useSelector((state: RootState) => state.state.recuperationEnabled);
+    return <>
+        <FilterShowcase filter={FanType.ventilator}
+                        state={ventilatorFilter}
+                        title={"Filtr ventilátoru"}
+        />
+        {recuperationEnabled && <FilterShowcase filter={FanType.recuperation}
+                                                state={recuperationFilter}
+                                                title={"Filtr rekuperace"}
+        />}
+    </>
 }
 
 export interface FilterShowcaseProps {
@@ -32,7 +32,8 @@ export interface FilterShowcaseProps {
     state: FilterState
     title: string
 }
-export function FilterShowcase(props: FilterShowcaseProps)  {
+
+export function FilterShowcase(props: FilterShowcaseProps) {
     const classes = useStyles();
     const dispatch = useDispatch();
     const days = Math.round(props.state.remainingMinutes / 60 / 24);

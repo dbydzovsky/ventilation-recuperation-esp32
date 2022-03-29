@@ -3,30 +3,29 @@ import {makeStyles} from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import {useDispatch, useSelector} from "react-redux";
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import PhotoFilterIcon from '@material-ui/icons/PhotoFilter';
 import WarningIcon from "@material-ui/icons/Warning";
 import Button from "@material-ui/core/Button";
 import {InputLabel, Paper} from "@material-ui/core";
-import {cleanFilter, FanType} from "../actions/filter";
+import {FanType} from "../actions/filter";
 import {RootState} from "../reducers";
-import {AlarmState, FilterState} from "../model/state";
-import {msToTime} from "./CurrentStatePage";
+import {AlarmState} from "../model/state";
 import {cleanAlarm} from "../actions/alarm";
 import AlarmIcon from '@material-ui/icons/Alarm';
+
 export function AlarmPage() {
     const ventilatorAlarm = useSelector((state: RootState) => state.state.alarmVentilator);
     const recuperationAlarm = useSelector((state: RootState) => state.state.alarmRecuperation);
-
-    return <Grid container>
-            <AlarmShowcase filter={FanType.ventilator}
-                            state={ventilatorAlarm}
-                            title={"Alarm ventilátoru"}
-            />
-            <AlarmShowcase filter={FanType.recuperation}
-                            state={recuperationAlarm}
-                            title={"Alarm rekuperace"}
-            />
-        </Grid>
+    const recuperationEnabled = useSelector((state: RootState) => state.state.recuperationEnabled);
+    return <>
+        <AlarmShowcase filter={FanType.ventilator}
+                       state={ventilatorAlarm}
+                       title={"Alarm ventilátoru"}
+        />
+        {recuperationEnabled && <AlarmShowcase filter={FanType.recuperation}
+                                               state={recuperationAlarm}
+                                               title={"Alarm rekuperace"}
+        />}
+    </>
 }
 
 export interface AlarmShowcaseProps {
@@ -34,7 +33,8 @@ export interface AlarmShowcaseProps {
     state: AlarmState
     title: string
 }
-export function AlarmShowcase(props: AlarmShowcaseProps)  {
+
+export function AlarmShowcase(props: AlarmShowcaseProps) {
     const classes = useStyles();
     const dispatch = useDispatch();
 

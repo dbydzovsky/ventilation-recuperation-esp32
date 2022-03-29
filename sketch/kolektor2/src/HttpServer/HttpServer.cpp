@@ -24,6 +24,10 @@ void setCors(AsyncWebServerResponse *response) {
 void setCache(AsyncWebServerResponse *response) {
   response->addHeader("Cache-Control", "public, max-age=31536000, immutable");
 }
+void setNoCache(AsyncWebServerResponse *response) {
+  response->addHeader("Cache-Control", "no-cache");
+}
+
 
 void notNotFound(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_OPTIONS) {
@@ -32,7 +36,7 @@ void notNotFound(AsyncWebServerRequest * request) {
         request->send(response);
     } else if (request->method() == HTTP_GET) {
         AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/index.html");
-        setCache(response);
+        setNoCache(response);
         request->send(response);
     }
 }
@@ -87,6 +91,7 @@ void HttpServer::setup() {
         root["description"] = description;
         // todo root["restarts"] = restarts;
         root["heap"] = ESP.getFreeHeap();
+        root["recuperationEnabled"] = IS_RECUPERATION_ENABLED;
         
         trial["duration"] = trialProgramme->getDuration();
         PowerOutput trialOutput = trialProgramme->getActualSetting();
@@ -261,7 +266,7 @@ void HttpServer::setup() {
     this->_server->addHandler(alarmHandler);
     // todo change password
     AsyncElegantOTA.begin(this->_server, "admin", "pass");
-    this->_server->serveStatic("/static/js/", SPIFFS, "/static/js/", "max-age=31536000");
+    this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
 }

@@ -69,8 +69,8 @@ function Routes() {
 
 function Drawer(props: {  }) {
 	const classes = useStyles();
-	const cleaningNeeded  = useSelector((state: RootState) => state.state.filterVentilator.needCleaning || state.state.filterRecuperation.needCleaning);
-	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || state.state.alarmRecuperation.needAttention);
+	const cleaningNeeded  = useSelector((state: RootState) => state.state.filterVentilator.needCleaning || (state.state.recuperationEnabled && state.state.filterRecuperation.needCleaning));
+	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || (state.state.recuperationEnabled && state.state.alarmRecuperation.needAttention));
 	return (
 		<div>
 			<div className={classes.drawerHeader} />

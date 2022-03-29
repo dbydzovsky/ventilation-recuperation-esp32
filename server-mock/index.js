@@ -61,6 +61,7 @@ module.exports = () => {
                 needAttention: false
             },
             "mode": 3,
+            "recuperationEnabled": true,
             "time": "2022/2/6 9:23.24",
             "ventilator": 0,
             "recuperation": -60,
