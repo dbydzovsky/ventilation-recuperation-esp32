@@ -28,7 +28,6 @@ void setNoCache(AsyncWebServerResponse *response) {
   response->addHeader("Cache-Control", "no-cache");
 }
 
-
 void notNotFound(AsyncWebServerRequest * request) {
     if (request->method() == HTTP_OPTIONS) {
         AsyncWebServerResponse *response = request->beginResponse(204);
@@ -41,12 +40,13 @@ void notNotFound(AsyncWebServerRequest * request) {
     }
 }
 
-HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter){
+HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter, long pass){
     this->_deps = deps;
     this->_server = server;
     this->_wifiManager = wifiManager;
     this->_orchestrator = orchestrator;
     this->_filter = filter;
+    this->_pass = pass;
 }
 
 
@@ -264,8 +264,14 @@ void HttpServer::setup() {
     this->_server->addHandler(saveSettingsHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
-    // todo change password
-    AsyncElegantOTA.begin(this->_server, "admin", "pass");
+    if (IS_DEBUG) {
+        AsyncElegantOTA.begin(this->_server);
+    } else {
+        int num = this->_pass;
+        char passstr[10];
+        itoa( num, passstr, 10 );
+        AsyncElegantOTA.begin(this->_server, "uploader", passstr);
+    }
     this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();

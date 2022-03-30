@@ -85,6 +85,7 @@ bool Display::handleClick(byte times) {
 	} else if (times == 2) {
 	  this->screenIndex = (this->screenIndex - 1) % SCREEN_COUNT;
 	} else {
+		this->actual->handleClick(this->screenProps, times);
 		return true;
 	}
 	this->actual = this->getActualScreen();
@@ -94,6 +95,9 @@ bool Display::handleClick(byte times) {
 	return true;
 }
 
+void Display::setPass(long pass) {
+	this->screenFactory->debugScreen->setPass(pass);
+}
 void Display::onPressDown() {
 	if (!this->actual->hasActiveButton()) {
 	  return;

@@ -30,6 +30,10 @@ class HistoryScreen: public Screen {
   public:
     virtual void updateHistory(ScreenProps * props) = 0;
 };
+class PasswordScreen: public Screen {
+  public:
+    virtual void setPass(long pass) = 0;
+};
 
 class ScreenFactory {
   public:
@@ -44,7 +48,7 @@ class ScreenFactory {
     Screen * boostScreen;
     Screen * inHouseScreen;
     Screen * outHouseScreen;
-    Screen * debugScreen;
+    PasswordScreen * debugScreen;
     HistoryScreen * co2History;
     HistoryScreen * tempHistory;
     // Screen * ManualControlScreen;

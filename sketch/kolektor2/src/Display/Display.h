@@ -26,6 +26,7 @@ class Display {
     bool handleClick(byte times);
     void onPressDown();
     void wifiConnecting();
+    void setPass(long pass);
   private:
     int screenIndex = 0;
     bool isButtonPress = false;

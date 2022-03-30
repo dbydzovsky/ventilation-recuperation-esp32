@@ -14,13 +14,19 @@
 #include "../Programme/Programme.h"
 
 
-class DebugScreen: public Screen {
+class DebugScreen: public PasswordScreen {
   private:
+    bool showpass = false;
+    long pass = 0;
     unsigned long opened_since;
   public:
     void setup(ScreenProps * deps){
-        this->opened_since = millis();
+      this->opened_since = millis();
+      this->showpass = false;
       if (IS_DEBUG) Serial.println("Debug screen setup");
+    }
+    void setPass(long pass) {
+      this->pass = pass;
     }
     bool isFinished(ScreenProps * props) {
       return millis() - this->opened_since > KEEP_SCREEN_LONG;
@@ -29,6 +35,16 @@ class DebugScreen: public Screen {
       
     };
     void tick(ScreenProps * props){ 
+      if (this->showpass) {
+        props->d->clearDisplay(); 
+        props->d->setTextSize(1);
+        props->d->setCursor(0,12);
+        props->d->print("uploader");
+        props->d->setCursor(0,30);
+        props->d->print(this->pass);
+        props->d->display();
+        return;
+      }
       props->d->clearDisplay();
       props->d->setTextSize(2);
       props->d->setTextColor(WHITE);
@@ -69,6 +85,10 @@ class DebugScreen: public Screen {
       return 1000;
     }
     bool handleClick(ScreenProps * deps, byte times){
+      if (times > 7) {
+        this->showpass = true;
+        return true;
+      }
       return false;
     }
 

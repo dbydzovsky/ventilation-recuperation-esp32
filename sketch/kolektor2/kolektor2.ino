@@ -92,15 +92,19 @@ Dependencies deps = {
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
   restarter, filter
 };
+  
+long passphase = abs(esp_random());
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 Display * display = new Display(&deps, orchestrator);
 Button * button = new Button(BTN_PIN, display);
 
+
+
 DNSServer dns;
 AsyncWebServer server(80);
 AsyncWiFiManager wifiManager(&server, &dns);
-HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter);
+HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter, passphase);
 
 long ventilatorTicks = 0;
 void IRAM_ATTR myVentilatorHandler() {
@@ -136,6 +140,7 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
+  display->setPass(passphase);
   settings->setup();
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
@@ -147,7 +152,6 @@ void setup()
   rpmVentilatorChecker->setup();
   rpmRecuperationChecker->setup();
   attachRecuperation();
-
   SettingsData * settingsData = settings->getSettings();
   if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 
     rpmRecuperationChecker->deactivate();

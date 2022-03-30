@@ -15,9 +15,10 @@
 
 class HttpServer {
   public:
-    HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator, FilterMonitor * filter);
+    HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator, FilterMonitor * filter, long pass);
     void setup();
   private:
+    long _pass;
     Dependencies * _deps;
     AsyncWebServer * _server;
     AsyncWiFiManager * _wifiManager;
