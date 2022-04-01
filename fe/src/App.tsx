@@ -36,14 +36,11 @@ import {useSelector} from "react-redux";
 import {RootState} from "./reducers";
 import {TrialPage} from "./pages/TrialPage";
 import {FirmwarePage} from "./pages/FirmwarePage";
-import ControlCameraIcon from '@material-ui/icons/ControlCamera';
-import {FilterPage} from "./pages/FilterPage";
-import AlarmOnIcon from '@material-ui/icons/AlarmOn';
-import {AlarmPage} from "./pages/AlarmPage";
 import {MaintenancePage} from "./pages/MaintenancePage";
 import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
+
 // https://v4.mui.com/components/material-icons/#material-icons
 
 function Routes() {
@@ -67,10 +64,14 @@ function Routes() {
 	);
 }
 
-function Drawer(props: {  }) {
+function Drawer(props: { toggle: () => void }) {
 	const classes = useStyles();
 	const cleaningNeeded  = useSelector((state: RootState) => state.state.filterVentilator.needCleaning || (state.state.recuperationEnabled && state.state.filterRecuperation.needCleaning));
 	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || (state.state.recuperationEnabled && state.state.alarmRecuperation.needAttention));
+	const onClick= (path: string) => {
+		props.toggle();
+		history.push(path);
+	}
 	return (
 		<div>
 			<div className={classes.drawerHeader} />
@@ -80,7 +81,7 @@ function Drawer(props: {  }) {
 			<Divider />
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/state")}>
+				<ListItem button onClick={() => onClick("/state")}>
 					<ListItemIcon>
 						<HomeIcon />
 					</ListItemIcon>
@@ -89,7 +90,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/configuration")}>
+				<ListItem button onClick={() => onClick("/configuration")}>
 					<ListItemIcon>
 						<SettingsIcon />
 					</ListItemIcon>
@@ -98,7 +99,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/maintenance")}>
+				<ListItem button onClick={() => onClick("/maintenance")}>
 					<ListItemIcon>
 						{(cleaningNeeded||alarmAttentionNeeded) && <WarningIcon htmlColor={"orange"}/> || <CheckCircleIcon />}
 					</ListItemIcon>
@@ -107,7 +108,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/trial")}>
+				<ListItem button onClick={() => onClick("/trial")}>
 					<ListItemIcon>
 						<TuneIcon />
 					</ListItemIcon>
@@ -116,7 +117,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/help")}>
+				<ListItem button onClick={() => onClick("/help")}>
 					<ListItemIcon>
 						<HelpIcon />
 					</ListItemIcon>
@@ -125,7 +126,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/advanced")}>
+				<ListItem button onClick={() => onClick("/advanced")}>
 					<ListItemIcon>
 						<SettingsEthernetIcon />
 					</ListItemIcon>
@@ -134,7 +135,7 @@ function Drawer(props: {  }) {
 			</List>
 			<Divider />
 			<List>
-				<ListItem button onClick={() => history.push("/firmware")}>
+				<ListItem button onClick={() => onClick("/firmware")}>
 					<ListItemIcon>
 						<SystemUpdateAltIcon />
 					</ListItemIcon>
@@ -214,7 +215,7 @@ function App() {
 								keepMounted: true, // Better open performance on mobile.
 							}}
 						>
-							<Drawer />
+							<Drawer toggle={handleDrawerToggle} />
 						</DrawerMui>
 					</Hidden>
 					<Hidden smDown>
@@ -225,7 +226,7 @@ function App() {
 								paper: classes.drawerPaper,
 							}}
 						>
-							<Drawer />
+							<Drawer toggle={handleDrawerToggle} />
 						</DrawerMui>
 					</Hidden>
 					<Routes />
@@ -260,7 +261,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 			display: "none",
 		},
 	},
-	drawerHeader: { ...theme.mixins.toolbar },
+	drawerHeader: {
+		...theme.mixins.toolbar,
+		background: "#1c2d6c",
+	},
 	drawerPaper: {
 		width: 250,
 		backgroundColor: theme.palette.background.default,
