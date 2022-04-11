@@ -197,13 +197,13 @@ Sensors::Sensors(MHZ19_uart * mhz19) {
   //this->co2Inside = new TestingSensor(1000);
   this->co2Inside = new Co2Sensor(mhz19);
     // Serial.println("Configuring testing sensors");
-  this->outsideHum = new TestingSensor(5);
-  this->outsideTemp = new TestingSensor(20);
+  // this->outsideHum = new TestingSensor(5);
+  // this->outsideTemp = new TestingSensor(20);
   // this->outsideTemp = this->insideTemp;
   
-  // OutsideSensor * outside = new OutsideSensor(sht20);
-  // this->outsideHum = new HumOutsideSensor(outside);
-  // this->outsideTemp = new TempOutsideSensor(outside);
+  OutsideSensor * outside = new OutsideSensor(sht20);
+  this->outsideHum = new HumOutsideSensor(outside);
+  this->outsideTemp = new TempOutsideSensor(outside);
 }
 
 void Sensors::setup() {

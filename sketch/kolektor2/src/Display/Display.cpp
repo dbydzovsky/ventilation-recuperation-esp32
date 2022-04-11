@@ -178,7 +178,6 @@ void Display::act(){
 	}
 	return;
   }
-
   if (this->actual->isFinished(this->screenProps)) {
 	this->screenIndex = 0;
 	this->actual = this->getDefaultScreen();
@@ -191,6 +190,10 @@ void Display::act(){
 	  return;
 	}
   }
+
+  // this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  // this->d->clearDisplay();
+  // this->d->display();
 
   if (IS_DEBUG) Serial.println("ticking screen");
   Screen * newOne = this->getActualScreen();

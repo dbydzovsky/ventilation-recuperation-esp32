@@ -35,18 +35,18 @@
 HTTPClient httpClient;
 
 // PINS
-#define PWM_ventilator_PIN 16
-#define ventilatorSignal 35
-#define PWM_recuperation_PIN 33 // 33-for screen, 26 for wood
-#define recuperationSignal 13
-#define BTN_PIN 23
-#define RECUPERATION_RELAY_PIN 17
-#define VENTILATOR_RELAY_PIN 27
-#define RED_DIODE_PIN 39
-#define GREEN_DIODE_PIN 19
-#define BLUE_DIODE_PIN 24
-#define rx_pin 26 // 26 for screen co2, 33 for wood
-#define tx_pin 18
+#define PWM_ventilator_PIN 23 //16
+#define ventilatorSignal 34 // 35
+#define PWM_recuperation_PIN 18 //33 // 33-for screen, 26 for wood
+#define recuperationSignal 33 // 13
+#define BTN_PIN 26 //23
+#define RECUPERATION_RELAY_PIN 19 // 17
+#define VENTILATOR_RELAY_PIN 27 // not-connected
+#define RED_DIODE_PIN 39 // not-used
+#define GREEN_DIODE_PIN 19 // not-used
+#define BLUE_DIODE_PIN 24 // not-used
+#define rx_pin 36 // 26 // 26 for screen co2, 33 for wood
+#define tx_pin 5 // 18
 
 
 RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent");

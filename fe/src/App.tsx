@@ -166,7 +166,7 @@ function Drawer(props: { toggle: () => void }) {
 
 function App() {
 	const classes = useStyles();
-	const [mobileOpen, setMobileOpen] = React.useState(true);
+	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const isMobile = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm")
 	);
