@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import {makeStyles} from "@material-ui/styles";
 import {Theme} from "@material-ui/core/styles";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import {InstallationPage} from "./InstallationPage";
 
 enum SignalDiode {
     Red = "red",
@@ -150,11 +151,13 @@ export function HelpPage() {
             <Row label={12.2} value={"Vyhřívací program - teplota v kolektoru pomalu klesá"}/>
             <Row label={12.3} value={"Vyhřívací program - rosný bod překračuje vnitřní teplotu"}/>
         </Grid>
-        {/*<br/>*/}
+        <br/>
         {/*    <div className={classes.center}>*/}
         {/*    <h1>Schéma</h1>*/}
         {/*    <GitHubIcon/> Více o projektu na <a href={"https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266"}>https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266</a><br/>*/}
         {/*</div>*/}
+
+        <InstallationPage/>
     </div>
 }
 

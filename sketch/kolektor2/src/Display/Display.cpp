@@ -167,6 +167,10 @@ void Display::act(){
 	  this->d->dim(false);
   }
   if (millis() - this->last_sync > 120000) {
+	this->_historyUpdateIndex = (this->_historyUpdateIndex + 1) % 30;
+	if (this->_historyUpdateIndex == 0) {
+		this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+	}
 	this->last_sync = millis();
 	this->screenFactory->co2History->updateHistory(this->screenProps);
 	this->screenFactory->tempHistory->updateHistory(this->screenProps);

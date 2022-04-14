@@ -68,30 +68,31 @@ void RPMChecker::setup() {
     this->_stoppedSince = millis();
   }
 }
-// todo jiny vypocet pro ventilator
 // todo no content page when not connected
 // todo kdyz co2 cidlo neni pripojene
-float computeRpm(int durationMs, long ticks) {
-  int revolutions = ticks / 2;
+float computeRpm(short ticksPerRevolution, int durationMs, long ticks) {
+  int revolutions = ticks / ticksPerRevolution;
   float rpm = (60000/durationMs) * revolutions;
   return rpm;
+}
+
+void RPMChecker::setTicksPerRevolution(short ticksPerRevolution) {
+  this->_ticksPerRevolution = ticksPerRevolution;
 }
 
 int RPMChecker::getRpm() {
   return this->_rpm;
 }
-
 void RPMChecker::setUnblockingFansPeriod(int unblockingPeriodSeconds) {
   this->_unblockingFansPeriod = unblockingPeriodSeconds;
 }
 void RPMChecker::setMaxRpm(int maxRpm) {
   this->_maxRpm = maxRpm;
 }
-
 bool RPMChecker::act(long ticks, short currentPower) {
   // return true if counter should be reset
   if (currentPower != this->_lastPower) {
-    this->last_sample rpmVentilatorChecker= millis();
+    this->last_sample = millis();
     this->_lastPower = currentPower;
     return true;
   }
@@ -106,7 +107,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
   int duration = millis() - this->last_sample;
   if (duration > RPM_SAMPLING_DURATION) {
     this->last_sample = millis();
-    this->_rpm = computeRpm(duration, ticks);
+    this->_rpm = computeRpm(this->_ticksPerRevolution, duration, ticks);
     if (this->_rpm > this->_maxRpm) {
       AlarmData data;
       data.highRpm = true;
@@ -115,10 +116,9 @@ bool RPMChecker::act(long ticks, short currentPower) {
       this->_stoppedSince = millis();
       this->_reason = MOTOR_HIGH_RPM_REASON;
     }
-    // todo - ventilator se dlouho roztáčí
     if (currentPower > 0 && this->_rpm < 1000) {
       this->_notExpectedRotations++;
-      if (this->_notExpectedRotations > 5) {
+      if (this->_notExpectedRotations > 15) {
         AlarmData data;
         data.blocked = true;
         save(this->_filename, data);

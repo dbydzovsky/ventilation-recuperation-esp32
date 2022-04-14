@@ -40,7 +40,7 @@ void notNotFound(AsyncWebServerRequest * request) {
     }
 }
 
-HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter, long pass){
+HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter, unsigned long pass){
     this->_deps = deps;
     this->_server = server;
     this->_wifiManager = wifiManager;
@@ -267,7 +267,7 @@ void HttpServer::setup() {
     if (IS_DEBUG) {
         AsyncElegantOTA.begin(this->_server);
     } else {
-        int num = this->_pass;
+        unsigned long num = this->_pass;
         char passstr[10];
         itoa( num, passstr, 10 );
         AsyncElegantOTA.begin(this->_server, "uploader", passstr);

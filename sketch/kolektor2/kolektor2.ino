@@ -93,7 +93,7 @@ Dependencies deps = {
   restarter, filter
 };
   
-long passphase = abs(esp_random());
+unsigned long passphase = abs(esp_random());
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 Display * display = new Display(&deps, orchestrator);
@@ -150,7 +150,9 @@ void setup()
   sensors->setup();
   filter->setup();
   rpmVentilatorChecker->setup();
+  rpmVentilatorChecker->setTicksPerRevolution(3);
   rpmRecuperationChecker->setup();
+  rpmRecuperationChecker->setTicksPerRevolution(2);
   attachRecuperation();
   SettingsData * settingsData = settings->getSettings();
   if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 

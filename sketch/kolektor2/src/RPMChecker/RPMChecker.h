@@ -23,6 +23,7 @@ class RPMChecker {
   public:
     RPMChecker(int pin, const char* filename);
     void setup();
+    void setTicksPerRevolution(short ticksPerRevolution);
     void deactivate();
     void setUnblockingFansPeriod(int unblockingPeriodSeconds);
     void setMaxRpm(int maxRpm);
@@ -32,6 +33,7 @@ class RPMChecker {
     int getRpm();
     void report(AlarmReport * out);
   private:
+    short _ticksPerRevolution;
     int _unblockingFansPeriod = 0;
     bool _activated = true;
     bool _stopped = false;

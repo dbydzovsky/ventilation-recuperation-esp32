@@ -28,6 +28,7 @@ class Display {
     void wifiConnecting();
     void setPass(long pass);
   private:
+    int _historyUpdateIndex = 0;
     int screenIndex = 0;
     bool isButtonPress = false;
     bool btnPressDone = false;
