@@ -9,6 +9,7 @@
 #include "Arduino.h"
 #include "ArduinoJson.h"
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 // UNBLOCKING_FANS_PERIOD 172800000 // 2 days
 // RECUPERATION_WAIT_FOR_DIRECTION_CHANGE 6000
@@ -36,10 +37,12 @@ struct SettingsData {
 
 class Settings {
   public:
+    Settings(Debugger * debugger);
     void setup();
     SettingsData* getSettings();
     bool save(JsonVariant &json);
   private:
+    Debugger * debugger;
     SettingsData * data = {};
     bool validate(DynamicJsonDocument doc, SettingsData *out);
     bool loadJson(DynamicJsonDocument *doc);

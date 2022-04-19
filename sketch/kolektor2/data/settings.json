@@ -1,6 +1,6 @@
 {
-  "checkRecuperationRpm": false,
-  "checkVentilatorRpm": false,
+  "checkRecuperationRpm": true,
+  "checkVentilatorRpm": true,
   "hideCo2": false,
   "hideInternalTempHum": false,
   "unblockingFansPeriod": 172800000,

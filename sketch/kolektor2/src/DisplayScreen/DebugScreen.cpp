@@ -85,7 +85,7 @@ class DebugScreen: public PasswordScreen {
       return 1000;
     }
     bool handleClick(ScreenProps * deps, byte times){
-      if (times > 7) {
+      if (times > 3) {
         this->showpass = true;
         return true;
       }

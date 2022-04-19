@@ -21,7 +21,10 @@ short Ventilator::getPower() {
 }
 
 void Ventilator::act() {
-  short duty = map(this->_power, 0, 100, 0, 254);
+  short duty = 0;
+  if (this->_power > 0) {
+    duty = map(this->_power, 0, 100, 30, 254);
+  }
   if (this->_checker->shouldStop()) {
     this->_relay->disable();
     this->_control->setDutyCycle(0);
@@ -34,7 +37,7 @@ void Ventilator::act() {
 
 void Ventilator::setPower(byte power) {
   if (power != this->_power) {
-    if (power < 10 || power > 100) {
+    if (power < 0 || power > 100) {
       this->_power = 0;
     } else {
       this->_power = power;

@@ -6,20 +6,20 @@
 #include "SPIFFS.h"
 #include "../Constants/Constants.h"
 
-
+Settings::Settings(Debugger * debugger) {
+  this->debugger = debugger;
+}
 
 void Settings::setup() {
-  if (IS_DEBUG) Serial.println("Goding to read settings..");
   DynamicJsonDocument doc(4096);
-  if (IS_DEBUG) Serial.println("Loading json..");
-  if (this->loadJson(&doc)) {
-    if (IS_DEBUG) Serial.println("Settings json Loaded, validating..");
+  this->debugger->debug("Loading settings JSON.");
+  if (this->loadJson(&doc)) {  
     SettingsData * data = new SettingsData();
     if (!this->validate(doc, data)) {
-      Serial.println("Cannot load settings.json, because it is not valid.");
+      this->debugger->debug("Cannot load settings.json, because some of it value is not valid.");
       this->data = new SettingsData();
     } else {
-      if (IS_DEBUG) Serial.println("Json validated, saving as data..");
+      this->debugger->debug("Settings JSON validated.");
       this->data = data;
     }
   } else {
@@ -61,59 +61,61 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
   out->hideCo2 = c["hideCo2"].as<bool>();
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
-  out->unblockingFansPeriod = c["unblockingFansPeriod"].as<int>();
+  out->unblockingFansPeriod = c["unblockingFansPeriod"].as<long>();
   if (out->unblockingFansPeriod < 1000) {
-    if (IS_DEBUG) Serial.println("invalid unblockingFansPeriod");
+    this->debugger->debug("Invalid unblockingFansPeriod, must not be less then 1000ms");
     return false;
   }
   out->ventilatorMaxRpm = c["ventilatorMaxRpm"].as<int>();
   if (out->ventilatorMaxRpm < 1000) {
-    if (IS_DEBUG) Serial.println("invalid ventilatorMaxRpm");
+    this->debugger->debug("invalid ventilatorMaxRpm");
     return false;
   }
   out->recuperationMaxRpm = c["recuperationMaxRpm"].as<int>();
   if (out->recuperationMaxRpm < 1000) {
-    if (IS_DEBUG) Serial.println("invalid recuperationMaxRpm");
+    this->debugger->debug("invalid recuperationMaxRpm");
     return false;
   }
   out->recuperationWaitForDirectionChange = c["recuperationWaitForDirectionChange"].as<int>();
   if (out->recuperationWaitForDirectionChange < 4000) {
-    if (IS_DEBUG) Serial.println("invalid recuperationWaitForDirectionChange");
+    this->debugger->debug("invalid recuperationWaitForDirectionChange");
     return false;
   }
   out->recuperationCycleDuration = c["recuperationCycleDuration"].as<int>();
   if (out->recuperationCycleDuration < 40000) {
-    if (IS_DEBUG) Serial.println("invalid recuperationCycleDuration");
+    this->debugger->debug("invalid recuperationCycleDuration");
     return false;
   }
   out->recuperationMode = c["recuperationMode"].as<int>();
   if (out->recuperationMode != RECUPERATION_MODE_RECYCLE &&
       out->recuperationMode != RECUPERATION_MODE_INHALE &&
       out->recuperationMode != RECUPERATION_MODE_EXHALE) {
-    if (IS_DEBUG) Serial.println("invalid recuperationMode");
+    this->debugger->debug("invalid recuperationMode");
     return false;
   }
   out->recuperationPower = c["recuperationPower"].as<int>();
   if (out->recuperationPower < 0 || out->recuperationPower > 100) {
-    if (IS_DEBUG) Serial.println("invalid recuperationPower");
+    this->debugger->debug("invalid recuperationPower");
     return false;
   }
   out->ventilatorPower = c["ventilatorPower"].as<int>();
   if (out->ventilatorPower < 0 || out->ventilatorPower > 100) {
-    if (IS_DEBUG) Serial.println("invalid ventilatorPower");
+    this->debugger->debug("invalid ventilatorPower");
     return false;
   }
   out->durationMillis = c["durationMillis"].as<int>();
   if (out->durationMillis < 60000) {
-    if (IS_DEBUG) Serial.println("invalid durationMillis");
+    this->debugger->debug("invalid durationMillis");
     return false;
   }
   out->tempDisableDuration = c["tempDisableDuration"].as<int>();
   if (out->tempDisableDuration < 5000) {
+    this->debugger->debug("Invalid temp disable duration.");
     return false;
   }
   out->brightness = c["brightness"].as<int>();
   if (out->brightness < 0 || out->brightness > 100) {
+    this->debugger->debug("Invalid brightness");
     return false;
   }
   return true;

@@ -23,6 +23,8 @@
 #include "../Settings/Settings.h"
 #include "../Restarter/Restarter.h"
 #include "../FilterMonitor/FilterMonitor.h"
+#include "../Debugger/Debugger.h"
+
 struct Dependencies {
   Ventilator * ventilation;
   Recuperation * recuperation;
@@ -45,6 +47,7 @@ struct Dependencies {
   Settings * settings;
   Restarter * restarter;
   FilterMonitor * filter;
+  Debugger * debugger;
 };
 
 #endif

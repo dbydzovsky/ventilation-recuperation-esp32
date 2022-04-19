@@ -247,6 +247,18 @@ void HttpServer::setup() {
         }
     });
 
+    this->_server->on("/a/debug/", HTTP_GET, [this](AsyncWebServerRequest * request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        StaticJsonDocument<4096> jsonDoc;
+        JsonObject root = jsonDoc.to<JsonObject>();
+
+        JsonArray messages = root.createNestedArray("messages");
+        this->_deps->debugger->getMessages(&messages);        
+        serializeJson(root, *response);
+        setCors(response);
+        request->send(response);
+    });
+
     AsyncCallbackJsonWebHandler* saveSettingsHandler = new AsyncCallbackJsonWebHandler("/a/settings", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         if (this->_deps->settings->save(json)) {
             AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
@@ -273,6 +285,7 @@ void HttpServer::setup() {
         AsyncElegantOTA.begin(this->_server, "uploader", passstr);
     }
     this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
+    this->_server->serveStatic("/static/media/", SPIFFS, "/media/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
 }

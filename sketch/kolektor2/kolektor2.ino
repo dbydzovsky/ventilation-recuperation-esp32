@@ -31,7 +31,9 @@
 #include "src/Settings/Settings.h"
 #include "src/Restarter/Restarter.h"
 #include "src/Display/Display.h"
+#include "src/Debugger/Debugger.h"
 
+Debugger * debugger = new Debugger();
 HTTPClient httpClient;
 
 // PINS
@@ -69,7 +71,7 @@ Relay * ventilatorRelay = new Relay(VENTILATOR_RELAY_PIN);
 Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
 Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker);
 Restarter * restarter = new Restarter();
-Settings * settings = new Settings();
+Settings * settings = new Settings(debugger);
 TimeProvider * timeProvider = new TimeProvider();
 WeatherForecast * forecast = new WeatherForecast();
 
@@ -90,7 +92,7 @@ Dependencies deps = {
   outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPoint,
   forecast, timeProvider, &httpClient,
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
-  restarter, filter
+  restarter, filter, debugger
 };
   
 unsigned long passphase = abs(esp_random());
@@ -182,17 +184,23 @@ void setup()
 
 unsigned long last_sensor_reading = millis();
 #define averageReadingInterval 2000
+unsigned long co2_last_sensor_reading = millis();
+#define averageCo2ReadingInterval 10000
 
 void loop() {
   SettingsData * settingsData = settings->getSettings();
   delay(10);
   display->act();
   restarter->act();
+
+  if (millis() - co2_last_sensor_reading > averageCo2ReadingInterval) {
+    co2_last_sensor_reading = millis();
+    co2Inside->doReading();
+  }
   if (millis() - last_sensor_reading > averageReadingInterval) {
     last_sensor_reading = millis();
     outsideTemp->doReading();
     outsideHum->doReading();
-    co2Inside->doReading();
     insideTemp->doReading();
     insideHum->doReading();
     dewPoint->compute(outsideHum->getAverage(), outsideTemp->getAverage());

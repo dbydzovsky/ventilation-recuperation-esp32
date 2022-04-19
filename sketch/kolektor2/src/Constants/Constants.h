@@ -5,7 +5,7 @@
 #define DEFAULT_PASSWORD "123456789"
 
 #define IS_RECUPERATION_ENABLED true
-#define IS_DEBUG false
+#define IS_DEBUG true
 
 #define RPM_SAMPLING_DURATION 1000
 #define updatingSensorStatsInterval 60000
