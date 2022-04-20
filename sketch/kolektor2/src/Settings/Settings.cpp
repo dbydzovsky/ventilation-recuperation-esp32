@@ -23,7 +23,7 @@ void Settings::setup() {
       this->data = data;
     }
   } else {
-    if (IS_DEBUG) Serial.println("Settings file cannot be loaded, using default.");
+    this->debugger->debug("Settings file cannot be loaded, using default.");
     this->data = new SettingsData();
   }
 }
@@ -63,7 +63,7 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<long>();
   if (out->unblockingFansPeriod < 1000) {
-    this->debugger->debug("Invalid unblockingFansPeriod, must not be less then 1000ms");
+    this->debugger->debug("Invalid unblockingFansPeriod, must not be less than 1000ms");
     return false;
   }
   out->ventilatorMaxRpm = c["ventilatorMaxRpm"].as<int>();

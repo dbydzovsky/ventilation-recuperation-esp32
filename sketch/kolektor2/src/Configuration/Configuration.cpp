@@ -5,13 +5,16 @@
 #include <FS.h>
 #include "SPIFFS.h"
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
+Configuration::Configuration(Debugger * debugger) {
+  this->debugger = debugger;
+}
 void Configuration::setInactiveMode() {
   this->changeProperty("mo", INACTIVE_MODE);
 }
 
 bool Configuration::changeProperty(const char* name, short value) {
-  if (IS_DEBUG) Serial.println("Changing property.");
   DynamicJsonDocument doc(4096);
   if (this->loadJson(&doc)) {
     doc[name] = value;
@@ -38,17 +41,17 @@ bool Configuration::isOverlapping(short a, short b, short c, short d) {
 }
 
 void Configuration::setup() {
-  if (IS_DEBUG) Serial.println("Goding to allocate doc..");
+  this->debugger->debug("Allocating doc for config.json..");
   DynamicJsonDocument doc(4096);
-  if (IS_DEBUG) Serial.println("Loading json..");
+  this->debugger->debug("Loading config.json.");
   if (this->loadJson(&doc)) {
-    if (IS_DEBUG) Serial.println("Json Loaded, validating..");
+    this->debugger->debug("Json Loaded, validating..");
     ConfigurationData * data = new ConfigurationData();
     if (!this->validate(doc, data)) {
-      Serial.println("Cannot load config.json");
+      this->debugger->debug("Cannot load config.json");
       return;
     }
-    if (IS_DEBUG) Serial.println("Json validated, saving..");
+    this->debugger->debug("Json Validated, saving..");
     this->data = data;
     this->dataSet = true;
   }
@@ -97,45 +100,52 @@ bool Configuration::saveJson(DynamicJsonDocument doc) {
 }
 
 bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
-  if (IS_DEBUG) Serial.println("Parsing name");
   const char* name = c["name"].as<const char*>();
   if (strlen(name) > 29) {
+    this->debugger->debug("Name property is too long");
     return false;
   }
   strncpy(out->name, name, 30);
-  if (IS_DEBUG) Serial.println("Parsing mode");
   out->mode = c["mode"].as<byte>();
   out->autoWinterStart = c["autoWinterStart"].as<short>();
   if (out->autoWinterStart < 0 || out->autoWinterStart > 365) {
+    this->debugger->debug("Winter start is out of range");
     return false;
   }
   out->autoWinterEnd = c["autoWinterEnd"].as<short>();
   if (out->autoWinterEnd < 0 || out->autoWinterEnd > 365) {
+    this->debugger->debug("Winter end is out of range");
     return false;
   }
   out->autoSummerStart = c["autoSummerStart"].as<short>();
   if (out->autoSummerStart < 0 || out->autoSummerStart > 365) {
+    this->debugger->debug("Summer start is out of range");
     return false;
   }
   out->autoSummerEnd = c["autoSummerEnd"].as<short>();
   if (out->autoSummerEnd < 0 || out->autoSummerEnd > 365) {
+    this->debugger->debug("Summer end is out of range");
     return false;
   }
   if (this->isOverlapping(out->autoSummerStart,out->autoSummerEnd,out->autoWinterStart,out->autoWinterEnd)) {
+    this->debugger->debug("Summer overlaps with Winter.");
     return false;
   }
   
   out->winterMaxInsideTemp = c["winterMaxInsideTemp"].as<float>();
   if (out->winterMaxInsideTemp < 0 || out->winterMaxInsideTemp > 1000) {
+    this->debugger->debug("Winter max inside must be between 0 and 1000.");
     return false;
   }
 
   out->summerMinInsideTemp = c["summerMinInsideTemp"].as<float>();
   if (out->summerMinInsideTemp < 0 || out->summerMinInsideTemp > 1000) {
+    this->debugger->debug("Summer minimum inside must be between 0 and 1000.");
     return false;
   }
   out->minimumFeelsLike = c["minimumFeelsLike"].as<float>();
   if (out->minimumFeelsLike < 0 || out->minimumFeelsLike > 1000) {
+    this->debugger->debug("Minimum feels like must be between 0 and 1000.");
     return false;
   }
   if (IS_DEBUG) Serial.println("Parsing monitoring");
@@ -143,33 +153,39 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   out->monitoring = monitoring;
   const char* apikey = c["monitoring"]["key"].as<const char*>();
   if (strlen(apikey) > 49) {
+    this->debugger->debug("Api key for monitoring must be 49 characters and less.");
     return false;
   }
   strncpy(monitoring->apikey, apikey, 50);
   const char* feed = c["monitoring"]["feed"].as<const char*>();
   if (strlen(feed) > 29) {
+    this->debugger->debug("Feed number must be 29 characters and less.");
     return false;
   }
   strncpy(monitoring->feed, feed, 30);
   int winterOnRulesSize = c["winterOnRules"].size();
   if (winterOnRulesSize > 5) {
+    this->debugger->debug("Max 5 winter rules are allowed.");
     return false;
   }
   if (IS_DEBUG) Serial.println("Parsing weather key");
   const char* weatherApiKey = c["weatherApiKey"].as<const char*>();
   if (strlen(weatherApiKey) > 33) {
+    this->debugger->debug("Weather api key must be 33 chars and less.");
     return false;
   }
   strncpy(out->weatherApiKey, weatherApiKey, 33);
 
   const char* lat = c["lat"].as<const char*>();
   if (strlen(lat) > 5) {
+    this->debugger->debug("Latitude must be 5 chars and less.");
     return false;
   }
   strncpy(out->lat, lat, 6);
 
   const char* lon = c["lon"].as<const char*>();
   if (strlen(lon) > 5) {
+    this->debugger->debug("Longitude must be 5 chars and less.");
     return false;
   }
   strncpy(out->lon, lon, 6);
@@ -182,15 +198,18 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     rule->targetValue = c["winterOnRules"][i]["tv"].as<int>();
     rule->percentage = c["winterOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
+      this->debugger->debug("Each winter rule must have percentage from 0 to 100");
       return false;
     }
     if (rule->targetValue < 0 || rule->targetValue > 100) {
+      this->debugger->debug("Each winter rule must have temperate from 0 to 100");
       return false;
     }
     onRules->rules[i] = rule;
     if (i != 0) {
       Rule * previous = onRules->rules[i - 1];
       if (previous->targetValue > (rule->targetValue - 3)) {
+        this->debugger->debug("Each winter rule must have 3 points gap after another one");
         return false;
       }
     }
@@ -198,6 +217,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (IS_DEBUG) Serial.println("Parsing summer rules");
   int summerOnRulesSize = c["summerOnRules"].size();
   if (summerOnRulesSize > 5) {
+    this->debugger->debug("Max 5 summer rules are allowed.");
     return false;
   }
   Rules * summerOnRules = new Rules();
@@ -208,15 +228,18 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     rule->targetValue = c["summerOnRules"][i]["tv"].as<int>();
     rule->percentage = c["summerOnRules"][i]["p"].as<byte>();
     if (rule->percentage < 0 || rule->percentage > 100) {
+      this->debugger->debug("Each winter rule must have percentage from 0 to 100");
       return false;
     }
     if (rule->targetValue < 0 || rule->targetValue > 100) {
+      this->debugger->debug("Each winter rule must have temperature from 0 to 100");
       return false;
     }
     summerOnRules->rules[i] = rule;
     if (i != 0) {
       Rule * previous = summerOnRules->rules[i - 1];
       if (previous->targetValue < (rule->targetValue + 3)) {
+        this->debugger->debug("Each summer rule must have 3 points gap after another one");
         return false;
       }
     }
@@ -224,6 +247,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
   if (IS_DEBUG) Serial.println("Parsing co2 rules.");
   int co2RulesSize = c["co2Rules"].size();
   if (co2RulesSize > 5) {
+    this->debugger->debug("Max 5 co2 rules are allowed.");
     return false;
   }
   Rules * co2Rules = new Rules();
@@ -234,15 +258,18 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     rule->targetValue = c["co2Rules"][i]["tv"].as<int>();
     rule->percentage = c["co2Rules"][i]["p"].as<short>();
     if (rule->percentage < 0 || rule->percentage > 100) {
+      this->debugger->debug("Each co2 rule must have percentage from 0 to 100");
       return false;
     }
-    if (rule->targetValue < 0 || rule->targetValue > 5000) {
+    if (rule->targetValue < 0 || rule->targetValue > 5000) { 
+      this->debugger->debug("Each co2 rule must have value between 0 to 5000");
       return false;
     }
     co2Rules->rules[i] = rule;
     if (i != 0) {
       Rule * previous = co2Rules->rules[i - 1];
       if (previous->targetValue > (rule->targetValue - 50)) {
+        this->debugger->debug("Each co2 rule must have 50 points gap after another one");
         return false;
       }
     }

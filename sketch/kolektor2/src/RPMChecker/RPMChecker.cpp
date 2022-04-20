@@ -4,6 +4,7 @@
 #include "../Constants/Constants.h"
 #include "SPIFFS.h"
 
+#include "../Debugger/Debugger.h"
 struct AlarmData {
   bool blocked = false;
   bool highRpm = false;
@@ -44,9 +45,10 @@ void read(const char* path, AlarmData *out){
   if (IS_DEBUG) Serial.println(out->highRpm);
 }
 
-RPMChecker::RPMChecker(int pin, const char* filename){
+RPMChecker::RPMChecker(int pin, const char* filename, Debugger * debugger){
   this->_pin = pin;
   this->_filename = filename;
+  this->debugger = debugger;
 }
 
 void RPMChecker::deactivate() {
@@ -60,9 +62,15 @@ void RPMChecker::setup() {
   if (data.blocked || data.highRpm) {
     this->_stopped = true;
     if (data.blocked) {
+      char messageBuf[50];
+      sprintf(messageBuf, "Motor %s is blocked since start", this->_filename);
+      this->debugger->debug(messageBuf);
       this->_reason = MOTOR_BLOCKED_REASON;
     }
     if (data.highRpm) {
+      char messageBuf[50];
+      sprintf(messageBuf, "Motor %s had unexpected rotation", this->_filename);
+      this->debugger->debug(messageBuf);
       this->_reason = MOTOR_HIGH_RPM_REASON;
     }
     this->_stoppedSince = millis();
@@ -111,7 +119,15 @@ bool RPMChecker::act(long ticks, short currentPower) {
     if (this->_rpm > this->_maxRpm) {
       AlarmData data;
       data.highRpm = true;
-      save(this->_filename, data);
+      if (save(this->_filename, data)){
+        char messageBuf[50];
+        sprintf(messageBuf, "WARN: Motor %s has high rotation!", this->_filename);
+        this->debugger->debug(messageBuf);
+      } else {
+        char messageBuf[50];
+        sprintf(messageBuf, "ERR: Motor %s has high rotation and unable to save!", this->_filename);
+        this->debugger->debug(messageBuf);
+      }
       this->_stopped = true;
       this->_stoppedSince = millis();
       this->_reason = MOTOR_HIGH_RPM_REASON;
@@ -121,7 +137,15 @@ bool RPMChecker::act(long ticks, short currentPower) {
       if (this->_notExpectedRotations > 15) {
         AlarmData data;
         data.blocked = true;
-        save(this->_filename, data);
+        if (save(this->_filename, data)){
+          char messageBuf[50];
+          sprintf(messageBuf, "WARN: Motor %s is blocked!", this->_filename);
+          this->debugger->debug(messageBuf);
+        } else {
+          char messageBuf[50];
+          sprintf(messageBuf, "ERR: Motor %s is blocked and unable to save!", this->_filename);
+          this->debugger->debug(messageBuf);
+        }
         this->_stopped = true;
         this->_stoppedSince = millis();
         this->_reason = MOTOR_BLOCKED_REASON;

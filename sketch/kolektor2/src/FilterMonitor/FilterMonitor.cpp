@@ -4,6 +4,7 @@
 #include "../Recuperation/Recuperation.h"
 #include "../Ventilator/Ventilator.h"
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 #include "SPIFFS.h"
 
@@ -46,9 +47,10 @@ void read(const char* path, FilterData *out){
   if (IS_DEBUG) Serial.println(out->minutes);
 }
 
-FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation){
+FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation, Debugger * debugger){
   this->_recuperation = recuperation;
   this->_ventilator = ventilator;
+  this->debugger = debugger;
 }
 
 void FilterMonitor::setup() {
@@ -66,18 +68,22 @@ bool FilterMonitor::cleared(int filter){
     if (IS_DEBUG) Serial.println("Going to clear ventilator");
     FilterData data;
     if (save(ventilator_filename, data)) {
-      if (IS_DEBUG) Serial.println("Ventilator cleared.");
+      this->debugger->debug("Ventilator filter cleared.");
       this->_ventilatorMinutes = 0;
       return true;
+    } else {
+      this->debugger->debug("Unable to clear Ventilator filter.");
     }
   }
   if (filter == FAN_TYPE_RECUPERATION) {
     if (IS_DEBUG) Serial.println("Going to clear recuperation");
     FilterData data;
     if (save(recuperation_filename, data)) {
-      if (IS_DEBUG) Serial.println("Recuperation cleared");
+      this->debugger->debug("Recuperation filter cleared.");
       this->_recuperationMinutes = 0;
       return true;
+    } else {
+      this->debugger->debug("Unable to clear Ventilator filter.");
     }
   }
   return false;

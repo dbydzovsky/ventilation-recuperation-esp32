@@ -11,6 +11,7 @@ export interface Props {
 export function InstallationPage(props: Props) {
     const classes = useStyles()
 
+
     return <div className={classes.root}>
         <h1>Instalační návod</h1>
         <p>
@@ -21,26 +22,32 @@ export function InstallationPage(props: Props) {
 
             <Grid item xs={12}>
                 <h2>Sensor</h2>
-                <img src={Images.sht20.src}/>
+                {/* @ts-ignore*/}
+                <img src={Images.sht20.src} inline/>
             </Grid>
             <Grid item xs={12}>
                 <h2>Pinout Wemos D1 ESP32 mini</h2>
-                <img src={Images.pinout.src}/>
+                {/* @ts-ignore*/}
+                <img src={Images.pinout.src} inline/>
             </Grid>
             <Grid item xs={12}>
                 <h2>Deska</h2>
             </Grid>
             <Grid item xs={12}>
-                <img src={Images.boardPic.src}/>
+                {/* @ts-ignore*/}
+                <img src={Images.boardPic.src} inline/>
             </Grid>
             <Grid item xs={12}>
-                <img src={Images.board.src}/>
+                {/* @ts-ignore*/}
+                <img src={Images.board.src} inline/>
             </Grid>
             <Grid item xs={12}>
                 <h1>RJ45 kabely</h1>
                 <p>RJ45 kabely musí používat standard RJ45-A</p>
-                <img src={Images.conector.src}/>
-                <img src={Images.rj45.src}/>
+                {/* @ts-ignore*/}
+                <img src={Images.conector.src} inline/>
+                {/* @ts-ignore*/}
+                <img src={Images.rj45.src} inline/>
             </Grid>
             <Grid item xs={6}>
                 <Wires title={"Display Konektor"} desc={["SCL", "GND", "27 (reserved)", "32 (reserved)", "25 (reserved)", "5V", "3.3V", "SDA"]}/>

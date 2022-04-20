@@ -21,12 +21,8 @@ int translateCode(byte code, char dest[50]) {
 };
 
 Orchestrator::Orchestrator(Dependencies * deps) {
-  this->deps = deps;
-  if (IS_DEBUG) {
-    this->actual = deps->factory->Disabled;  
-  } else {
-    this->actual = deps->factory->Initial;  
-  }
+  this->deps = deps;  
+  this->actual = deps->factory->Initial;  
 }
 int Orchestrator::getProgrammeCode() {
   return this->_programCode;
@@ -153,7 +149,7 @@ void Orchestrator::act() {
   context.isTimeSet = this->deps->timeProvider->isTimeSet();
   context.data = data;
   context.forecast = this->deps->forecast;
-  WeatherDeps weatherDeps = {data, this->deps->timeProvider, this->deps->httpClient, this->deps->httpLock};
+  WeatherDeps weatherDeps = {data, this->deps->timeProvider, this->deps->httpClient, this->deps->httpLock, this->deps->debugger};
   context.weatherDeps = &weatherDeps;
   PowerOutput out;
   if (this->actual->canForce()) {

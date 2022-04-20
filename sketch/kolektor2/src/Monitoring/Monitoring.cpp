@@ -27,12 +27,12 @@ void Monitoring::doReport() {
         return;
     }
     if (!this->_deps->httpLock->readLock()) {
-        if (IS_DEBUG) Serial.println("Unable to get http read lock to send sensor stats.");
+        this->_deps->debugger->debug("Unable to send sensor statistics. Unable to get HTTP read lock.");
         return;
     }
     if (!this->_deps->confLock->readLock()) {
         this->_deps->httpLock->readUnlock();
-        if (IS_DEBUG) Serial.println("Unable to get conf read lock to send sensor stats.");
+        this->_deps->debugger->debug("Unable to send sensor statistics. Unable to get CONF read lock.");
         return;
     }
     StaticJsonDocument<1024> doc;
@@ -52,7 +52,7 @@ void Monitoring::doReport() {
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
     data["VentilatorBlocked"][0]["value"] = this->_deps->ventilatorChecker->shouldStop();
-    if (IS_RECUPERATION_ENABLED) {
+    if (IS_RECUPERATION_ENABLED) { // todo make it configurable by settings
         data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
         data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
     }
@@ -85,8 +85,11 @@ void Monitoring::doReport() {
     httpClient->addHeader("api-key", this->_deps->conf->getData()->monitoring->apikey);
     int responseCode = httpClient->POST(requestBody);
     httpClient->end();
-    if (IS_DEBUG) Serial.print("Response code from sensor stat update: ");
-    if (IS_DEBUG) Serial.println(responseCode);
+    if (responseCode < 200 || responseCode > 299) {
+        char messageBuf[50];
+        sprintf(messageBuf, "Unexpected code from monitoring server %d", responseCode);
+        this->_deps->debugger->debug(messageBuf);
+    }
     this->_deps->httpLock->readUnlock();
     this->_deps->confLock->readUnlock();
 }

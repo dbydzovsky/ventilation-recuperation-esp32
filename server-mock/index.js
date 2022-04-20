@@ -14,6 +14,14 @@ module.exports = () => {
         settings: {
             checkRecuperationRpm: true,
         },
+        debug: {
+            messages: [
+                "08:50 WARN Loading Settings Json",
+                "09:24 ERR Validated Settings JSON",
+                "09:24 Error with recuperation",
+                "09:26 Filter needs to be cleaner",
+            ]
+        },
         conf: {
             "mode": 3,
             "winterMaxInsideTemp": 29,

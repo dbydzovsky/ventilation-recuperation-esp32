@@ -13,6 +13,8 @@ class TimeProvider {
     TimeProvider();
     bool isTimeSet();
     void updateTime(unsigned long unixTimestamp, int offset);
+  private:
+    bool _initialized = false;
 };
 
 #endif

@@ -33,7 +33,8 @@
 #include "src/Display/Display.h"
 #include "src/Debugger/Debugger.h"
 
-Debugger * debugger = new Debugger();
+TimeProvider * timeProvider = new TimeProvider();
+Debugger * debugger = new Debugger(timeProvider);
 HTTPClient httpClient;
 
 // PINS
@@ -51,8 +52,8 @@ HTTPClient httpClient;
 #define tx_pin 5 // 18
 
 
-RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent");
-RPMChecker * rpmRecuperationChecker = new RPMChecker(recuperationSignal, "/blockrecu");
+RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent", debugger);
+RPMChecker * rpmRecuperationChecker = new RPMChecker(recuperationSignal, "/blockrecu", debugger);
 int stateDiode = LED_BUILTIN;
 DewPoint * dewPoint = new DewPoint();
 #define PWM_1_CHANNEL 1
@@ -63,7 +64,7 @@ PwmControl * pwmRecuperation = new PwmControl(PWM_2_CHANNEL, PWM_recuperation_PI
 RGBDiode * diode = new RGBDiode(PWM_3_CHANNEL, RED_DIODE_PIN, GREEN_DIODE_PIN, BLUE_DIODE_PIN);
 Lock * httpsLock = new Lock();
 Lock * confLock = new Lock();
-Configuration * configuration = new Configuration();
+Configuration * configuration = new Configuration(debugger);
 ProgrammeFactory * factory = new ProgrammeFactory();
 
 Relay * recuperationRelay = new Relay(RECUPERATION_RELAY_PIN);
@@ -72,7 +73,6 @@ Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperatio
 Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker);
 Restarter * restarter = new Restarter();
 Settings * settings = new Settings(debugger);
-TimeProvider * timeProvider = new TimeProvider();
 WeatherForecast * forecast = new WeatherForecast();
 
 
@@ -85,7 +85,7 @@ Average * insideTemp = new Average(sensors->insideTemp);
 Average * insideHum = new Average(sensors->insideHum);
 Average * co2Inside = new Average(sensors->co2Inside);
 
-FilterMonitor * filter = new FilterMonitor(ventilator, recuperation);
+FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger);
 Dependencies deps = { 
   ventilator, recuperation, confLock, httpsLock,
   factory, diode, configuration, 
@@ -185,7 +185,7 @@ void setup()
 unsigned long last_sensor_reading = millis();
 #define averageReadingInterval 2000
 unsigned long co2_last_sensor_reading = millis();
-#define averageCo2ReadingInterval 10000
+#define averageCo2ReadingInterval 5000
 
 void loop() {
   SettingsData * settingsData = settings->getSettings();

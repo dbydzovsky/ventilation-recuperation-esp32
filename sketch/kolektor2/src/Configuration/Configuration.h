@@ -8,6 +8,7 @@
 #define Configuration_h
 #include "Arduino.h"
 #include "ArduinoJson.h"
+#include "../Debugger/Debugger.h"
 
 #define WINTER_MODE 1
 #define SUMMER_MODE 2
@@ -53,12 +54,14 @@ struct ConfigurationData {
 
 class Configuration {
   public:
+    Configuration(Debugger * debugger);
     void setup();
     void setInactiveMode();
     ConfigurationData* getData();
     bool save(JsonVariant &json);
     bool dataSet = false;
   private:
+    Debugger * debugger;
     ConfigurationData * data = {};
     bool isOverlapping(short a, short b, short c, short d);
     bool changeProperty(const char* name, short value);

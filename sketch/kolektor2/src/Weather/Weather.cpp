@@ -9,13 +9,14 @@ WeatherForecast::WeatherForecast() {
 }
 
 bool WeatherForecast::sync(WeatherDeps * deps){ 
-  if (IS_DEBUG) Serial.println("Syncing forecast");
+  deps->debugger->debug("Syncing weather forecast");
   if (WiFi.status() != WL_CONNECTED) {
-    if (IS_DEBUG) Serial.println("Wifi is not connected to gather actual forecast!");
+    if (IS_DEBUG) deps->debugger->debug("Wifi is not connected to gather actual forecast!");
     return false;
   }
+  
   if (!deps->httpsLock->readLock()) {
-    if (IS_DEBUG) Serial.println("https lock not locked!");
+    if (IS_DEBUG) deps->debugger->debug("Unable to sync forecast. Unable to lock HTTP lock.");
     return false;
   }
   char url[220] = "";
@@ -44,14 +45,21 @@ bool WeatherForecast::sync(WeatherDeps * deps){
     } else {
       this->feelsLikeTomorrow = doc["daily"][1]["feels_like"]["day"].as<float>();
     }
+    char messageBuf[100];
+    sprintf(messageBuf, "Updated forecast. Will fell like %d C", (int)this->feelsLikeTomorrow);
+    deps->debugger->debug(messageBuf);
     deps->timeProvider->updateTime(currentTime, offset);
-    if (IS_DEBUG) Serial.print("Feels like: ");
-    if (IS_DEBUG) Serial.println(this->feelsLikeTomorrow);
+    char newTimeBuf[100];
+    sprintf(newTimeBuf, "New time: %d, offset: %d", currentTime, offset);
+    deps->debugger->debug(newTimeBuf);
     this->last_success = millis();
     httpClientForecast->end();
     deps->httpsLock->readUnlock();
     return true;
   } else {
+    char messageBuf[100];
+    sprintf(messageBuf, "Unexpected code from forecast server %d", this->lastStatusCode);
+    deps->debugger->debug(messageBuf);
     httpClientForecast->end();
     deps->httpsLock->readUnlock();
     return false;

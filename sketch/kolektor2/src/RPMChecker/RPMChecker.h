@@ -11,7 +11,8 @@
 #define MOTOR_NO_REASON 0
 #define MOTOR_BLOCKED_REASON 1
 #define MOTOR_HIGH_RPM_REASON 2
- 
+#include "../Debugger/Debugger.h"
+
 struct AlarmReport {
   bool needAttention = false;
   bool highRpm = false;
@@ -21,7 +22,7 @@ struct AlarmReport {
 
 class RPMChecker {
   public:
-    RPMChecker(int pin, const char* filename);
+    RPMChecker(int pin, const char* filename, Debugger * debugger);
     void setup();
     void setTicksPerRevolution(short ticksPerRevolution);
     void deactivate();
@@ -33,6 +34,7 @@ class RPMChecker {
     int getRpm();
     void report(AlarmReport * out);
   private:
+    Debugger * debugger;
     short _ticksPerRevolution;
     int _unblockingFansPeriod = 0;
     bool _activated = true;

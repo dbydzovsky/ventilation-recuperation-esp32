@@ -44,6 +44,7 @@
 		"eslint-plugin-react": "7.17.0",
 		"gulp": "^4.0.2",
 		"gulp-concat": "^1.0.0",
+		"gulp-inline-images": "^1.2.6",
 		"gulp-inline-source": "^4.0.0",
 		"gulp-replace": "^1.0.0",
 		"react-app-rewired": "^2.2.1"

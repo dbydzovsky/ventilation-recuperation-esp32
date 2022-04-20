@@ -195,11 +195,6 @@ void Display::act(){
 	}
   }
 
-  // this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  // this->d->clearDisplay();
-  // this->d->display();
-
-  if (IS_DEBUG) Serial.println("ticking screen");
   Screen * newOne = this->getActualScreen();
   if (newOne != this->actual) {
 	this->actual = newOne;

@@ -12,12 +12,14 @@
 #include "../TimeProvider/TimeProvider.h"
 #include "../Configuration/Configuration.h"
 #include "../Lock/Lock.h"
+#include "../Debugger/Debugger.h"
 
 struct WeatherDeps {
   ConfigurationData * data;
   TimeProvider * timeProvider;
   HTTPClient * httpClient;
   Lock * httpsLock;
+  Debugger * debugger;
 };
 
 class WeatherForecast {

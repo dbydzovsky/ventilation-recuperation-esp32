@@ -40,7 +40,8 @@ import {MaintenancePage} from "./pages/MaintenancePage";
 import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
-
+import {DebugMessagesPage} from "./pages/DebugMessagesPage";
+import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 // https://v4.mui.com/components/material-icons/#material-icons
 
 function Routes() {
@@ -59,6 +60,7 @@ function Routes() {
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
 			<Route exact={true} path="/firmware" component={FirmwarePage} />
+			<Route exact={true} path="/debug" component={DebugMessagesPage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
 		</div>
 	);
@@ -140,6 +142,15 @@ function Drawer(props: { toggle: () => void }) {
 						<SystemUpdateAltIcon />
 					</ListItemIcon>
 					<ListItemText primary="Firmware" />
+				</ListItem>
+			</List>
+			<Divider />
+			<List>
+				<ListItem button onClick={() => onClick("/debug")}>
+					<ListItemIcon>
+						<ViewHeadlineIcon />
+					</ListItemIcon>
+					<ListItemText primary="Debug" />
 				</ListItem>
 			</List>
 			<Divider />

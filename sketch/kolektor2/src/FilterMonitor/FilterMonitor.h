@@ -10,7 +10,7 @@
 #include "../Recuperation/Recuperation.h"
 #include "../Ventilator/Ventilator.h"
 #include "../Constants/Constants.h"
- 
+#include "../Debugger/Debugger.h"
 struct FilterReport {
   bool needCleaning = false;
   long remainMinutes = 0;
@@ -22,12 +22,13 @@ struct FilterData {
 
 class FilterMonitor {
   public:
-    FilterMonitor(Ventilator * ventilator, Recuperation *recuperation);
+    FilterMonitor(Ventilator * ventilator, Recuperation *recuperation, Debugger * debugger);
     bool cleared(int filter);
     void report(byte filter, FilterReport * report);
     void act();
     void setup();
   private:
+    Debugger * debugger;
     long _ventilatorMinutes = 0;
     long _recuperationMinutes = 0;
     unsigned long _lastTracking = millis();
