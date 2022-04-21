@@ -285,7 +285,6 @@ void HttpServer::setup() {
         AsyncElegantOTA.begin(this->_server, "uploader", passstr);
     }
     this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
-    this->_server->serveStatic("/static/media/", SPIFFS, "/media/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
 }

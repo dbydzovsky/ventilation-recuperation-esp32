@@ -15,26 +15,25 @@ Debugger::Debugger(TimeProvider * timeProvider) {
 
 void Debugger::debug(const char * message) {
     if (IS_DEBUG) Serial.println(message);
-// todo add time to message
-//    char hourBuffer[3];
-//    char minuteBuffer[3];
-//    bool timeset = this->_timeProvider->isTimeSet();
-//    if (timeset) {
-//        if (hour() < 10) {
-//            sprintf(hourBuffer, "0%d", hour());
-//        } else {
-//            sprintf(hourBuffer, "%d", hour());
-//        }
-//        if (minute() < 10) {
-//            sprintf(minuteBuffer, "0%d", minute());
-//        } else {
-//            sprintf(minuteBuffer, "%d", minute());
-//        }
-//    }
-//    char messageBuf[DEBUGGER_MESSAGE_LENGTH+5];
-//    sprintf(messageBuf, "%d:%d %s", hourBuffer, minuteBuffer, this->_messages[actualIndex]);
-//    messages->add(messageBuf);
-    strcpy(this->_messages[this->_index], message);
+    if (this->_timeProvider->isTimeSet()) {
+        char hourBuffer[4];
+        if (hour() < 10) {
+            sprintf(hourBuffer, "0%i", (int) hour());
+        } else {
+            sprintf(hourBuffer, "%i", (int)hour());
+        }
+        char minuteBuffer[4];
+        if (minute() < 10) {
+            sprintf(minuteBuffer, "0%i", (int)minute());
+        } else {
+            sprintf(minuteBuffer, "%i", (int)minute());
+        }
+        char messageBuf[DEBUGGER_MESSAGE_LENGTH];
+        sprintf(messageBuf, "%d:%d %s", hourBuffer, minuteBuffer, message);
+        strcpy(this->_messages[this->_index], messageBuf);
+    } else {
+        strcpy(this->_messages[this->_index], message);
+    }
     this->_index = (this->_index + 1) % DEBUGGER_MESSAGES_COUNT; 
 }
 

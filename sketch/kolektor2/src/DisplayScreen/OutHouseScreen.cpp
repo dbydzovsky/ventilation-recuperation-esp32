@@ -53,6 +53,9 @@ class OutHouseScreen: public Screen {
     bool canBeDimmed(ScreenProps * deps) {
       return false;
     }
+    bool shouldShowScreenSaver(ScreenProps * deps) {
+      return true; // todo
+    }
     int getDelayMs(ScreenProps * deps) {
       return 500;
     }

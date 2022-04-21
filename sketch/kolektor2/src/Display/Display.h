@@ -15,7 +15,9 @@
 #include "../Orchestrator/Orchestrator.h"
 #include "../DisplayScreen/ScreenFactory.h"
 
-#define KEEP_DISPLAY_BRIGHT_FOR 6000 // a minute
+#define KEEP_DISPLAY_BRIGHT_FOR 6000
+#define SHOW_SCREEN_SAVER_AFTER 120000
+#define SCREEN_SAVER_TICK_DURATION 1000
 
 class Display {
   public:
@@ -28,7 +30,9 @@ class Display {
     void wifiConnecting();
     void setPass(long pass);
   private:
+    bool _reinitScreen = false;
     int _historyUpdateIndex = 0;
+    bool _wokeUpFromScreenSaver = false;
     int screenIndex = 0;
     bool isButtonPress = false;
     bool btnPressDone = false;
@@ -49,6 +53,7 @@ class Display {
     void tick();
     bool initialized = false;
     bool shouldBeDimmed();
+    bool shouldShowScreenSaver();
 };
 
 

@@ -81,6 +81,9 @@ class DebugScreen: public PasswordScreen {
     bool canBeDimmed(ScreenProps * deps) {
       return false;
     }
+    bool shouldShowScreenSaver(ScreenProps * deps) {
+      return true; // todo
+    }
     int getDelayMs(ScreenProps * deps) {
       return 1000;
     }

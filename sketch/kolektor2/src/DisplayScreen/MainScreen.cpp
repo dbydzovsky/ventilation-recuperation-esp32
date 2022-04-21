@@ -203,6 +203,9 @@ class MainScreen: public Screen {
     bool canBeDimmed(ScreenProps * deps) {
       return true;
     }
+    bool shouldShowScreenSaver(ScreenProps * deps) {
+      return true; // todo
+    }
     int getDelayMs(ScreenProps * deps) {
       return 1000;
     }

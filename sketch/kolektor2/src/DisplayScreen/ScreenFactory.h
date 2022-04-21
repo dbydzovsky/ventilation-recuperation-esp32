@@ -19,6 +19,7 @@ class Screen {
         virtual void finish() = 0;
         virtual void tick(ScreenProps * deps) = 0;
         virtual bool canBeDimmed(ScreenProps * deps) = 0;
+        virtual bool shouldShowScreenSaver(ScreenProps * deps) = 0;
         virtual int getDelayMs(ScreenProps * deps) = 0;
         virtual bool handleClick(ScreenProps * deps, byte times) = 0;
         virtual bool handleHold(ScreenProps * deps, int duration_ms, bool finished) = 0;

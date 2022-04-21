@@ -19,6 +19,10 @@ bool Display::shouldBeDimmed() {
   return this->actual->canBeDimmed(this->screenProps) && millis() - this->last_interaction > KEEP_DISPLAY_BRIGHT_FOR;
 }
 
+bool Display::shouldShowScreenSaver() {
+  return this->actual->shouldShowScreenSaver(this->screenProps) && millis() - this->last_interaction > SHOW_SCREEN_SAVER_AFTER;
+}
+
 bool Display::handleHold(int duration_ms, bool finished) {
 	if (!this->actual->hasActiveButton()) {
 	  return false;
@@ -80,13 +84,15 @@ bool Display::handleClick(byte times) {
 	if (IS_DEBUG) Serial.print("handleClick");
 	if (IS_DEBUG) Serial.println(times);
 	this->last_interaction = millis();
-	if (times == 1) {
-	  this->screenIndex = (this->screenIndex + 1) % SCREEN_COUNT;
+	if (this->_wokeUpFromScreenSaver) {
+	  this->_wokeUpFromScreenSaver = false;
+	} else if (times == 1) {
+      this->screenIndex = (this->screenIndex + 1) % SCREEN_COUNT;  
 	} else if (times == 2) {
 	  this->screenIndex = (this->screenIndex - 1) % SCREEN_COUNT;
 	} else {
-		this->actual->handleClick(this->screenProps, times);
-		return true;
+	  this->actual->handleClick(this->screenProps, times);
+	  return true;
 	}
 	this->actual = this->getActualScreen();
 	this->actual->setup(this->screenProps);
@@ -99,14 +105,20 @@ void Display::setPass(long pass) {
 	this->screenFactory->debugScreen->setPass(pass);
 }
 void Display::onPressDown() {
+	bool showScreenSaver = this->shouldShowScreenSaver();
+	if (showScreenSaver) {
+	  this->_wokeUpFromScreenSaver = true;
+	}
+	this->last_interaction = millis();
 	if (!this->actual->hasActiveButton()) {
 	  return;
 	}
-	if (IS_DEBUG) Serial.println("onPressDown");
-	this->btnPressDone = false;
-	this->screenFactory->pressButtonScreen->setup(this->screenProps);
-	this->last_interaction = millis();
-	this->actual->onPressDown(this->screenProps);
+	if (!showScreenSaver) {
+	  if (IS_DEBUG) Serial.println("onPressDown");
+	  this->btnPressDone = false;
+	  this->screenFactory->pressButtonScreen->setup(this->screenProps);
+	  this->actual->onPressDown(this->screenProps);	
+	}
 }
 
 #define LOGO16_GLCD_HEIGHT 16
@@ -161,6 +173,9 @@ void Display::act(){
   	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
 	this->actual->finish();
   }
+  if (this->_reinitScreen) {
+	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  }
   if (this->shouldBeDimmed()) {
 	  this->d->dim(true);
   } else {
@@ -182,6 +197,7 @@ void Display::act(){
 	}
 	return;
   }
+  bool showScreenSaver = this->shouldShowScreenSaver();
   if (this->actual->isFinished(this->screenProps)) {
 	this->screenIndex = 0;
 	this->actual = this->getDefaultScreen();
@@ -190,8 +206,14 @@ void Display::act(){
 	this->last_tick = millis();
   } else {
 	// if not finished, check its time
-	if (millis() - this->last_tick < this->actual->getDelayMs(this->screenProps)) {
-	  return;
+	if (showScreenSaver) {
+		if (millis() - this->last_tick < SCREEN_SAVER_TICK_DURATION) {
+			return;
+		}
+	} else {
+		if (millis() - this->last_tick < this->actual->getDelayMs(this->screenProps)) {
+			return;
+		}
 	}
   }
 
@@ -199,7 +221,18 @@ void Display::act(){
   if (newOne != this->actual) {
 	this->actual = newOne;
 	this->actual->setup(this->screenProps);
+	this->last_interaction = millis();
   }
   this->last_tick = millis();
-  this->actual->tick(this->screenProps);
+  if (showScreenSaver) {
+	this->d->clearDisplay();
+	// todo screensaver
+	// this->d->setCursor(0, 0);
+	// this->d->setTextSize(2);
+	// this->d->setTextColor(WHITE);
+	// this->d->print("SAVER");
+	this->d->display();
+  } else {
+	this->actual->tick(this->screenProps);
+  }
 }
