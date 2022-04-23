@@ -58,7 +58,7 @@ bool WeatherForecast::sync(WeatherDeps * deps){
     return true;
   } else {
     char messageBuf[100];
-    sprintf(messageBuf, "Unexpected code from forecast server %d", this->lastStatusCode);
+    sprintf(messageBuf, "WARN Unexpected code from forecast server %d", this->lastStatusCode);
     deps->debugger->debug(messageBuf);
     httpClientForecast->end();
     deps->httpsLock->readUnlock();

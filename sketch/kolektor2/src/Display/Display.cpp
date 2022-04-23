@@ -107,6 +107,7 @@ void Display::setPass(long pass) {
 void Display::onPressDown() {
 	bool showScreenSaver = this->shouldShowScreenSaver();
 	if (showScreenSaver) {
+	  this->_reinitScreen = true;
 	  this->_wokeUpFromScreenSaver = true;
 	}
 	this->last_interaction = millis();
@@ -174,6 +175,7 @@ void Display::act(){
 	this->actual->finish();
   }
   if (this->_reinitScreen) {
+	this->_reinitScreen = false; 
 	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
   }
   if (this->shouldBeDimmed()) {
@@ -207,7 +209,7 @@ void Display::act(){
   } else {
 	// if not finished, check its time
 	if (showScreenSaver) {
-		if (millis() - this->last_tick < SCREEN_SAVER_TICK_DURATION) {
+		if (millis() - this->last_tick < this->screenFactory->screenSaverScreen->getDelayMs(this->screenProps)) {
 			return;
 		}
 	} else {
@@ -225,13 +227,7 @@ void Display::act(){
   }
   this->last_tick = millis();
   if (showScreenSaver) {
-	this->d->clearDisplay();
-	// todo screensaver
-	// this->d->setCursor(0, 0);
-	// this->d->setTextSize(2);
-	// this->d->setTextColor(WHITE);
-	// this->d->print("SAVER");
-	this->d->display();
+	this->screenFactory->screenSaverScreen->tick(this->screenProps);
   } else {
 	this->actual->tick(this->screenProps);
   }

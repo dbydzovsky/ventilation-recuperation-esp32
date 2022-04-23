@@ -5,14 +5,19 @@ import {DebugActions} from "../model/debug";
 
 export interface DebugState {
     messages: DebugMessage[]
+    version: number
 }
 
 let initialDebugState: DebugState = {
-    messages: []
+    messages: [],
+    version: -1
 }
 
 export const debugState = createReducer<DebugState>(initialDebugState, {
     [DebugActions.SET_MESSAGES](state: DebugState, payload: DebugActionType<DebugMessage[], any>): DebugState {
-        return { messages: payload.payload }
+        return { ...state, messages: payload.payload }
+    },
+    [DebugActions.SET_VERSION](state: DebugState, payload: DebugActionType<string, any>): DebugState {
+        return { ...state, version: payload.payload }
     },
 });

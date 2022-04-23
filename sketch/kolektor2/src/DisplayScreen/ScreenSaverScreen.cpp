@@ -12,56 +12,54 @@
 #include "../Weather/Weather.h"
 #include "../Settings/Settings.h"
 
-class InHouseScreen: public Screen {
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 48
+#define BALL_R 3
+class ScreenSaverScreen: public Screen {
   private:
-	unsigned long opened_since = millis(); 
+    int16_t x = SCREEN_WIDTH / 2;
+    int16_t y = SCREEN_HEIGHT / 2;
+    int xspeed = 2;
+    int yspeed = 2;
   public:
     void setup(ScreenProps * deps){
-	    this->opened_since = millis();
+      this->y = SCREEN_HEIGHT / 2;
+      this->x = SCREEN_WIDTH / 2;
     }
     bool isFinished(ScreenProps * deps) {
-      return millis() - this->opened_since > KEEP_SCREEN_LONG;
+      return false;
     }
     void finish() {
       
     };
     void tick(ScreenProps * props){ 
 	    props->d->clearDisplay();
-      props->d->setCursor(0, 0);
-	    props->d->setTextSize(1);
-      props->d->setTextColor(WHITE);
-      props->d->print("IN");
-	    int dewPoint = (int) props->deps->dewPointIn->getDewPoint();
-      props->d->setCursor(16, 0);
-	    props->d->print(dewPoint);
-      props->d->print("ros");
-      
-      props->d->setCursor(2, 12);
-      props->d->print(props->deps->insideTemp->getAverage());
-      props->d->print(" C");
-	    props->d->setCursor(2, 24);
-	    props->d->print(props->deps->insideHum->getAverage());
-      props->d->print(" %");
-	    props->d->setCursor(2, 36);
-	    props->d->print((int) props->deps->co2Inside->getAverage());
-      props->d->print(" PPM");
+      this->x = this->x + this->xspeed;
+      this->y = this->y + this->yspeed;
+      if (this->x > (SCREEN_WIDTH - BALL_R) || this->x < (0 + BALL_R)) {
+        this->xspeed = this->xspeed * -1;
+      }
+      if (this->y > (SCREEN_HEIGHT - BALL_R) || this->y < (0 + BALL_R)) {
+        this->yspeed = this->yspeed * -1;
+      }
+      // drawCircle / fillCircle
+      props->d->drawCircle(this->x, this->y, BALL_R, WHITE);
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {
-      return false;
+      return true;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
       return true;
     }
     int getDelayMs(ScreenProps * deps) {
-      return 500;
+      return 200;
     }
     bool handleClick(ScreenProps * deps, byte times){
-      return false;
+      return true;
     }
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Disabling...");
-	  return true;
+      return true;
     }
 
     void onPressDown(ScreenProps * deps) {

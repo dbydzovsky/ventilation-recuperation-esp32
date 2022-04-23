@@ -16,8 +16,7 @@
 #include "../DisplayScreen/ScreenFactory.h"
 
 #define KEEP_DISPLAY_BRIGHT_FOR 6000
-#define SHOW_SCREEN_SAVER_AFTER 120000
-#define SCREEN_SAVER_TICK_DURATION 1000
+#define SHOW_SCREEN_SAVER_AFTER 60000
 
 class Display {
   public:

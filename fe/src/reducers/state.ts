@@ -24,6 +24,7 @@ let initialState: CurrentState = {
     },
     alarmVentilator: {
         blocked: false,
+        overHeated: false,
         remainMinutes: 0,
         highRpm: false,
         needAttention: false

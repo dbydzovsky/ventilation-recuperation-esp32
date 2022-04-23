@@ -66,7 +66,7 @@ class WinterProgramme: public Programme {
     }
     void getPower(ProgrammeContext* context, PowerOutput* out) {
       out->mode = POWER_OUTPUT_MODE_VENTILATION;
-      if (isnan(context->dewPoint)) {
+      if (isnan(context->dewPointOut)) {
         this->markError(124);
         return;
       }

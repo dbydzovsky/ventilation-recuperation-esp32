@@ -65,9 +65,13 @@ void Monitoring::doReport() {
             data["VlhkostVnitrni"][0]["value"] = this->_deps->insideHum->getAverage();
         }    
     } 
-    float dewPoint = this->_deps->dewPoint->getDewPoint();
-    if (!isnan(dewPoint)) {
-        data["RosnyBod"][0]["value"] = dewPoint;
+    float dewPointOut = this->_deps->dewPointOut->getDewPoint();
+    if (!isnan(dewPointOut)) {
+        data["RosnyBodOut"][0]["value"] = dewPointOut;
+    }
+    float dewPointIn = this->_deps->dewPointIn->getDewPoint();
+    if (!isnan(dewPointIn)) {
+        data["RosnyBodIn"][0]["value"] = dewPointIn;
     }
     data["Heap"][0]["value"] = ESP.getFreeHeap();
     data["Forecast"][0]["value"] = (int) this->_deps->forecast->howDoesItFeelLike();
@@ -87,7 +91,7 @@ void Monitoring::doReport() {
     httpClient->end();
     if (responseCode < 200 || responseCode > 299) {
         char messageBuf[50];
-        sprintf(messageBuf, "Unexpected code from monitoring server %d", responseCode);
+        sprintf(messageBuf, "WARN Unexpected code from monitoring server %d", responseCode);
         this->_deps->debugger->debug(messageBuf);
     }
     this->_deps->httpLock->readUnlock();

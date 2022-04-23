@@ -83,7 +83,7 @@ class TempHistoryScreen: public HistoryScreen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return false;
     }
     int getDelayMs(ScreenProps * deps) {
       return 30000;

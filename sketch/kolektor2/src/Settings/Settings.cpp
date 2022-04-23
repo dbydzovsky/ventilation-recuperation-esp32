@@ -16,14 +16,14 @@ void Settings::setup() {
   if (this->loadJson(&doc)) {  
     SettingsData * data = new SettingsData();
     if (!this->validate(doc, data)) {
-      this->debugger->debug("Cannot load settings.json, because some of it value is not valid.");
+      this->debugger->debug("ERR Cannot load settings.json, because some of it value is not valid.");
       this->data = new SettingsData();
     } else {
       this->debugger->debug("Settings JSON validated.");
       this->data = data;
     }
   } else {
-    this->debugger->debug("Settings file cannot be loaded, using default.");
+    this->debugger->debug("ERR Settings file cannot be loaded, using default.");
     this->data = new SettingsData();
   }
 }
@@ -63,59 +63,64 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<long>();
   if (out->unblockingFansPeriod < 1000) {
-    this->debugger->debug("Invalid unblockingFansPeriod, must not be less than 1000ms");
+    this->debugger->debug("WARN Invalid unblockingFansPeriod, must not be less than 1000ms");
     return false;
   }
   out->ventilatorMaxRpm = c["ventilatorMaxRpm"].as<int>();
   if (out->ventilatorMaxRpm < 1000) {
-    this->debugger->debug("invalid ventilatorMaxRpm");
+    this->debugger->debug("WARN invalid ventilatorMaxRpm");
     return false;
   }
   out->recuperationMaxRpm = c["recuperationMaxRpm"].as<int>();
   if (out->recuperationMaxRpm < 1000) {
-    this->debugger->debug("invalid recuperationMaxRpm");
+    this->debugger->debug("WARN invalid recuperationMaxRpm");
     return false;
   }
   out->recuperationWaitForDirectionChange = c["recuperationWaitForDirectionChange"].as<int>();
   if (out->recuperationWaitForDirectionChange < 4000) {
-    this->debugger->debug("invalid recuperationWaitForDirectionChange");
+    this->debugger->debug("WARN invalid recuperationWaitForDirectionChange");
     return false;
   }
   out->recuperationCycleDuration = c["recuperationCycleDuration"].as<int>();
   if (out->recuperationCycleDuration < 40000) {
-    this->debugger->debug("invalid recuperationCycleDuration");
+    this->debugger->debug("WARN invalid recuperationCycleDuration");
     return false;
   }
   out->recuperationMode = c["recuperationMode"].as<int>();
   if (out->recuperationMode != RECUPERATION_MODE_RECYCLE &&
       out->recuperationMode != RECUPERATION_MODE_INHALE &&
       out->recuperationMode != RECUPERATION_MODE_EXHALE) {
-    this->debugger->debug("invalid recuperationMode");
+    this->debugger->debug("WARN invalid recuperationMode");
     return false;
   }
   out->recuperationPower = c["recuperationPower"].as<int>();
   if (out->recuperationPower < 0 || out->recuperationPower > 100) {
-    this->debugger->debug("invalid recuperationPower");
+    this->debugger->debug("WARN invalid recuperationPower");
     return false;
   }
   out->ventilatorPower = c["ventilatorPower"].as<int>();
   if (out->ventilatorPower < 0 || out->ventilatorPower > 100) {
-    this->debugger->debug("invalid ventilatorPower");
+    this->debugger->debug("WARN invalid ventilatorPower");
     return false;
   }
   out->durationMillis = c["durationMillis"].as<int>();
   if (out->durationMillis < 60000) {
-    this->debugger->debug("invalid durationMillis");
+    this->debugger->debug("WARN invalid durationMillis");
     return false;
   }
   out->tempDisableDuration = c["tempDisableDuration"].as<int>();
   if (out->tempDisableDuration < 5000) {
-    this->debugger->debug("Invalid temp disable duration.");
+    this->debugger->debug("WARN Invalid temp disable duration.");
     return false;
   }
   out->brightness = c["brightness"].as<int>();
   if (out->brightness < 0 || out->brightness > 100) {
-    this->debugger->debug("Invalid brightness");
+    this->debugger->debug("WARN Invalid brightness");
+    return false;
+  }
+  out->maxVentilatorTemp = c["maxVentilatorTemp"].as<int>();
+  if (out->maxVentilatorTemp < 0 || out->maxVentilatorTemp > 100) {
+    this->debugger->debug("WARN Invalid maxVentilatorTemp. Must be between 0 and 100.");
     return false;
   }
   return true;

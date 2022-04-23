@@ -13,6 +13,21 @@ module.exports = () => {
     const data = {
         settings: {
             checkRecuperationRpm: true,
+            maxVentilatorTemp: 70,
+            "checkVentilatorRpm": true,
+            "hideCo2": false,
+            "hideInternalTempHum": false,
+            "unblockingFansPeriod": 172800000,
+            "ventilatorMaxRpm": 8200,
+            "recuperationMaxRpm": 6000,
+            "recuperationWaitForDirectionChange": 6000,
+            "recuperationCycleDuration": 70000,
+            "recuperationMode": 1,
+            "recuperationPower": 100,
+            "ventilatorPower": 30,
+            "durationMillis": 300000000,
+            "tempDisableDuration": 10800000,
+            "brightness": 100
         },
         debug: {
             messages: [
@@ -21,6 +36,9 @@ module.exports = () => {
                 "09:24 Error with recuperation",
                 "09:26 Filter needs to be cleaner",
             ]
+        },
+        debugv: {
+            version: 0,
         },
         conf: {
             "mode": 3,
@@ -60,6 +78,7 @@ module.exports = () => {
                 blocked: false,
                 remainMinutes: 95,
                 highRpm: false,
+                overHeated: true,
                 needAttention: false
             },
             alarmRecuperation: {

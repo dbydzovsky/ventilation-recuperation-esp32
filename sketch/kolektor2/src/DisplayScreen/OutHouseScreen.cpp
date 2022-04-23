@@ -46,7 +46,7 @@ class OutHouseScreen: public Screen {
 	    props->d->print(props->deps->outsideHum->getAverage());
       props->d->print(" %");
 	    props->d->setCursor(2, 36);
-	    props->d->print((int) props->deps->dewPoint->getDewPoint());
+	    props->d->print((int) props->deps->dewPointOut->getDewPoint());
       props->d->print(" rosny");
       props->d->display();
     }
@@ -54,7 +54,7 @@ class OutHouseScreen: public Screen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return true;
     }
     int getDelayMs(ScreenProps * deps) {
       return 500;

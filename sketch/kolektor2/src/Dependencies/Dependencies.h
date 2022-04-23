@@ -38,7 +38,8 @@ struct Dependencies {
   Average * insideTemp;
   Average * insideHum;
   Average * co2Inside;
-  DewPoint * dewPoint;
+  DewPoint * dewPointOut;
+  DewPoint * dewPointIn;
   WeatherForecast * forecast;
   TimeProvider * timeProvider;
   HTTPClient * httpClient;

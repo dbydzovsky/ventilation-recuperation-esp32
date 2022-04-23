@@ -81,6 +81,7 @@ static const unsigned char PROGMEM wifi2_icon12x10[] = {
 class MainScreen: public Screen {
   private:
     int index = 0;
+    bool _isProgrem = false;
     AlarmScreen * alarmScreen = new AlarmScreen();
 
   public:
@@ -106,6 +107,9 @@ class MainScreen: public Screen {
         props->deps->filter->report(FAN_TYPE_VENTILATOR, &ventReport);
         FilterReport recReport;
         props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
+        AlarmReport ventilatorAlarmReport;
+        bool overHeated = props->deps->ventilation->overHeated();
+
         if (props->deps->recuperationChecker->shouldStop()) {
           this->alarmScreen->setText("", "   Chyba   ", "rekuperace");
         } else if (props->deps->ventilatorChecker->shouldStop()) {
@@ -124,9 +128,12 @@ class MainScreen: public Screen {
           this->alarmScreen->setText("  Vycistit ", "   FILTR   ", "rekuperace");
         } else if (ventReport.needCleaning) {
           this->alarmScreen->setText("  Vycistit ", "   FILTR   ", " ventilace");
+        } else if (overHeated) {
+          this->alarmScreen->setText("  Vysoka ", "  teplota  ", " ventilace");
         } else {
           isProblem = false;
         }
+        this->_isProgrem = isProblem;
         if (isProblem) {
           this->alarmScreen->tick(props);
           return;
@@ -189,14 +196,6 @@ class MainScreen: public Screen {
       } else {
         props->d->print("....");
       }
-      // this->d->setTextColor(BLACK, WHITE); // 'inverted' text
-      // this->d->print("hum:");
-      // this->d->println(hum);
-      // this->d->setTextSize(1);
-      // this->d->setTextColor(WHITE);
-      // this->d->print("co2:");
-      // this->d->println(ppm);
-      // this->d->display();
       props->d->display();
     }
 
@@ -204,7 +203,7 @@ class MainScreen: public Screen {
       return true;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return !this->_isProgrem;
     }
     int getDelayMs(ScreenProps * deps) {
       return 1000;

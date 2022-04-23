@@ -33,6 +33,7 @@ struct SettingsData {
   int durationMillis = 300000;
   int tempDisableDuration = 10800000; // 3 hours
   int brightness = 1024;
+  int maxVentilatorTemp = 70;
 };
 
 class Settings {

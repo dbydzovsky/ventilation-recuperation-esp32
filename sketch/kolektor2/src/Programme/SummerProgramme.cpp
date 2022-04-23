@@ -87,11 +87,11 @@ class SummerProgramme: public Programme {
         return;
       }
 
-      if (isnan(context->dewPoint)) {
+      if (isnan(context->dewPointOut)) {
         this->markError(114);
         return;
       }
-      if (context->dewPoint > (context->tempInside - 2)) {
+      if (context->dewPointOut > (context->tempInside - 2)) {
         this->markError(113);
         return;
       }

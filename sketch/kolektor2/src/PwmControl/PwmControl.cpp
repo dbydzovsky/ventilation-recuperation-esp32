@@ -12,8 +12,6 @@ PwmControl::PwmControl(int channel, int pin)
 
 void PwmControl::setDutyCycle(byte duty) {
   if (this->_dutyCycle != duty) {
-    if (IS_DEBUG) Serial.print("Setting duty cycle: ");
-    if (IS_DEBUG) Serial.println(duty);
     this->_dutyCycle = duty;
     ledcWrite(this->_channel, (int) duty);
   }

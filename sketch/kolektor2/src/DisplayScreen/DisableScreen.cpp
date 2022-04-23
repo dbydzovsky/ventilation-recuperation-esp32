@@ -61,7 +61,7 @@ class DisableScreen: public Screen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return true;
     }
     int getDelayMs(ScreenProps * deps) {
       return 500;
@@ -72,12 +72,13 @@ class DisableScreen: public Screen {
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
       if (IS_DEBUG) Serial.println("Disabling...");
-	  ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
-	  PowerOutput output;
-	  SettingsData * settings = props->deps->settings->getSettings();
-	  trialProgramme->setPower(output, settings->tempDisableDuration);
-	  props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
-	  return true;
+      ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
+      PowerOutput output;
+      SettingsData * settings = props->deps->settings->getSettings();
+      trialProgramme->setPower(output, settings->tempDisableDuration);
+      props->deps->debugger->debug("Starting Trial programme (Disabled)");
+      props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
+      return true;
     }
 
     void onPressDown(ScreenProps * deps) {

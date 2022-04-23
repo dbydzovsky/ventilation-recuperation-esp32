@@ -22,37 +22,36 @@ export function InstallationPage(props: Props) {
 
             <Grid item xs={12}>
                 <h2>Sensor</h2>
-                {/* @ts-ignore*/}
-                <img src={Images.sht20.src} inline/>
+                <img className={classes.image} width={300} src={Images.sht20.src}/>
             </Grid>
             <Grid item xs={12}>
                 <h2>Pinout Wemos D1 ESP32 mini</h2>
-                {/* @ts-ignore*/}
-                <img src={Images.pinout.src} inline/>
+                <img  className={classes.image} width={700} src={Images.pinout.src} />
             </Grid>
             <Grid item xs={12}>
                 <h2>Deska</h2>
             </Grid>
             <Grid item xs={12}>
-                {/* @ts-ignore*/}
-                <img src={Images.boardPic.src} inline/>
+                <img  className={classes.image} width={700} src={Images.boardPic.src}/>
             </Grid>
             <Grid item xs={12}>
-                {/* @ts-ignore*/}
-                <img src={Images.board.src} inline/>
+                <img className={classes.image} width={700} src={Images.board.src}/>
             </Grid>
+
             <Grid item xs={12}>
                 <h1>RJ45 kabely</h1>
                 <p>RJ45 kabely musí používat standard RJ45-A</p>
-                {/* @ts-ignore*/}
-                <img src={Images.conector.src} inline/>
-                {/* @ts-ignore*/}
-                <img src={Images.rj45.src} inline/>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
+                <img className={classes.image} width={300} src={Images.rj45.src}/>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <img className={classes.image} width={300} src={Images.conector.src}/>
+            </Grid>
+            <Grid item xs={12} md={6}>
                 <Wires title={"Display Konektor"} desc={["SCL", "GND", "27 (reserved)", "32 (reserved)", "25 (reserved)", "5V", "3.3V", "SDA"]}/>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <Wires title={"Sensor Konektor"} desc={["SCL", "GND", "36 - RX - co2", "5 - TX - co2", "26 - Button", "5V", "3.3V", "SDA"]}/>
             </Grid>
             <Grid item xs={12}>
@@ -99,6 +98,9 @@ const useStyles = makeStyles((theme: Theme) => {
     return {
         root: {
 
+        },
+        image:{
+            maxWidth: "100%"
         },
         squeare: {
             width: 20,

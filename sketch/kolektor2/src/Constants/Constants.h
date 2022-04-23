@@ -5,10 +5,11 @@
 #define DEFAULT_PASSWORD "123456789"
 
 #define IS_RECUPERATION_ENABLED true
-#define IS_DEBUG true
+#define IS_DEBUG false
 
 #define RPM_SAMPLING_DURATION 1000
 #define updatingSensorStatsInterval 60000
+#define MAX_OVERTEMPERATURE_PERIOD 60000
 
 #define KEEP_SCREEN_SHORT 5000
 #define KEEP_SCREEN_LONG 600000
@@ -30,4 +31,5 @@
 
 #define FAN_TYPE_VENTILATOR 1
 #define FAN_TYPE_RECUPERATION 2
+
 #endif

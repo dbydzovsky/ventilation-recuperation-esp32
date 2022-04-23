@@ -4,15 +4,22 @@
 #include "../PwmControl/PwmControl.h"
 #include "../RPMChecker/RPMChecker.h"
 #include "../Relay/Relay.h"
+#include "../Debugger/Debugger.h"
 
 class Ventilator {
   public:
-    Ventilator(Relay * relay, PwmControl *control, RPMChecker *checker);
+    Ventilator(Relay * relay, PwmControl *control, RPMChecker *checker, Debugger * debugger);
     void setPower(byte power);
     short getPower();
-    void act();
+    bool overHeated();
+    void setMaxTemperature(int maxTemperature);
+    void act(int actualTemp);
   private:
+    bool _overtempInitialized = false;
+    unsigned long _overTempSince;
+    int _maxTemperature;
     byte _power;
+    Debugger * _debugger;
     Relay * _relay;
     PwmControl * _control;
     RPMChecker * _checker;

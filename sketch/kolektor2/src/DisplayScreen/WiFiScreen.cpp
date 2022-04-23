@@ -102,7 +102,7 @@ class WifiScreen: public Screen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return false;
     }
     int getDelayMs(ScreenProps * deps) {
       return 500;

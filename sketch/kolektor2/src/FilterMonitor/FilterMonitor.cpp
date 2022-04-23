@@ -72,7 +72,7 @@ bool FilterMonitor::cleared(int filter){
       this->_ventilatorMinutes = 0;
       return true;
     } else {
-      this->debugger->debug("Unable to clear Ventilator filter.");
+      this->debugger->debug("WARN Unable to clear Ventilator filter.");
     }
   }
   if (filter == FAN_TYPE_RECUPERATION) {
@@ -83,7 +83,7 @@ bool FilterMonitor::cleared(int filter){
       this->_recuperationMinutes = 0;
       return true;
     } else {
-      this->debugger->debug("Unable to clear Ventilator filter.");
+      this->debugger->debug("WARN Unable to clear Ventilator filter.");
     }
   }
   return false;
@@ -107,11 +107,9 @@ void FilterMonitor::act(){
       this->_lastTracking = millis();
       short ventilatorPower = this->_ventilator->getPower();
       if (ventilatorPower != 0) {
-        if (IS_DEBUG) Serial.println("Adding a filter minute to ventilator");
         this->_ventilatorMinutes += max(1, (int)(ventilatorPower/25));
       };
       if (this->_recuperation->getPower() != 0) {
-        if (IS_DEBUG) Serial.println("Adding a filter minute to recuperation");
         this->_recuperationMinutes += 1;
       }
       if (millis() - this->_lastPersistence > fanTrackingPersistenceInterval) {

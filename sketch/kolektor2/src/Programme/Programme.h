@@ -17,7 +17,8 @@ typedef struct {
   float tempOutside;
   float humidityOutside;
   float co2;
-  float dewPoint;
+  float dewPointOut;
+  float dewPointIn;
   WeatherForecast * forecast;
   WeatherDeps * weatherDeps;
   bool isTimeSet;

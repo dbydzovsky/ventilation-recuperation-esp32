@@ -39,32 +39,29 @@ void Orchestrator::setProgramme(Programme * programme) {
   this->actual = programme;
 }
 void Orchestrator::assignProgramme() {
-  if (IS_DEBUG) Serial.println("Assinging Programme");
+  this->deps->debugger->debug("Assigning new Programme");
   Programme * candidate = this->deps->factory->Disabled;
-  if (IS_DEBUG) Serial.println("Disabled assigned for any case");
   if (this->deps->confLock->readLock()) {
-    if (IS_DEBUG) Serial.println("Conf locked");
     if (!this->deps->conf->dataSet) {
-      if (IS_DEBUG) Serial.println("Data not set");
+      this->deps->debugger->debug("Data not set. Error programme configured.");
       candidate = this->deps->factory->Error;
     } else if (this->deps->conf->getData()->mode == WINTER_MODE) {
-      if (IS_DEBUG) Serial.println("Assigning winter");
+      this->deps->debugger->debug("Assinning Winter programme");
       candidate = this->deps->factory->Winter;
     } else if (this->deps->conf->getData()->mode == SUMMER_MODE) {
-      if (IS_DEBUG) Serial.println("Assinging Summer");
+      this->deps->debugger->debug("Assigning Summer programme");
       candidate = this->deps->factory->Summer;
     } else if (this->deps->conf->getData()->mode == AUTO_MODE) {
-      if (IS_DEBUG) Serial.println("Assinging Auto");  
+      this->deps->debugger->debug("Assigning Auto programme");  
       candidate = this->deps->factory->Auto;
     } else {
-      if (IS_DEBUG) Serial.println("Assinging Disabled");  
+      this->deps->debugger->debug("Assigning Disabled programme");  
       candidate = this->deps->factory->Disabled;
     }
-    if (IS_DEBUG) Serial.println("Unlocking");
     this->deps->confLock->readUnlock();
   }
   if (this->actual != candidate) {
-    if (IS_DEBUG) Serial.println("Actual programme has changed");
+    this->deps->debugger->debug("Actual programme has changed.");
     this->actual->invalidate();
     this->actual = candidate;
     this->actual->onStart();
@@ -141,7 +138,8 @@ void Orchestrator::act() {
     this->assignProgramme();
   }
   ProgrammeContext context;
-  context.dewPoint = this->deps->dewPoint->getDewPoint();
+  context.dewPointOut = this->deps->dewPointOut->getDewPoint();
+  context.dewPointIn = this->deps->dewPointIn->getDewPoint();
   context.humidityOutside = this->deps->outsideHum->getAverage();
   context.tempInside = this->deps->insideTemp->getAverage();
   context.tempOutside = this->deps->outsideTemp->getAverage();

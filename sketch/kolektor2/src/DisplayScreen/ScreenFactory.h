@@ -44,6 +44,7 @@ class ScreenFactory {
     Screen * pressButtonScreen;
     Screen * wifiScreen;
     Screen * trialScreen;
+    Screen * screenSaverScreen;
     
     Screen * disableScreen;
     Screen * boostScreen;

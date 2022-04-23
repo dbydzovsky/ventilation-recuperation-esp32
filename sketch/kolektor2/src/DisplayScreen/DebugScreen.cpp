@@ -82,7 +82,7 @@ class DebugScreen: public PasswordScreen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return true;
     }
     int getDelayMs(ScreenProps * deps) {
       return 1000;

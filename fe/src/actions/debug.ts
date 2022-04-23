@@ -9,8 +9,18 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
     return async function getDebugMessages(dispatch: Function, getState: Function) {
         // dispatch({type: LoaderActions.SHOW_LOADER})
         try {
+            const state = getState();
+            const storedVersion = state.debugState.version;
+            const versionResponse = await fetch(baseurl + "/a/debugv/", {method: "GET"});
+            const versionResponseObj = await versionResponse.json();
+            const actualVersion  = Number(versionResponseObj["version"]);
+            if (storedVersion === actualVersion) {
+                props.onDone();
+                return;
+            }
             const response = await fetch(baseurl + "/a/debug/", {method: "GET"});
             const obj = await response.json();
+            const version = Number(obj["version"]);
             const messages = obj.messages as string[];
             const payload:DebugMessage[] =[];
 
@@ -35,6 +45,7 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
                 })
             })
             dispatch({type: DebugActions.SET_MESSAGES, payload: payload})
+            dispatch({type: DebugActions.SET_VERSION, payload: version})
         } finally {
             props.onDone()
             // dispatch({type: LoaderActions.HIDE_LOADER})

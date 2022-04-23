@@ -81,7 +81,7 @@ class AlarmScreen: public Screen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return false;
     }
     int getDelayMs(ScreenProps * deps) {
       return 500;
@@ -91,16 +91,6 @@ class AlarmScreen: public Screen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Boosting..");
-      ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
-      PowerOutput output;
-      SettingsData * settings = props->deps->settings->getSettings();
-      output.mode = POWER_OUTPUT_MODE_BOTH;
-      output.ventilatorPower = settings->ventilatorPower;    
-      output.recuperationPower = settings->recuperationPower;
-      output.recuperationMode = settings->recuperationMode;
-      trialProgramme->setPower(output, settings->tempDisableDuration);
-      props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
       return true;
     }
 

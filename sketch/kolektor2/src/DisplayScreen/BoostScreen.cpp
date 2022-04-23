@@ -58,7 +58,7 @@ class BoostScreen: public Screen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true; // todo
+      return true;
     }
     int getDelayMs(ScreenProps * deps) {
       return 500;
@@ -77,6 +77,7 @@ class BoostScreen: public Screen {
       output.recuperationPower = settings->recuperationPower;
       output.recuperationMode = settings->recuperationMode;
       trialProgramme->setPower(output, settings->durationMillis);
+      props->deps->debugger->debug("Starting Trial programme (BOOST)");
       props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
       return true;
     }

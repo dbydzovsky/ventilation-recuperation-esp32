@@ -82,6 +82,12 @@ export function SettingsPage(props: Props) {
             </Group>
             <Property values={values}
                       setValues={setValues}
+                      type="number"
+                      title={"Maximální provozní teplota ventilátoru"}
+                      description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru."}
+                      property={"maxVentilatorTemp"}/>
+            <Property values={values}
+                      setValues={setValues}
                       transform={Divide1000Transformation}
                       type="number"
                       title={"Perioda odblokování ventilátorů"}

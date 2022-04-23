@@ -5,7 +5,7 @@ import WhatshotIcon from '@material-ui/icons/Whatshot';
 import {Sensor} from "../model/state";
 import {roundMe, SensorValue} from "./SensorValue";
 
-function computeDewPoint(h: number, t: number) {
+export function computeDewPoint(h: number, t: number) {
     let e = 2.71828;
     let powResult = Math.pow(e, (17.67 * t) / (243.5 + t));
     let logResult = Math.log((h / 100) * powResult);

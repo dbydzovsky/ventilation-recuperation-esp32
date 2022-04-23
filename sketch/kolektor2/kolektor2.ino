@@ -55,7 +55,8 @@ HTTPClient httpClient;
 RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent", debugger);
 RPMChecker * rpmRecuperationChecker = new RPMChecker(recuperationSignal, "/blockrecu", debugger);
 int stateDiode = LED_BUILTIN;
-DewPoint * dewPoint = new DewPoint();
+DewPoint * dewPointOut = new DewPoint();
+DewPoint * dewPointIn = new DewPoint();
 #define PWM_1_CHANNEL 1
 #define PWM_2_CHANNEL 2
 #define PWM_3_CHANNEL 3
@@ -70,7 +71,7 @@ ProgrammeFactory * factory = new ProgrammeFactory();
 Relay * recuperationRelay = new Relay(RECUPERATION_RELAY_PIN);
 Relay * ventilatorRelay = new Relay(VENTILATOR_RELAY_PIN);
 Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
-Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker);
+Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker, debugger);
 Restarter * restarter = new Restarter();
 Settings * settings = new Settings(debugger);
 WeatherForecast * forecast = new WeatherForecast();
@@ -89,7 +90,7 @@ FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger);
 Dependencies deps = { 
   ventilator, recuperation, confLock, httpsLock,
   factory, diode, configuration, 
-  outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPoint,
+  outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPointOut, dewPointIn, 
   forecast, timeProvider, &httpClient,
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
   restarter, filter, debugger
@@ -157,6 +158,7 @@ void setup()
   rpmRecuperationChecker->setTicksPerRevolution(2);
   attachRecuperation();
   SettingsData * settingsData = settings->getSettings();
+  ventilator->setMaxTemperature(settingsData->maxVentilatorTemp);
   if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 
     rpmRecuperationChecker->deactivate();
   } else {
@@ -203,11 +205,12 @@ void loop() {
     outsideHum->doReading();
     insideTemp->doReading();
     insideHum->doReading();
-    dewPoint->compute(outsideHum->getAverage(), outsideTemp->getAverage());
+    dewPointOut->compute(outsideHum->getAverage(), outsideTemp->getAverage());
+    dewPointIn->compute(insideHum->getAverage(), insideTemp->getAverage());
   }
   monitoring->act();
   button->act();
-  ventilator->act();
+  ventilator->act(outsideTemp->getAverage());
   if (IS_RECUPERATION_ENABLED) {
     recuperation->act();
     recuperationRelay->act();

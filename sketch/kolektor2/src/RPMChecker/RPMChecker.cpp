@@ -76,7 +76,6 @@ void RPMChecker::setup() {
     this->_stoppedSince = millis();
   }
 }
-// todo no content page when not connected
 // todo kdyz co2 cidlo neni pripojene
 float computeRpm(short ticksPerRevolution, int durationMs, long ticks) {
   int revolutions = ticks / ticksPerRevolution;
@@ -121,11 +120,11 @@ bool RPMChecker::act(long ticks, short currentPower) {
       data.highRpm = true;
       if (save(this->_filename, data)){
         char messageBuf[50];
-        sprintf(messageBuf, "WARN: Motor %s has high rotation!", this->_filename);
+        sprintf(messageBuf, "WARN Motor %s has high rotation!", this->_filename);
         this->debugger->debug(messageBuf);
       } else {
         char messageBuf[50];
-        sprintf(messageBuf, "ERR: Motor %s has high rotation and unable to save!", this->_filename);
+        sprintf(messageBuf, "ERR Motor %s has high rotation and unable to save!", this->_filename);
         this->debugger->debug(messageBuf);
       }
       this->_stopped = true;
@@ -139,11 +138,11 @@ bool RPMChecker::act(long ticks, short currentPower) {
         data.blocked = true;
         if (save(this->_filename, data)){
           char messageBuf[50];
-          sprintf(messageBuf, "WARN: Motor %s is blocked!", this->_filename);
+          sprintf(messageBuf, "WARN Motor %s is blocked!", this->_filename);
           this->debugger->debug(messageBuf);
         } else {
           char messageBuf[50];
-          sprintf(messageBuf, "ERR: Motor %s is blocked and unable to save!", this->_filename);
+          sprintf(messageBuf, "ERR Motor %s is blocked and unable to save!", this->_filename);
           this->debugger->debug(messageBuf);
         }
         this->_stopped = true;

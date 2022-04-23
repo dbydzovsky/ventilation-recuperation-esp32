@@ -16,24 +16,25 @@ Debugger::Debugger(TimeProvider * timeProvider) {
 void Debugger::debug(const char * message) {
     if (IS_DEBUG) Serial.println(message);
     if (this->_timeProvider->isTimeSet()) {
-        char hourBuffer[4];
+        char hourBuffer[3];
         if (hour() < 10) {
-            sprintf(hourBuffer, "0%i", (int) hour());
+            sprintf(hourBuffer, "0%d", hour());
         } else {
-            sprintf(hourBuffer, "%i", (int)hour());
+            sprintf(hourBuffer, "%d", hour());
         }
-        char minuteBuffer[4];
+        char minuteBuffer[3];
         if (minute() < 10) {
-            sprintf(minuteBuffer, "0%i", (int)minute());
+            sprintf(minuteBuffer, "0%d", minute());
         } else {
-            sprintf(minuteBuffer, "%i", (int)minute());
+            sprintf(minuteBuffer, "%d", minute());
         }
         char messageBuf[DEBUGGER_MESSAGE_LENGTH];
-        sprintf(messageBuf, "%d:%d %s", hourBuffer, minuteBuffer, message);
+        sprintf(messageBuf, "%s:%s %s", hourBuffer, minuteBuffer, message);
         strcpy(this->_messages[this->_index], messageBuf);
     } else {
         strcpy(this->_messages[this->_index], message);
     }
+    this->_version = this->_version + 1;
     this->_index = (this->_index + 1) % DEBUGGER_MESSAGES_COUNT; 
 }
 
@@ -55,4 +56,8 @@ void Debugger::getMessages(JsonArray * messages) {
         actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
         messages->add(this->_messages[actualIndex]);
     }
+}
+
+int Debugger::version() {
+    return this->_version;
 }

@@ -6,9 +6,9 @@
 #include "Arduino.h"
 #include "ArduinoJson.h"
 #include "../TimeProvider/TimeProvider.h"
-
+#include "TimeLib.h"
 #define DEBUGGER_MESSAGES_COUNT 100
-#define DEBUGGER_MESSAGE_LENGTH 200
+#define DEBUGGER_MESSAGE_LENGTH 100
 
 class Debugger {
   public:
@@ -17,7 +17,9 @@ class Debugger {
     void disable();
     void debug(const char* message);
     void getMessages(JsonArray * messages);
+    int version();
   private:
+    int _version = random(9999999);
     TimeProvider * _timeProvider;
     short _index = 0;
     char _messages[DEBUGGER_MESSAGES_COUNT][DEBUGGER_MESSAGE_LENGTH];

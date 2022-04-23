@@ -29,6 +29,7 @@ export interface AlarmState {
   needAttention: boolean
   blocked: boolean
   highRpm: boolean
+  overHeated?: boolean
   remainMinutes: number
 }
 

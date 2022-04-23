@@ -75,6 +75,7 @@ export function CurrentStatePanel() {
             <VentilatorIcon
                 highRPM={currentState.alarmVentilator.highRpm}
                 blocked={currentState.alarmVentilator.blocked}
+                overHeated={currentState.alarmVentilator.overHeated}
                 percentage={currentState.ventilator} />
             Ventilátor ({currentState.ventilatorRPM} RPM) {currentState.ventilator}%
         </div>
@@ -104,10 +105,13 @@ export function CurrentStatePanel() {
     </div>
 }
 
-export function VentilatorIcon(props: {percentage: number, highRPM?: boolean, blocked?: boolean, disabled?: boolean}) {
+export function VentilatorIcon(props: {percentage: number, highRPM?: boolean, overHeated?: boolean, blocked?: boolean, disabled?: boolean}) {
     let style: any = {}
     if (props.disabled) {
         style["color"] = "grey"
+    }
+    if (props.overHeated) {
+        return <ToysIcon className={"overHeated"}/>
     }
     if (props.blocked) {
         return <ToysIcon className={"blocked"}/>

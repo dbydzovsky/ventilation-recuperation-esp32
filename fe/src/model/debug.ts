@@ -1,6 +1,7 @@
 
 export enum DebugActions{
     SET_MESSAGES = "SET_MESSAGES",
+    SET_VERSION = "SET_VERSION",
 }
 
 export interface DebugActionType<T, P> {
@@ -9,7 +10,8 @@ export interface DebugActionType<T, P> {
 }
 
 export type DebugAction =
-    | DebugActionType<typeof DebugActions.SET_MESSAGES , void>;
+    | DebugActionType<typeof DebugActions.SET_MESSAGES , void>
+    | DebugActionType<typeof DebugActions.SET_VERSION , void>;
 
 export interface DebugMessage{
     time: string,

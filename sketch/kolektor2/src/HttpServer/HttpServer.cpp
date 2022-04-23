@@ -139,10 +139,12 @@ void HttpServer::setup() {
         
         JsonObject alarmVentilator = root.createNestedObject("alarmVentilator");
         AlarmReport ventilatorAlarmReport;
+        bool overHeated = this->_deps->ventilation->overHeated();
         this->_deps->ventilatorChecker->report(&ventilatorAlarmReport);
-        alarmVentilator["needAttention"] = ventilatorAlarmReport.needAttention;
+        alarmVentilator["needAttention"] = overHeated || ventilatorAlarmReport.needAttention;
         alarmVentilator["blocked"] = ventilatorAlarmReport.blocked;
         alarmVentilator["highRpm"] = ventilatorAlarmReport.highRpm;
+        alarmVentilator["overHeated"] = overHeated;
         alarmVentilator["remainMinutes"] = ventilatorAlarmReport.remainMinutes;
         
         JsonObject alarmRecuperation = root.createNestedObject("alarmRecuperation");
@@ -187,6 +189,7 @@ void HttpServer::setup() {
             powerOutput.recuperationPower = recuperationPower;
             powerOutput.recuperationMode = recuperationMode;
             trialProgramme->setPower(powerOutput, duration);
+            this->_deps->debugger->debug("Starting CUSTOM Trial programme from User Interface");
             this->_orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
         } else {
             ConfigurableProgramme * trialProgramme = this->_deps->factory->Trial;
@@ -246,12 +249,20 @@ void HttpServer::setup() {
             request->send(response);
         }
     });
-
+    this->_server->on("/a/debugv/", HTTP_GET, [this](AsyncWebServerRequest * request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        StaticJsonDocument<128> jsonDoc;
+        JsonObject root = jsonDoc.to<JsonObject>();
+        root["version"] = this->_deps->debugger->version();        
+        serializeJson(root, *response);
+        setCors(response);
+        request->send(response);
+    });
     this->_server->on("/a/debug/", HTTP_GET, [this](AsyncWebServerRequest * request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
-        StaticJsonDocument<4096> jsonDoc;
+        StaticJsonDocument<8192> jsonDoc;
         JsonObject root = jsonDoc.to<JsonObject>();
-
+        root["version"] = this->_deps->debugger->version();
         JsonArray messages = root.createNestedArray("messages");
         this->_deps->debugger->getMessages(&messages);        
         serializeJson(root, *response);
