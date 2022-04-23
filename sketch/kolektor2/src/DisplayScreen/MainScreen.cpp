@@ -108,7 +108,6 @@ class MainScreen: public Screen {
         FilterReport recReport;
         props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
         AlarmReport ventilatorAlarmReport;
-        bool overHeated = props->deps->ventilation->overHeated();
 
         if (props->deps->recuperationChecker->shouldStop()) {
           this->alarmScreen->setText("", "   Chyba   ", "rekuperace");
@@ -128,8 +127,6 @@ class MainScreen: public Screen {
           this->alarmScreen->setText("  Vycistit ", "   FILTR   ", "rekuperace");
         } else if (ventReport.needCleaning) {
           this->alarmScreen->setText("  Vycistit ", "   FILTR   ", " ventilace");
-        } else if (overHeated) {
-          this->alarmScreen->setText("  Vysoka ", "  teplota  ", " ventilace");
         } else {
           isProblem = false;
         }

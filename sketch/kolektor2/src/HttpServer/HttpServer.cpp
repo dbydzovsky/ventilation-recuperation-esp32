@@ -139,12 +139,11 @@ void HttpServer::setup() {
         
         JsonObject alarmVentilator = root.createNestedObject("alarmVentilator");
         AlarmReport ventilatorAlarmReport;
-        bool overHeated = this->_deps->ventilation->overHeated();
         this->_deps->ventilatorChecker->report(&ventilatorAlarmReport);
-        alarmVentilator["needAttention"] = overHeated || ventilatorAlarmReport.needAttention;
+        alarmVentilator["needAttention"] = ventilatorAlarmReport.needAttention;
         alarmVentilator["blocked"] = ventilatorAlarmReport.blocked;
         alarmVentilator["highRpm"] = ventilatorAlarmReport.highRpm;
-        alarmVentilator["overHeated"] = overHeated;
+        alarmVentilator["overHeated"] = ventilatorAlarmReport.overHeated;
         alarmVentilator["remainMinutes"] = ventilatorAlarmReport.remainMinutes;
         
         JsonObject alarmRecuperation = root.createNestedObject("alarmRecuperation");
@@ -153,6 +152,7 @@ void HttpServer::setup() {
         alarmRecuperation["needAttention"] = recuperationAlarmReport.needAttention;
         alarmRecuperation["blocked"] = recuperationAlarmReport.blocked;
         alarmRecuperation["highRpm"] = recuperationAlarmReport.highRpm;
+        alarmRecuperation["overHeated"] = recuperationAlarmReport.overHeated;
         alarmRecuperation["remainMinutes"] = recuperationAlarmReport.remainMinutes;
 
         serializeJson(root, *response);

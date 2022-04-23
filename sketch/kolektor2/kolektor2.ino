@@ -158,7 +158,7 @@ void setup()
   rpmRecuperationChecker->setTicksPerRevolution(2);
   attachRecuperation();
   SettingsData * settingsData = settings->getSettings();
-  ventilator->setMaxTemperature(settingsData->maxVentilatorTemp);
+  rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);
   if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 
     rpmRecuperationChecker->deactivate();
   } else {
@@ -210,7 +210,7 @@ void loop() {
   }
   monitoring->act();
   button->act();
-  ventilator->act(outsideTemp->getAverage());
+  ventilator->act();
   if (IS_RECUPERATION_ENABLED) {
     recuperation->act();
     recuperationRelay->act();
@@ -219,6 +219,7 @@ void loop() {
   dns.processNextRequest();
   orchestrator->act();
   filter->act();
+  rpmVentilatorChecker->actMaxTemp(outsideTemp->getAverage(), ventilator->getIntendedPower());
   if (settingsData->checkVentilatorRpm){
     if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
       detachVentilator();

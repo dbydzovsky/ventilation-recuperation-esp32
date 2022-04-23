@@ -96,6 +96,34 @@ void RPMChecker::setUnblockingFansPeriod(int unblockingPeriodSeconds) {
 void RPMChecker::setMaxRpm(int maxRpm) {
   this->_maxRpm = maxRpm;
 }
+void RPMChecker::setMaxTemperature(int maxTemp) {
+  this->_checkMaxTemp = true;
+  this->_maxTemp = maxTemp;
+}
+bool RPMChecker::actMaxTemp(int actualTemp, short currentPower) {
+  if (isnan(actualTemp)) {
+    return true;
+  }
+  bool overTempAlarm = false;
+  if (this->_checkMaxTemp) {
+    if (actualTemp > this->_maxTemp && currentPower > 0) {
+      if (this->_overtempInitialized) {
+        overTempAlarm = millis() - this->_overTempSince > MAX_OVERTEMPERATURE_PERIOD;
+      } else {
+        this->_overTempSince = millis();
+        this->_overtempInitialized = true;
+      }
+    } else {
+      this->_overtempInitialized = false;
+    }
+  }
+  if (overTempAlarm && this->_overheated != overTempAlarm) {
+    char messageBuf[100];
+    sprintf(messageBuf, "WARN Ventilator motor stopped due to critical TEMPERATURE %d C", actualTemp);
+    this->debugger->debug(messageBuf);
+  }
+  this->_overheated = overTempAlarm;
+}
 bool RPMChecker::act(long ticks, short currentPower) {
   // return true if counter should be reset
   if (currentPower != this->_lastPower) {
@@ -109,6 +137,9 @@ bool RPMChecker::act(long ticks, short currentPower) {
       save(this->_filename, data);
       this->_stopped = false;
     }
+    return true;
+  }
+  if (this->_checkMaxTemp && this->_overheated) {
     return true;
   }
   int duration = millis() - this->last_sample;
@@ -159,9 +190,9 @@ bool RPMChecker::act(long ticks, short currentPower) {
 
 bool RPMChecker::shouldStop() {
   if (this->_activated) {
-    return this->_stopped;
+    return this->_stopped || this->_overheated;
   }
-  return false;
+  return this->_overheated;
 }
 
 bool RPMChecker::resetAlarm() {
@@ -181,6 +212,7 @@ void RPMChecker::report(AlarmReport * out) {
   if (this->_stopped) {
     out->blocked = this->_reason == MOTOR_BLOCKED_REASON;
     out->highRpm = this->_reason == MOTOR_HIGH_RPM_REASON;
+    out->overHeated = this->_overheated;
   }
   out->needAttention = this->_stopped;
   int durationPassed = (millis() - this->_stoppedSince);

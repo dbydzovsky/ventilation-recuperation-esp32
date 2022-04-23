@@ -11,11 +11,13 @@
 #define MOTOR_NO_REASON 0
 #define MOTOR_BLOCKED_REASON 1
 #define MOTOR_HIGH_RPM_REASON 2
+#define MOTOR_OVER_HEATED 3
 #include "../Debugger/Debugger.h"
 
 struct AlarmReport {
   bool needAttention = false;
   bool highRpm = false;
+  bool overHeated = false;
   bool blocked = false;
   long remainMinutes = 0;
 };
@@ -29,11 +31,19 @@ class RPMChecker {
     void setUnblockingFansPeriod(int unblockingPeriodSeconds);
     void setMaxRpm(int maxRpm);
     bool act(long ticks, short currentPower);
+    bool actMaxTemp(int actualTemp, short currentPower);
     bool shouldStop();
     bool resetAlarm();
+    void setMaxTemperature(int maxTemp);
     int getRpm();
     void report(AlarmReport * out);
   private:
+    bool _checkMaxTemp = false;
+    bool _overtempInitialized = false;
+    unsigned long _overTempSince;
+    int _maxTemp;
+    bool _overheated = false;
+
     Debugger * debugger;
     short _ticksPerRevolution;
     int _unblockingFansPeriod = 0;

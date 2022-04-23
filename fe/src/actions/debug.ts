@@ -13,9 +13,8 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
             const storedVersion = state.debugState.version;
             const versionResponse = await fetch(baseurl + "/a/debugv/", {method: "GET"});
             const versionResponseObj = await versionResponse.json();
-            const actualVersion  = Number(versionResponseObj["version"]);
+            const actualVersion = Number(versionResponseObj["version"]);
             if (storedVersion === actualVersion) {
-                props.onDone();
                 return;
             }
             const response = await fetch(baseurl + "/a/debug/", {method: "GET"});

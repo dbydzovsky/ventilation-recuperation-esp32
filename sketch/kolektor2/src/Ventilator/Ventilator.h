@@ -11,9 +11,8 @@ class Ventilator {
     Ventilator(Relay * relay, PwmControl *control, RPMChecker *checker, Debugger * debugger);
     void setPower(byte power);
     short getPower();
-    bool overHeated();
-    void setMaxTemperature(int maxTemperature);
-    void act(int actualTemp);
+    short getIntendedPower();
+    void act();
   private:
     bool _overtempInitialized = false;
     unsigned long _overTempSince;
