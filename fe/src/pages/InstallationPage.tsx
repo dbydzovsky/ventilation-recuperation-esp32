@@ -3,7 +3,7 @@ import React from 'react'
 import {makeStyles, Theme} from "@material-ui/core/styles";
 import {Images} from "../images/Images";
 import Grid from "@material-ui/core/Grid";
-
+import WarningIcon from '@material-ui/icons/Warning';
 export interface Props {
 
 }
@@ -12,9 +12,12 @@ export function InstallationPage(props: Props) {
     const classes = useStyles()
 
     return <div className={classes.root}>
-        <h1>Instalační návod</h1>
-
         <Grid container>
+            <p><WarningIcon htmlColor={"orange"}/>
+                Před jakoukoli montáží je třeba zařízení odpojit od přivodu elektrické energie.
+                Při jakékoliv montáží je třeba pečlivě sledovat značení na desce.
+                Nejsou povolené žádné vlastní úpravy, které by mohli ohrozit funkčnost zařízení.
+            </p>
             <Grid item xs={12}>
                 <h2>Sensor</h2>
                 <img className={classes.image} width={300} src={Images.sht20.src}/>
@@ -52,10 +55,7 @@ export function InstallationPage(props: Props) {
             <Grid item xs={12} md={6}>
                 <Wires title={"Sensor Konektor"} desc={["SCL", "GND", "36 - RX - co2", "5 - TX - co2", "26 - Button", "5V", "3.3V", "SDA"]}/>
             </Grid>
-            <Grid item xs={12}>
-                <h2>Zdrojový kód</h2>
-                <p>Zdrojový kód je veřejný. <a href={"https://github.com/dbydzovsky/ventilation-recuperation-esp32"} target={"_blank"}>Github</a></p>
-            </Grid>
+
         </Grid>
     </div>
 }

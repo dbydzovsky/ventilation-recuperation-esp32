@@ -72,7 +72,7 @@ export function AlarmShowcase(props: AlarmShowcaseProps) {
                 </>}
             </p>
             {props.state.needAttention && <div className={classes.box}>
-                {props.state.overHeated && <p>Pro uvolnění ventilátoru je třeba počkat.</p>}
+                {props.state.overHeated && <p>Pro uvolnění ventilátoru je třeba počkat na snížení teploty.</p>}
                 <Button variant={props.state.needAttention ? "contained" : "outlined"}
                         color={props.state.needAttention ? "secondary" : "primary"}
                         disabled={(!props.state.needAttention) || props.state.overHeated}

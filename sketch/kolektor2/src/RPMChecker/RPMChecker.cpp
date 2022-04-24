@@ -119,7 +119,7 @@ bool RPMChecker::actMaxTemp(int actualTemp, short currentPower) {
   }
   if (overTempAlarm && this->_overheated != overTempAlarm) {
     char messageBuf[100];
-    sprintf(messageBuf, "WARN Ventilator motor stopped due to critical TEMPERATURE %d C", actualTemp);
+    sprintf(messageBuf, "ERR Ventilator motor stopped due to critical TEMPERATURE %d C", actualTemp);
     this->debugger->debug(messageBuf);
   }
   this->_overheated = overTempAlarm;
@@ -207,14 +207,11 @@ bool RPMChecker::resetAlarm() {
 }
 
 void RPMChecker::report(AlarmReport * out) {
-  if (!this->_activated) {
-    return;
-  }
   if (this->_stopped) {
     out->blocked = this->_reason == MOTOR_BLOCKED_REASON;
     out->highRpm = this->_reason == MOTOR_HIGH_RPM_REASON;
-    out->overHeated = this->_overheated;
   }
+  out->overHeated = this->_overheated;
   out->needAttention = this->_stopped || this->_overheated;
   int durationPassed = (millis() - this->_stoppedSince);
   out->remainMinutes = (this->_unblockingFansPeriod - durationPassed) / 1000 / 60;

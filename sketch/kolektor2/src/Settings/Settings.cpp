@@ -119,8 +119,8 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     return false;
   }
   out->maxVentilatorTemp = c["maxVentilatorTemp"].as<int>();
-  if (out->maxVentilatorTemp < 0 || out->maxVentilatorTemp > 100) {
-    this->debugger->debug("WARN Invalid maxVentilatorTemp. Must be between 0 and 100.");
+  if (out->maxVentilatorTemp < 0 || out->maxVentilatorTemp > 80) {
+    this->debugger->debug("WARN Invalid maxVentilatorTemp. Must be between 0 and 80.");
     return false;
   }
   return true;

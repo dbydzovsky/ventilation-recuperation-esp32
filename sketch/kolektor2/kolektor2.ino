@@ -38,18 +38,18 @@ Debugger * debugger = new Debugger(timeProvider);
 HTTPClient httpClient;
 
 // PINS
-#define PWM_ventilator_PIN 23 //16
-#define ventilatorSignal 34 // 35
-#define PWM_recuperation_PIN 18 //33 // 33-for screen, 26 for wood
-#define recuperationSignal 33 // 13
-#define BTN_PIN 26 //23
-#define RECUPERATION_RELAY_PIN 19 // 17
-#define VENTILATOR_RELAY_PIN 27 // not-connected
+#define PWM_ventilator_PIN 23
+#define ventilatorSignal 34
+#define PWM_recuperation_PIN 18
+#define recuperationSignal 33
+#define BTN_PIN 26 // see GPIO_NUM_X when changing
+#define RECUPERATION_RELAY_PIN 19
+#define VENTILATOR_RELAY_PIN 27
 #define RED_DIODE_PIN 39 // not-used
 #define GREEN_DIODE_PIN 19 // not-used
 #define BLUE_DIODE_PIN 24 // not-used
-#define rx_pin 36 // 26 // 26 for screen co2, 33 for wood
-#define tx_pin 5 // 18
+#define rx_pin 36
+#define tx_pin 5
 
 
 RPMChecker * rpmVentilatorChecker = new RPMChecker(ventilatorSignal, "/blockvent", debugger);
@@ -76,7 +76,7 @@ Restarter * restarter = new Restarter();
 Settings * settings = new Settings(debugger);
 WeatherForecast * forecast = new WeatherForecast();
 
-
+  
 MHZ19_uart mhz19;
 
 Sensors * sensors = new Sensors(&mhz19);
@@ -131,8 +131,6 @@ void attachRecuperation() {
 void detachRecuperation() {
   detachInterrupt(digitalPinToInterrupt(recuperationSignal));
 }
-
-
 void setup()
 {
   pinMode(stateDiode, OUTPUT);
@@ -234,7 +232,6 @@ void loop() {
       attachRecuperation();  
     }
   }
-
   if (IS_DEBUG) {
     if (Serial.available() > 0){ 
       String command = Serial.readStringUntil(':');

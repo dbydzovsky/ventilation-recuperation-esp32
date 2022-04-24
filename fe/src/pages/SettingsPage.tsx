@@ -51,6 +51,10 @@ export function SettingsPage(props: Props) {
 
     return <div className={classes.paper}>
         <h1>Pokročilé nastavení</h1>
+        <p>Pomocí následujících nastavení lze ladit zařízení pro konkrétní použití.
+            Nutno zmínit, že jakákoliv změna provede automatický restart zařízení a tak dojde
+            k ukončení činnost jakékoliv aktivního programu.
+        </p>
         <Grid container>
             { recuperationEnabled && <Property values={values}
                       setValues={setValues}
@@ -71,7 +75,7 @@ export function SettingsPage(props: Props) {
                           setValues={setValues}
                           description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
                           type="boolean"
-                          title={"Schovat CO2 hodnoty"}
+                          title={"Schovat hodnoty oxidu uhličitého"}
                           property={"hideCo2"}/>
                 <SingleProperty values={values}
                           setValues={setValues}

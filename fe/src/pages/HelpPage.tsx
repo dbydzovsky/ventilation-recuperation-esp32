@@ -206,7 +206,30 @@ export function HelpPage() {
         {/*    <GitHubIcon/> Více o projektu na <a href={"https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266"}>https://gitlab.com/d.bydzovsky/solar-air-collector-esp8266</a><br/>*/}
         {/*</div>*/}
 
-        <InstallationPage/>
+        <ExpansionPanel>
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon/>}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>Instalační návod a schéma</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+                <InstallationPage/>
+            </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel>
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon/>}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>Zdrojový kód</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+                <p>Zdrojový kód je veřejný. <a href={"https://github.com/dbydzovsky/ventilation-recuperation-esp32"} target={"_blank"}>Github</a></p>
+            </ExpansionPanelDetails>
+        </ExpansionPanel>
     </div>
 }
 

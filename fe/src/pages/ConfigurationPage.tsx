@@ -480,6 +480,13 @@ export function ConfigurationPage() {
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>
                     <h2>Nastavení automatického programu</h2>
+                    <p>
+                        Pro aktivaci automatického programu je třeba zařízení udržovat připojené k internetu.
+                        V opačném případě nebude zařízení schopné určit aktuální datum
+                        a nebude tak vědět, který program si má vybrat.
+                        Automatický program usnadňuje správu ventilační jednotky, neboť
+                        automaticky přepíná režimy dle kalendáře.
+                    </p>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                     <Paper className={classes.properties}>
