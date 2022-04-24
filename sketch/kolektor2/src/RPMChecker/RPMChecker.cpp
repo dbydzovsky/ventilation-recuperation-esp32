@@ -140,6 +140,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
     return true;
   }
   if (this->_checkMaxTemp && this->_overheated) {
+    this->_rpm = 0;
     return true;
   }
   int duration = millis() - this->last_sample;
@@ -214,7 +215,7 @@ void RPMChecker::report(AlarmReport * out) {
     out->highRpm = this->_reason == MOTOR_HIGH_RPM_REASON;
     out->overHeated = this->_overheated;
   }
-  out->needAttention = this->_stopped;
+  out->needAttention = this->_stopped || this->_overheated;
   int durationPassed = (millis() - this->_stoppedSince);
   out->remainMinutes = (this->_unblockingFansPeriod - durationPassed) / 1000 / 60;
 }

@@ -122,7 +122,7 @@ export function SettingsPage(props: Props) {
                           property={"recuperationCycleDuration"}/>
             </>}
             <Group>
-                <h2>Defaultní nastavení párty módu</h2>
+                <h2>Výchozí nastavení párty módu</h2>
                 {
                     recuperationEnabled && <><SingleProperty values={values} setValues={setValues}
                                 property={"recuperationPower"}

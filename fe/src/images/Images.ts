@@ -5,6 +5,7 @@ const githubImage = (name: string): string => {
 }
 export const Images = {
     board: {src: githubImage("board.png")},
+    board2: {src: githubImage("board2.png")},
     boardPic: {src: githubImage("board-pic.jpg")},
     conector: {src: githubImage("konektor.jpg")},
     sht20: {src: githubImage("sht20.png")},

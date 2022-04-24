@@ -345,6 +345,10 @@ export function ConfigurationPage() {
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><AcUnitIcon/> Nastavení vyhřívacího programu</h2>
+                    <p>Vyhřívací program je vhodný na zimní období, neboť při zvýšené teplotě v kolektoru
+                    dojde k sepnutí ventilátoru dle následujícího nastavení pravidel. Lze nastavit až 5
+                    pravidel. Lze také nastavit vnitřní teplotu, při které se má vytápění deaktivovat, což
+                    slouží k prevenci přehřátí místnosti (Pro deaktivaci tohoto nastavení lze nastavit např. 40 stupnu)</p>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper className={classes.properties}>
@@ -383,7 +387,13 @@ export function ConfigurationPage() {
             <Grid container>
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><WbSunnyIcon/> Nastavení chladícího programu</h2>
-                    <p>Větrání se vypne, pokud hrozí dle výpočtu rosného bodu vznik kondenzace.</p>
+                    <p>Chladící program je vhodný na letní období, kdy během chladnějších nocí vychladí místnost na
+                        určenou teplotu. Pro tento program je nutné připojit zařízení k internetu prostřednictvím WiFi.
+                        Z internetu získává data o předpovědi počasí. Předpověď počasí se používá pro řízení
+                        chlazení, neboť dává smysl chladit místnost pouze v okamžiku, když bude další den
+                        pocitová teplota větší, než nastavená.</p>
+                    <p>Nutno zmínit, že s ohledem na bezpečnost dochází ke chlazení místnosti pouze pokud
+                        nehrozí dle výpočtu rosného bodu vznik kondenzace.</p>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper className={classes.properties}>
@@ -446,7 +456,11 @@ export function ConfigurationPage() {
                 <Grid item xs={12} sm={12} md={12}>
                     <h2><CompareArrowsIcon/> Nastavení řízeného větrání</h2>
                     <p>
-                        V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion), v průmyslových oblastech je hodnota o něco vyšší. Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm. Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických jednotek nebo výměny vzduchu v místnosti.
+                        V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion),
+                        v průmyslových oblastech je hodnota o něco vyšší.
+                        Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm.
+                        Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických
+                        jednotek nebo výměny vzduchu v místnosti.
                     </p>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>

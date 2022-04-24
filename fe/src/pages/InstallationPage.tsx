@@ -11,15 +11,10 @@ export interface Props {
 export function InstallationPage(props: Props) {
     const classes = useStyles()
 
-
     return <div className={classes.root}>
         <h1>Instalační návod</h1>
-        <p>
-
-        </p>
 
         <Grid container>
-
             <Grid item xs={12}>
                 <h2>Sensor</h2>
                 <img className={classes.image} width={300} src={Images.sht20.src}/>
@@ -36,6 +31,9 @@ export function InstallationPage(props: Props) {
             </Grid>
             <Grid item xs={12}>
                 <img className={classes.image} width={700} src={Images.board.src}/>
+            </Grid>
+            <Grid item xs={12}>
+                <img className={classes.image} width={700} src={Images.board2.src}/>
             </Grid>
 
             <Grid item xs={12}>

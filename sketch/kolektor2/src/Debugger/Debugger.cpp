@@ -29,7 +29,7 @@ void Debugger::debug(const char * message) {
             sprintf(minuteBuffer, "%d", minute());
         }
         char messageBuf[DEBUGGER_MESSAGE_LENGTH];
-        sprintf(messageBuf, "%s:%s %s", hourBuffer, minuteBuffer, message);
+        sprintf(messageBuf, "%d.%d-%s:%s %s", day(), month(), hourBuffer, minuteBuffer, message);
         strcpy(this->_messages[this->_index], messageBuf);
     } else {
         strcpy(this->_messages[this->_index], message);

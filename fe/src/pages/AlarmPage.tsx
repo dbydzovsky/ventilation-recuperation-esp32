@@ -65,11 +65,17 @@ export function AlarmShowcase(props: AlarmShowcaseProps) {
                     Větrák je zablokovaný nebo se neotáčí v okamžiku, když by měl.
                     K uvolnění alarmu dojde automaticky za {props.state.remainMinutes} minut.
                 </>}
+                {props.state.overHeated && <>
+                    Větrák pracuje nějakou dobu ve vyšších tepelných podmínkách.
+                    Z důvody ochrany ventilátoru, a zároveň i vzhledem k bezpečnosti,
+                    byl ventilátor na okamžik odstaven.
+                </>}
             </p>
             {props.state.needAttention && <div className={classes.box}>
+                {props.state.overHeated && <p>Pro uvolnění ventilátoru je třeba počkat.</p>}
                 <Button variant={props.state.needAttention ? "contained" : "outlined"}
                         color={props.state.needAttention ? "secondary" : "primary"}
-                        disabled={!props.state.needAttention}
+                        disabled={(!props.state.needAttention) || props.state.overHeated}
                         startIcon={<PowerSettingsNewIcon/>}
                         onClick={() => {
                             dispatch(cleanAlarm({filter: props.filter}))
