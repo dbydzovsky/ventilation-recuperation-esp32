@@ -1,3 +1,0 @@
-Relay   KEYWORD1
-enable    KEYWORD2
-disable     KEYWORD2

@@ -1,6 +1,0 @@
-Lock   KEYWORD1
-readLock    KEYWORD2
-readUnlock     KEYWORD2
-writeLock     KEYWORD2
-writeUnlock     KEYWORD2
-writeLockInfinite     KEYWORD2

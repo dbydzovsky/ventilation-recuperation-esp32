@@ -1,3 +1,0 @@
-DewPoint   KEYWORD1
-compute    KEYWORD2
-getDewPoint     KEYWORD2
