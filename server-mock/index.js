@@ -35,10 +35,13 @@ module.exports = () => {
                 "09:24 ERR Validated Settings JSON",
                 "09:24 Error with recuperation",
                 "09:26 Filter needs to be cleaner",
-            ]
+            ],
+            version: 0,
+            appVersion: "2.0.0-dev"
         },
         debugv: {
             version: 0,
+            appVersion: "2.0.0-dev"
         },
         conf: {
             "mode": 3,

@@ -9,8 +9,18 @@ export interface Props {
 }
 
 export function InstallationPage(props: Props) {
-    const classes = useStyles()
-
+    const classes = useStyles();
+    let properties = [
+        {property: "Max. výkon"},
+        {property: "StandBy spotřeba bez periférií"},
+        {property: "StandBy spotřeba"},
+        {property: "Spotřeba 10% výkon"},
+        {property: "Spotřeba 25% výkon"},
+        {property: "Spotřeba 50% výkon"},
+        {property: "Spotřeba 75% výkon"},
+        {property: "Spotřeba 100% výkon"},
+        {property: "Datum montáže"},
+    ]
     return <div className={classes.root}>
         <Grid container>
             <p><WarningIcon htmlColor={"orange"}/>
@@ -18,24 +28,34 @@ export function InstallationPage(props: Props) {
                 Při jakékoliv montáží je třeba pečlivě sledovat značení na desce.
                 Nejsou povolené žádné vlastní úpravy, které by mohli ohrozit funkčnost zařízení.
             </p>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={"showOnPrint"}>
+                <table>
+                    {properties.map( obj => {
+                        return <tr key={obj.property}>
+                            <td>{obj.property}</td>
+                            <td style={{width: 200}}></td>
+                        </tr>
+                    })}
+                </table>
+            </Grid>
+            <Grid item xs={12} className={"hideOnPrint"}>
                 <h2>Sensor</h2>
                 <img className={classes.image} width={300} src={Images.sht20.src}/>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className="hideOnPrint">
                 <h2>Pinout Wemos D1 ESP32 mini</h2>
                 <img  className={classes.image} width={700} src={Images.pinout.src} />
             </Grid>
             <Grid item xs={12}>
                 <h2>Deska</h2>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className="hideOnPrint">
                 <img  className={classes.image} width={700} src={Images.boardPic.src}/>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className="hideOnPrint">
                 <img className={classes.image} width={700} src={Images.board.src}/>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className="hideOnPrint">
                 <img className={classes.image} width={700} src={Images.board2.src}/>
             </Grid>
 
@@ -43,16 +63,16 @@ export function InstallationPage(props: Props) {
                 <h1>RJ45 kabely</h1>
                 <p>RJ45 kabely musí používat standard RJ45-A</p>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} className={"hideOnPrint"}>
                 <img className={classes.image} width={300} src={Images.rj45.src}/>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}  className={"hideOnPrint"}>
                 <img className={classes.image} width={300} src={Images.conector.src}/>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}  className={"hideOnPrint"}>
                 <Wires title={"Display Konektor"} desc={["SCL", "GND", "27 (reserved)", "32 (reserved)", "25 (reserved)", "5V", "3.3V", "SDA"]}/>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}  className={"hideOnPrint"}>
                 <Wires title={"Sensor Konektor"} desc={["SCL", "GND", "36 - RX - co2", "5 - TX - co2", "26 - Button", "5V", "3.3V", "SDA"]}/>
             </Grid>
 

@@ -222,7 +222,7 @@ function App() {
 							variant="permanent"
 							open
 							classes={{
-								paper: classes.drawerPaper,
+								paper: classes.drawerPaper + " hideOnPrint",
 							}}
 						>
 							<Drawer toggle={handleDrawerToggle} />

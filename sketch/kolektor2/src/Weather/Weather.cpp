@@ -7,7 +7,7 @@
 WeatherForecast::WeatherForecast() {
 
 }
-
+// todo kontrolovat ze se netoci, kdyz nema
 bool WeatherForecast::sync(WeatherDeps * deps){ 
   deps->debugger->debug("Syncing weather forecast");
   if (WiFi.status() != WL_CONNECTED) {
@@ -46,12 +46,15 @@ bool WeatherForecast::sync(WeatherDeps * deps){
       this->feelsLikeTomorrow = doc["daily"][1]["feels_like"]["day"].as<float>();
     }
     char messageBuf[100];
-    sprintf(messageBuf, "Updated forecast. Will fell like %d C", (int)this->feelsLikeTomorrow);
+    sprintf(messageBuf, "Updated forecast. Will feel like %d C", (int)this->feelsLikeTomorrow);
     deps->debugger->debug(messageBuf);
     deps->timeProvider->updateTime(currentTime, offset);
     char newTimeBuf[100];
     sprintf(newTimeBuf, "New time: %d, offset: %d", currentTime, offset);
     deps->debugger->debug(newTimeBuf);
+    if (this->feelsLikeTomorrow > deps->data->minimumFeelsLike) {
+      deps->debugger->debug("Tomorrow will be hot, I should cool tonight.");
+    }
     this->last_success = millis();
     httpClientForecast->end();
     deps->httpsLock->readUnlock();

@@ -1,6 +1,8 @@
 fe/node_modules
 .idea
 fe/build
+sketch/
 server-mock/node_modules
-sketch/main/data
-sketch/venv
+sketch/kolektor2/.vscode
+sketch/kolektor2/data
+ignored

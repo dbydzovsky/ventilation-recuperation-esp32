@@ -11,25 +11,25 @@ import GitHubIcon from "@material-ui/icons/GitHub";
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import {Button, Container} from "@material-ui/core";
 import {DebugMessagesPage} from "./DebugMessagesPage";
+import {useSelector} from "react-redux";
+import {RootState} from "../reducers";
 
 
 
 export function FirmwarePage() {
     const classes = useStyles();
+    const appVersion = useSelector((state: RootState) => state.debugState.appVersion);
     return <>
         <Container>
             <div className={classes.root}>
-                <h1>Firmware 2.0</h1>
+                <h1>Firmware {appVersion}</h1>
                 <Button startIcon={<SystemUpdateAltIcon/>} variant="text" onClick={()=> {
                     window.open("/update", "_blank")
                 }}>Aktualizovat</Button>
             </div>
             <h2>Ladící zprávy</h2>
             <p>Ladící zprávy jsou uchovány pouze v paměti a budou ztraceny při vypnutí zařízení.</p>
-
-
         </Container>
-
         <DebugMessagesPage/>
     </>
 }

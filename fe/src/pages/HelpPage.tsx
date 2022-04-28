@@ -65,10 +65,10 @@ export function Row(props: { label: any, value: any }) {
     const classes = useStyles();
     return <Grid item xs={12}>
         <Grid container className={classes.row}>
-            <Grid item className={classes.flex} xs={12} sm={12} md={6} lg={4}>
+            <Grid item className={classes.flex} xs={1}>
                 {props.label}
             </Grid>
-            <Grid item className={classes.flex} xs={12} sm={12} md={6} lg={8}>
+            <Grid item className={classes.flex} xs>
                 {props.value}
             </Grid>
         </Grid>
@@ -156,14 +156,16 @@ export function HelpPage() {
                 <Typography>Změna WiFi připojení</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <p>Pro změnu WiFi sítě (nebo jejího hesla) je potřeba zařízení restartovat, což lze provézt podržením dotykového tlačítka po dobu 10 vteřin.</p>
-                <p>Zařízení se po restartu nepodaří připojit k síti a proto přejde do módu Access Point, kdy je možné ho opět konfigurovat.</p>
-                <p>
-                    <ul>
-                        <li>Default SSID: SolarAirCollectorV2</li>
-                        <li>Default heslo: 123456789</li>
-                    </ul>
-                </p>
+                <div>
+                    <p>Pro změnu WiFi sítě (nebo jejího hesla) je potřeba zařízení restartovat, což lze provézt podržením dotykového tlačítka po dobu 10 vteřin.</p>
+                    <p>Zařízení se po restartu nepodaří připojit k síti a proto přejde do módu Access Point, kdy je možné ho opět konfigurovat.</p>
+                    <p>
+                        <ul>
+                            <li>Default SSID: SolarAirCollectorV2</li>
+                            <li>Default heslo: 123456789</li>
+                        </ul>
+                    </p>
+                </div>
             </ExpansionPanelDetails>
         </ExpansionPanel>
 
@@ -176,7 +178,7 @@ export function HelpPage() {
                 <Typography>Sémantika programových kódů</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <div>
+                <div className="pageBreak">
                     <p>Do monitoringu se posílá také programový kód, tj. aktuální číslo programu. Každé číslo má konkrétní význam.</p>
                     <p>Toto číslo je nápomocné, pokud se zpětně hodnotí přičina chování systému.</p>
                     <br/>
@@ -239,14 +241,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: 20
     },
     row: {
-        marginTop: 20
     },
     row2: {
         marginTop: 20,
         border: "1px dashed black"
     },
     group: {
-        marginBottom: 20
     },
     flex: {
         display: "flex",

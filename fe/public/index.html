@@ -51,7 +51,27 @@
                 transform: rotate(2500deg);
             }
         }
-
+        .showOnPrint {
+            display: none;
+        }
+        table > tr > td {
+            border-bottom: 1px solid #1c2d6c;
+            border-left: 1px solid #1c2d6c;
+            padding: 2px;
+            margin: 3px;
+        }
+        @media print {
+            .hideOnPrint {
+                display: none;
+            }
+            .showOnPrint {
+                display: inherit;
+            }
+            .pageBreak {page-break-after: always;}
+            img {
+                max-width: 70% !important;
+            }
+        }
         .spin {
             animation-name: spin;
             animation-iteration-count: infinite;

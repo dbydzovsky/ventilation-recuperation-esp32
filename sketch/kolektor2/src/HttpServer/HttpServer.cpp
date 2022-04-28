@@ -253,7 +253,8 @@ void HttpServer::setup() {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         StaticJsonDocument<128> jsonDoc;
         JsonObject root = jsonDoc.to<JsonObject>();
-        root["version"] = this->_deps->debugger->version();        
+        root["version"] = this->_deps->debugger->version(); 
+        root["appVersion"] = VENTILATION_VERSION;       
         serializeJson(root, *response);
         setCors(response);
         request->send(response);
@@ -263,6 +264,7 @@ void HttpServer::setup() {
         StaticJsonDocument<8192> jsonDoc;
         JsonObject root = jsonDoc.to<JsonObject>();
         root["version"] = this->_deps->debugger->version();
+        root["appVersion"] = VENTILATION_VERSION;
         JsonArray messages = root.createNestedArray("messages");
         this->_deps->debugger->getMessages(&messages);        
         serializeJson(root, *response);

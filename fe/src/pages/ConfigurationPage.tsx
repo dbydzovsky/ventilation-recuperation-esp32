@@ -342,174 +342,222 @@ export function ConfigurationPage() {
             </Grid>
         </Grid>
         <div className={classes.winterSetting}>
-            <Grid container>
-                <Grid item xs={12} sm={12} md={12}>
+            <ExpansionPanel className={classes.griditem}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
                     <h2><AcUnitIcon/> Nastavení vyhřívacího programu</h2>
-                    <p>Vyhřívací program je vhodný na zimní období, neboť při zvýšené teplotě v kolektoru
-                    dojde k sepnutí ventilátoru dle následujícího nastavení pravidel. Lze nastavit až 5
-                    pravidel. Lze také nastavit vnitřní teplotu, při které se má vytápění deaktivovat, což
-                    slouží k prevenci přehřátí místnosti (Pro deaktivaci tohoto nastavení lze nastavit např. 40 stupnu)</p>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Paper className={classes.properties}>
-                        <InputLabel className={classes.label}>
-                            <PanToolIcon/>
-                            Deaktivovat při vnitřní teplotě větší než:
-                        </InputLabel>
-                        <Input
-                            error={maxInsideTemperatureInvalid}
-                            id="standard-adornment-max-inside-temp"
-                            type={"number"}
-                            value={values.winterMaxInsideTemp}
-                            className={classes.input}
-                            onChange={handleChange('winterMaxInsideTemp', temperatureValidator, (val: string) => {
-                                console.log(val);
-                                return Math.round(Number(val) * 100) / 100
-                            })}
-                            startAdornment={<InputAdornment position="start">°C</InputAdornment>}
-                        />
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší vnější teploty po největší):"}
-                                    adornment={"°C"}
-                                    placeholder={"Teplota"}
-                                    requiredDifference={3}
-                                    newDefault={20}
-                                    valueValidator={temperatureValidator}
-                                    rules={values.winterOnRules}
-                                    validate={winterOrderValidation}
-                                    onChange={handleRuleChange('winterOnRules')}/>
-                </Grid>
-            </Grid>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Grid container>
+                        <Grid item xs={12} sm={12} md={12}>
+
+                            <p>Vyhřívací program je vhodný na zimní období, neboť při zvýšené teplotě v kolektoru
+                                dojde k sepnutí ventilátoru dle následujícího nastavení pravidel. Lze nastavit až 5
+                                pravidel. Lze také nastavit vnitřní teplotu, při které se má vytápění deaktivovat, což
+                                slouží k prevenci přehřátí místnosti (Pro deaktivaci tohoto nastavení lze nastavit např. 40 stupnu)</p>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper className={classes.properties}>
+                                <InputLabel className={classes.label}>
+                                    <PanToolIcon/>
+                                    Deaktivovat při vnitřní teplotě větší než:
+                                </InputLabel>
+                                <Input
+                                    error={maxInsideTemperatureInvalid}
+                                    id="standard-adornment-max-inside-temp"
+                                    type={"number"}
+                                    value={values.winterMaxInsideTemp}
+                                    className={classes.input}
+                                    onChange={handleChange('winterMaxInsideTemp', temperatureValidator, (val: string) => {
+                                        console.log(val);
+                                        return Math.round(Number(val) * 100) / 100
+                                    })}
+                                    startAdornment={<InputAdornment position="start">°C</InputAdornment>}
+                                />
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejmenší vnější teploty po největší):"}
+                                            adornment={"°C"}
+                                            placeholder={"Teplota"}
+                                            requiredDifference={3}
+                                            newDefault={20}
+                                            valueValidator={temperatureValidator}
+                                            rules={values.winterOnRules}
+                                            validate={winterOrderValidation}
+                                            onChange={handleRuleChange('winterOnRules')}/>
+                        </Grid>
+                    </Grid>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
         </div>
         <div className={classes.summerSetting}>
-            <Grid container>
-                <Grid item xs={12} sm={12} md={12}>
+            <ExpansionPanel className={classes.griditem}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
                     <h2><WbSunnyIcon/> Nastavení chladícího programu</h2>
-                    <p>Chladící program je vhodný na letní období, kdy během chladnějších nocí vychladí místnost na
-                        určenou teplotu. Pro tento program je nutné připojit zařízení k internetu prostřednictvím WiFi.
-                        Z internetu získává data o předpovědi počasí. Předpověď počasí se používá pro řízení
-                        chlazení, neboť dává smysl chladit místnost pouze v okamžiku, když bude další den
-                        pocitová teplota větší, než nastavená.</p>
-                    <p>Nutno zmínit, že s ohledem na bezpečnost dochází ke chlazení místnosti pouze pokud
-                        nehrozí dle výpočtu rosného bodu vznik kondenzace.</p>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Paper className={classes.properties}>
-                        <InputLabel className={classes.label}>
-                            <PanToolIcon/>
-                            Deaktivovat při teplotě menší než::
-                        </InputLabel>
-                        <Input
-                            error={maxInsideTemperatureInvalid}
-                            id="standard-adornment-min-inside-temp"
-                            type={"number"}
-                            value={values.summerMinInsideTemp}
-                            className={classes.input}
-                            onChange={handleChange('summerMinInsideTemp', temperatureValidator, (val: string) => {
-                                console.log(val);
-                                return Math.round(Number(val) * 100) / 100
-                            })}
-                            startAdornment={<InputAdornment position="start">°C</InputAdornment>}
-                        />
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Grid container>
+                        <Grid item xs={12} sm={12} md={12}>
 
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Paper className={classes.properties}>
-                        <InputLabel className={classes.label}>
-                            <WbSunnyIcon/>
-                            Zapnout chlazení pokud je pocitová teplota (podle předpovědi) větší než:
-                        </InputLabel>
-                        <Input
-                            error={maxInsideTemperatureInvalid}
-                            id="standard-adornment-minimumFeelsLike"
-                            type={"number"}
-                            value={values.minimumFeelsLike}
-                            className={classes.input}
-                            onChange={handleChange('minimumFeelsLike', temperatureValidator, (val: string) => {
-                                console.log(val);
-                                return Math.round(Number(val) * 100) / 100
-                            })}
-                            startAdornment={<InputAdornment position="start">°C</InputAdornment>}
-                        />
+                            <p>Chladící program je vhodný na letní období, kdy během chladnějších nocí vychladí místnost na
+                                určenou teplotu. Pro tento program je nutné připojit zařízení k internetu prostřednictvím WiFi.
+                                Z internetu získává data o předpovědi počasí. Předpověď počasí se používá pro řízení
+                                chlazení, neboť dává smysl chladit místnost pouze v okamžiku, když bude další den
+                                pocitová teplota větší, než nastavená.</p>
+                            <p>Nutno zmínit, že s ohledem na bezpečnost dochází ke chlazení místnosti pouze pokud
+                                nehrozí dle výpočtu rosného bodu vznik kondenzace.</p>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper className={classes.properties}>
+                                <InputLabel className={classes.label}>
+                                    <PanToolIcon/>
+                                    Deaktivovat při teplotě menší než::
+                                </InputLabel>
+                                <Input
+                                    error={maxInsideTemperatureInvalid}
+                                    id="standard-adornment-min-inside-temp"
+                                    type={"number"}
+                                    value={values.summerMinInsideTemp}
+                                    className={classes.input}
+                                    onChange={handleChange('summerMinInsideTemp', temperatureValidator, (val: string) => {
+                                        console.log(val);
+                                        return Math.round(Number(val) * 100) / 100
+                                    })}
+                                    startAdornment={<InputAdornment position="start">°C</InputAdornment>}
+                                />
 
-                    </Paper>
-                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper className={classes.properties}>
+                                <InputLabel className={classes.label}>
+                                    <WbSunnyIcon/>
+                                    Zapnout chlazení pokud je pocitová teplota (podle předpovědi) větší než:
+                                </InputLabel>
+                                <Input
+                                    error={maxInsideTemperatureInvalid}
+                                    id="standard-adornment-minimumFeelsLike"
+                                    type={"number"}
+                                    value={values.minimumFeelsLike}
+                                    className={classes.input}
+                                    onChange={handleChange('minimumFeelsLike', temperatureValidator, (val: string) => {
+                                        console.log(val);
+                                        return Math.round(Number(val) * 100) / 100
+                                    })}
+                                    startAdornment={<InputAdornment position="start">°C</InputAdornment>}
+                                />
 
-                <Grid item xs={12} sm={12} md={12}>
-                    <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší vnější teploty po nejmenší):"}
-                                    adornment={"°C"}
-                                    placeholder={"Teplota"}
-                                    newDefault={20}
-                                    requiredDifference={3}
-                                    valueValidator={temperatureValidator}
-                                    rules={values.summerOnRules}
-                                    validate={summerOrderValidation}
-                                    onChange={handleRuleChange('summerOnRules')}/>
-                </Grid>
-            </Grid>
+                            </Paper>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={12}>
+                            <TurnOnOffRules header={"Pravidla pro sepnutí (max 5, od nejvyšší vnější teploty po nejmenší):"}
+                                            adornment={"°C"}
+                                            placeholder={"Teplota"}
+                                            newDefault={20}
+                                            requiredDifference={3}
+                                            valueValidator={temperatureValidator}
+                                            rules={values.summerOnRules}
+                                            validate={summerOrderValidation}
+                                            onChange={handleRuleChange('summerOnRules')}/>
+                        </Grid>
+                    </Grid>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
         </div>
         { recuperationEnabled && <div className={classes.co2Setting}>
-            <Grid container>
-                <Grid item xs={12} sm={12} md={12}>
+            <ExpansionPanel className={classes.griditem}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
                     <h2><CompareArrowsIcon/> Nastavení řízeného větrání</h2>
-                    <p>
-                        V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion),
-                        v průmyslových oblastech je hodnota o něco vyšší.
-                        Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm.
-                        Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických
-                        jednotek nebo výměny vzduchu v místnosti.
-                    </p>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <TurnOnOffRules header={"Pravidla pro sepnutí rekuperace (max 5, od nejnižší hodnoty PPM):"}
-                                    adornment={"PPM"}
-                                    placeholder={"Co2"}
-                                    newDefault={800}
-                                    requiredDifference={50}
-                                    valueValidator={co2Validator}
-                                    rules={values.co2Rules}
-                                    validate={co2OrderValidation}
-                                    onChange={handleRuleChange('co2Rules')}/>
-                </Grid>
-            </Grid>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Grid container>
+                        <Grid item xs={12} sm={12} md={12}>
+
+                            <p>
+                                V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion),
+                                v průmyslových oblastech je hodnota o něco vyšší.
+                                Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm.
+                                Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických
+                                jednotek nebo výměny vzduchu v místnosti.
+                            </p>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <TurnOnOffRules header={"Pravidla pro sepnutí rekuperace (max 5, od nejnižší hodnoty PPM):"}
+                                            adornment={"PPM"}
+                                            placeholder={"Co2"}
+                                            newDefault={800}
+                                            requiredDifference={50}
+                                            valueValidator={co2Validator}
+                                            rules={values.co2Rules}
+                                            validate={co2OrderValidation}
+                                            onChange={handleRuleChange('co2Rules')}/>
+                        </Grid>
+                    </Grid>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
         </div> }
         <div className={classes.autoSetting}>
-            <Grid container>
-                <Grid item xs={12} sm={12} md={12}>
+            <ExpansionPanel className={classes.griditem}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
                     <h2>Nastavení automatického programu</h2>
-                    <p>
-                        Pro aktivaci automatického programu je třeba zařízení udržovat připojené k internetu.
-                        V opačném případě nebude zařízení schopné určit aktuální datum
-                        a nebude tak vědět, který program si má vybrat.
-                        Automatický program usnadňuje správu ventilační jednotky, neboť
-                        automaticky přepíná režimy dle kalendáře.
-                    </p>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <Paper className={classes.properties}>
-                        Nastavení období vyhřívacího programu
-                        <Range color="orange" start={values.autoWinterStart} end={values.autoWinterEnd}
-                               onChange={(start, end) => {
-                                   setValues({...values, autoWinterStart: start, autoWinterEnd: end})
-                               }}/>
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <Paper className={classes.properties}>
-                        Nastavení období klimatizačního programu
-                        <Range color="blue" start={values.autoSummerStart} end={values.autoSummerEnd}
-                               onChange={(start, end) => {
-                                   setValues({...values, autoSummerStart: start, autoSummerEnd: end})
-                               }}/>
-                    </Paper>
-                </Grid>
-                {winterSummerOverlaps ? <div className={classes.warn}>
-                    <WarningIcon/> Obě dvě období se nesmí prolínat
-                </div> : ""}
-            </Grid></div>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Grid container>
+                        <Grid item xs={12} sm={12} md={12}>
+
+                            <p>
+                                Pro aktivaci automatického programu je třeba zařízení udržovat připojené k internetu.
+                                V opačném případě nebude zařízení schopné určit aktuální datum
+                                a nebude tak vědět, který program si má vybrat.
+                                Automatický program usnadňuje správu ventilační jednotky, neboť
+                                automaticky přepíná režimy dle kalendáře.
+                            </p>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <Paper className={classes.properties}>
+                                Nastavení období vyhřívacího programu
+                                <Range color="orange" start={values.autoWinterStart} end={values.autoWinterEnd}
+                                       onChange={(start, end) => {
+                                           setValues({...values, autoWinterStart: start, autoWinterEnd: end})
+                                       }}/>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12}>
+                            <Paper className={classes.properties}>
+                                Nastavení období klimatizačního programu
+                                <Range color="blue" start={values.autoSummerStart} end={values.autoSummerEnd}
+                                       onChange={(start, end) => {
+                                           setValues({...values, autoSummerStart: start, autoSummerEnd: end})
+                                       }}/>
+                            </Paper>
+                        </Grid>
+                        {winterSummerOverlaps ? <div className={classes.warn}>
+                            <WarningIcon/> Obě dvě období se nesmí prolínat
+                        </div> : ""}
+                    </Grid>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+            </div>
         <Button onClick={handleSave} disabled={anyInvalid} color={"secondary"} variant={"contained"}
                 className={classes.btn}>Uložit</Button>
         <div className={classes.nothing}></div>
@@ -534,22 +582,18 @@ const useStyles = makeStyles({
     },
     winterSetting: {
         borderLeft: "red 2px solid",
-        padding: 20,
-        marginTop: 10,
+        marginTop: 10
     },
     autoSetting: {
         borderLeft: "orange 2px solid",
-        padding: 20,
         marginTop: 10,
     },
     summerSetting: {
         borderLeft: "blue 2px solid",
-        padding: 20,
         marginTop: 10,
     },
     co2Setting: {
         borderLeft: "violet 2px solid",
-        padding: 20,
         marginTop: 10,
     },
     selectedFont: {

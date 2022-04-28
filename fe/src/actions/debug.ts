@@ -1,6 +1,6 @@
 import {LoaderActions} from "../model/loader";
 import {SettingsActions} from "../model/settings";
-import {DebugActions, DebugMessage} from "../model/debug";
+import {DebugActions, DebugMessage, DebugVersions} from "../model/debug";
 import {Simulate} from "react-dom/test-utils";
 
 const baseurl = process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
@@ -20,6 +20,7 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
             const response = await fetch(baseurl + "/a/debug/", {method: "GET"});
             const obj = await response.json();
             const version = Number(obj["version"]);
+            const appVersion = obj["appVersion"];
             const messages = obj.messages as string[];
             const payload:DebugMessage[] =[];
 
@@ -43,8 +44,11 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
                     severity: severity
                 })
             })
+            let versions: DebugVersions = {
+                version, appVersion
+            }
             dispatch({type: DebugActions.SET_MESSAGES, payload: payload})
-            dispatch({type: DebugActions.SET_VERSION, payload: version})
+            dispatch({type: DebugActions.SET_VERSION, payload: versions})
         } finally {
             props.onDone()
             // dispatch({type: LoaderActions.HIDE_LOADER})
