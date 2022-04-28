@@ -1,0 +1,18 @@
+{
+  "checkRecuperationRpm": true,
+  "checkVentilatorRpm": true,
+  "hideCo2": false,
+  "hideInternalTempHum": false,
+  "unblockingFansPeriod": 172800000,
+  "ventilatorMaxRpm": 8200,
+  "recuperationMaxRpm": 6000,
+  "recuperationWaitForDirectionChange": 6000,
+  "recuperationCycleDuration": 70000,
+  "recuperationMode": 1,
+  "recuperationPower": 100,
+  "ventilatorPower": 30,
+  "durationMillis": 300000000,
+  "tempDisableDuration": 10800000,
+  "brightness": 100,
+  "maxVentilatorTemp": 70
+}

@@ -50,11 +50,23 @@ void Debugger::disable() {
     this->_index = 0;
 }
 
+void Debugger::printMessages(Print * output) {
+    short actualIndex = this->_index;
+    for (int i = 0; i < DEBUGGER_MESSAGES_COUNT; i++) {
+        actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
+        if (this->_messages[actualIndex][0] != '\0') {
+            output->println(this->_messages[actualIndex]);
+        }
+    }
+}
+
 void Debugger::getMessages(JsonArray * messages) {
     short actualIndex = this->_index;
     for (int i = 0; i < DEBUGGER_MESSAGES_COUNT; i++) {
         actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
-        messages->add(this->_messages[actualIndex]);
+        if (this->_messages[actualIndex][0] != '\0') {
+            messages->add(this->_messages[actualIndex]);
+        }
     }
 }
 

@@ -1,0 +1,44 @@
+{
+  "mode": 3,
+  "winterMaxInsideTemp": 29.0,
+  "summerMinInsideTemp": 19.0,
+  "minimumFeelsLike": 50.0,
+  "winterOnRules": [
+    {
+      "tv": 35,
+      "p": 30
+    },
+    {
+      "tv": 40,
+      "p": 70
+    }
+  ],
+  "summerOnRules": [
+    {
+      "tv": 20,
+      "p": 30
+    },
+    {
+      "tv": 10,
+      "p": 0
+    }
+  ],
+  "co2Rules": [
+    {
+      "tv": 600,
+      "p": 60
+    }
+  ],
+  "name": "rekuperace",
+  "weatherApiKey": "",
+  "lat": "50.25",
+  "lon": "15.39",
+  "autoWinterStart": 250,
+  "autoWinterEnd": 50,
+  "autoSummerStart": 100,
+  "autoSummerEnd": 200,
+  "monitoring": {
+    "feed": "",
+    "key": ""
+  }
+}

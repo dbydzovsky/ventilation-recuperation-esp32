@@ -16,6 +16,7 @@ class Debugger {
     void enable();
     void disable();
     void debug(const char* message);
+    void printMessages(Print * output);
     void getMessages(JsonArray * messages);
     int version();
   private:

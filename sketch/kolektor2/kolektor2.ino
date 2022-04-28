@@ -102,8 +102,6 @@ Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 Display * display = new Display(&deps, orchestrator);
 Button * button = new Button(BTN_PIN, display);
 
-
-
 DNSServer dns;
 AsyncWebServer server(80);
 AsyncWiFiManager wifiManager(&server, &dns);

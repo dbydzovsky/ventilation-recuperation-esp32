@@ -28,6 +28,17 @@ export function InstallationPage(props: Props) {
                 Při jakékoliv montáží je třeba pečlivě sledovat značení na desce.
                 Nejsou povolené žádné vlastní úpravy, které by mohli ohrozit funkčnost zařízení.
             </p>
+            <p>
+                Je doporučeno projít si pokročilé nastavení
+                (k dispozici v uživatelském rozhraní prostřednictvím internetového prohlížeče),
+                kde je možné zařízení dále konfigurovat dle požadavků prostředí.
+            </p>
+            <p>
+                Pro sledování případných problémů je určena stránka "Firmware", kde
+                lze sledovat ladící zprávy. Tyto ladící zprávy zmizí při restartu zařízení.
+                Pokud nastane problém, bude zde k dispozici chybová ladící zpráva, kterou je vhodné
+                zarchivovat.
+            </p>
             <Grid item xs={12} className={"showOnPrint"}>
                 <table>
                     {properties.map( obj => {

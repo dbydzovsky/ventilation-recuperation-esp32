@@ -259,6 +259,18 @@ void HttpServer::setup() {
         setCors(response);
         request->send(response);
     });
+
+    this->_server->on("/a/debugd/", HTTP_GET, [this](AsyncWebServerRequest * request) {
+        AsyncResponseStream *response = request->beginResponseStream("text/html");
+        response->addHeader("Content-disposition", "attachment; filename=ventilation.log");
+        response->printf("version %d", this->_deps->debugger->version());
+        response->println();
+        response->printf("appVersion %s", VENTILATION_VERSION);
+        response->println();
+        this->_deps->debugger->printMessages(response);        
+        setCors(response);
+        request->send(response);
+    });
     this->_server->on("/a/debug/", HTTP_GET, [this](AsyncWebServerRequest * request) {
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         StaticJsonDocument<8192> jsonDoc;

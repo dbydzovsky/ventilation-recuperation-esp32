@@ -13,7 +13,7 @@ import {Button, Container} from "@material-ui/core";
 import {DebugMessagesPage} from "./DebugMessagesPage";
 import {useSelector} from "react-redux";
 import {RootState} from "../reducers";
-
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 
 export function FirmwarePage() {
@@ -28,9 +28,16 @@ export function FirmwarePage() {
                 }}>Aktualizovat</Button>
             </div>
             <h2>Ladící zprávy</h2>
-            <p>Ladící zprávy jsou uchovány pouze v paměti a budou ztraceny při vypnutí zařízení.</p>
+
+            <p><Button variant={"contained"}  color={"secondary"} startIcon={<GetAppIcon/>} onClick={() => {
+                window.open("/a/debugd/", "_blank")}
+            }>Stáhnout</Button>Ladící zprávy jsou uchovány pouze v paměti a budou ztraceny při vypnutí zařízení.</p>
         </Container>
         <DebugMessagesPage/>
+        <Container>
+            <h2>Changelog</h2>
+            <p>2.0.0 - Úvodní verze</p>
+        </Container>
     </>
 }
 
