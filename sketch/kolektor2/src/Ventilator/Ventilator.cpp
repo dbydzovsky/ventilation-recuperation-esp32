@@ -47,7 +47,5 @@ void Ventilator::setPower(byte power) {
     } else {
       this->_power = power;
     }
-    if (IS_DEBUG) Serial.printf("Setting ventilator power to: %d", power);
-    if (IS_DEBUG) Serial.println("");
   }
 }

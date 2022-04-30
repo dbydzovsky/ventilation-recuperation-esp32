@@ -23,7 +23,7 @@ void Monitoring::hideCo2() {
 
 void Monitoring::doReport() {
     if (WiFi.status() != WL_CONNECTED) {
-        if (IS_DEBUG) Serial.println("Wifi is not connected to send sensor statistics");
+        this->_deps->debugger->trace("Wifi is not connected to send sensor statistics");
         return;
     }
     if (!this->_deps->httpLock->readLock()) {
@@ -52,7 +52,7 @@ void Monitoring::doReport() {
     }
     data["VentilatorPower"][0]["value"] = this->_deps->ventilation->getPower();
     data["VentilatorBlocked"][0]["value"] = this->_deps->ventilatorChecker->shouldStop();
-    if (IS_RECUPERATION_ENABLED) { // todo make it configurable by settings
+    if (this->_deps->settings->getSettings()->recuperationOn) {
         data["RecuperationPower"][0]["value"] = this->_deps->recuperation->getPower();
         data["RecuperationBlocked"][0]["value"] = this->_deps->recuperationChecker->shouldStop();
     }
@@ -81,7 +81,6 @@ void Monitoring::doReport() {
     char requestBody[1024];
     serializeJson(doc, requestBody);
     char url[110] = "";
-    if (IS_DEBUG) Serial.println(url);
     sprintf(url, "https://iotplotter.com/api/v2/feed/%s", this->_deps->conf->getData()->monitoring->feed);
     HTTPClient * httpClient = this->_deps->httpClient;
     // dynamic_cast<WiFiClient&>(secureClient), 

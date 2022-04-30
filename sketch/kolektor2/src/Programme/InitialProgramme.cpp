@@ -4,12 +4,17 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 class InitialWarmingUpProgramme: public Programme {
   private:
+    Debugger * debugger;
     unsigned long startedWaiting;
     bool _isValid = false;
   public:
+    InitialWarmingUpProgramme(Debugger * debugger) {
+      this->debugger = debugger;
+    }
     byte getCode() {
       return 70;
     }
@@ -26,7 +31,7 @@ class InitialWarmingUpProgramme: public Programme {
       }
     }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting Initial Programme");
+      this->debugger->trace("Starting Initial Programme");
       this->startedWaiting = millis();
       this->_isValid = true;
     }

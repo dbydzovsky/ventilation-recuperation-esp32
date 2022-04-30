@@ -6,3 +6,4 @@ server-mock/node_modules
 sketch/kolektor2/.vscode
 sketch/kolektor2/data
 ignored
+sketch/kolektor2/*.bin

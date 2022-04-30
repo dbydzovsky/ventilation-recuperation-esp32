@@ -83,7 +83,7 @@ class Co2HistoryScreen: public HistoryScreen {
       return false;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return true;
+      return false;
     }
     int getDelayMs(ScreenProps * deps) {
       return 30000;

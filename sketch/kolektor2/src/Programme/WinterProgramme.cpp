@@ -3,10 +3,12 @@
 #include "../RGBDiode/RGBDiode.h"
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
+#include "../Debugger/Debugger.h"
 
 class WinterProgramme: public Programme {
   private:
     Programme * _recuperation;
+    Debugger * debugger;
     short currentRuleIndex = -1;
     byte error = 0;
     float markError(byte error) {
@@ -14,10 +16,12 @@ class WinterProgramme: public Programme {
       return 0;
     }
   public:
-    WinterProgramme(Programme * Recuperation) {
+    WinterProgramme(Debugger * debugger, Programme * Recuperation) {
       this->_recuperation = Recuperation;
+      this->debugger = debugger;
     }
     void onStart() {
+      this->debugger->trace("Starting Winter Programme");
       this->currentRuleIndex = -1;
     }
     byte getCode() {

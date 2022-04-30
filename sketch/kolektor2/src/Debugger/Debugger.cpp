@@ -13,6 +13,9 @@ Debugger::Debugger(TimeProvider * timeProvider) {
   }
 }
 
+void Debugger::trace(const char *message) {
+    
+}
 void Debugger::debug(const char * message) {
     if (IS_DEBUG) Serial.println(message);
     if (this->_timeProvider->isTimeSet()) {

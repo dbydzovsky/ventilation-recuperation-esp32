@@ -68,7 +68,6 @@ class BoostScreen: public Screen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Boosting..");
       ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
       PowerOutput output;
       SettingsData * settings = props->deps->settings->getSettings();

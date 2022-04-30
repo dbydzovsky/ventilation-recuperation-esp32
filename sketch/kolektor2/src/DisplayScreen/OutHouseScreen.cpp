@@ -31,14 +31,9 @@ class OutHouseScreen: public Screen {
 	    props->d->setTextSize(1);
       props->d->setTextColor(WHITE);
       props->d->print("OUT ");
-
-      if (props->deps->forecast->hasValidForecast()) {
-        props->d->print((int) props->deps->forecast->howDoesItFeelLike());
-        props->d->print(" C");
-      } else {
-        props->d->print(" NaN");
-      }
-	    props->d->setCursor(2, 12);
+      props->d->print((int) props->deps->dewPointOut->getDewPoint());
+      props->d->print("ros");
+      props->d->setCursor(2, 12);
 	  
       props->d->print(props->deps->outsideTemp->getAverage());
       props->d->print(" C");
@@ -46,8 +41,13 @@ class OutHouseScreen: public Screen {
 	    props->d->print(props->deps->outsideHum->getAverage());
       props->d->print(" %");
 	    props->d->setCursor(2, 36);
-	    props->d->print((int) props->deps->dewPointOut->getDewPoint());
-      props->d->print(" rosny");
+
+      if (props->deps->forecast->hasValidForecast()) {
+        props->d->print((int) props->deps->forecast->howDoesItFeelLike());
+        props->d->print(" C");
+      } else {
+        props->d->print(" NaN");
+      }
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {
@@ -63,8 +63,7 @@ class OutHouseScreen: public Screen {
       return false;
     }
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Disabling...");
-	  return true;
+	    return true;
     }
 
     void onPressDown(ScreenProps * deps) {

@@ -4,9 +4,15 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 class DisabledProgramme: public Programme {
+  private:
+    Debugger * debugger;
   public:
+    DisabledProgramme(Debugger * debugger) {
+      this->debugger = debugger;
+    }
     byte getCode() {
       return 90;
     }
@@ -18,7 +24,7 @@ class DisabledProgramme: public Programme {
       return 13;
     }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting Disabled Programme");
+      this->debugger->trace("Starting Disabled Programme");
     }
     bool handleClick(byte times) {
       

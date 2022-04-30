@@ -5,6 +5,8 @@
 #include <WiFiClientSecure.h>
 #include <TimeLib.h>
 #include "../Constants/Constants.h"
+
+#include "../Debugger/Debugger.h"
 class AutoProgramme: public Programme {
   private:
     byte error = 0;
@@ -12,6 +14,7 @@ class AutoProgramme: public Programme {
     bool candidateSet = false;
     ProgrammeFactory * factory;
     Programme * _recuperation;
+    Debugger * debugger;
     bool isInInterval(int days, int intervalStart, int intervalEnd) {
       if (intervalStart < intervalEnd) {
         return (intervalStart <= days) && (days < intervalEnd);
@@ -55,12 +58,13 @@ class AutoProgramme: public Programme {
       }
     }
   public:
-    AutoProgramme(ProgrammeFactory * factory) {
+    AutoProgramme(Debugger * debugger, ProgrammeFactory * factory) {
+      this->debugger = debugger; 
       this->factory = factory;
       this->_recuperation = factory->Recuperation;
     }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting AUTO programme");
+      this->debugger->trace("Starting AUTO programme");
     }
     byte getCode() {
       if (this->error != 0) {
@@ -96,7 +100,7 @@ class AutoProgramme: public Programme {
 
     void getPower(ProgrammeContext* context, PowerOutput * out) {
       if (!context->isTimeSet) {
-        if (IS_DEBUG) Serial.println("Time is not set, getting forecast");
+        this->debugger->trace("Time is not set, getting forecast");
         context->forecast->act(context->weatherDeps);
         this->error = 133;
         this->_recuperation->getPower(context, out);

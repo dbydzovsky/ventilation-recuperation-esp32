@@ -4,13 +4,18 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 class TrialProgramme: public ConfigurableProgramme {
   private:
     bool valid = false;
     unsigned long started = 0;
     int durationMillis = 300000;
     PowerOutput output;
+    Debugger * debugger;
   public:
+    TrialProgramme(Debugger * debugger) {
+      this->debugger = debugger;
+    }
     byte getCode() {
       return 100;
     }
@@ -19,7 +24,7 @@ class TrialProgramme: public ConfigurableProgramme {
     }
 
     void onStart() {
-      if (IS_DEBUG)Serial.println("Starting Trial programme");
+      this->debugger->trace("Starting Trial programme");
       this->valid = true;
       this->started = millis();
     }

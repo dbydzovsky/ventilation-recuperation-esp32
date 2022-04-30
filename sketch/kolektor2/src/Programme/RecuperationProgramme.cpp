@@ -5,12 +5,17 @@
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
 
+#include "../Debugger/Debugger.h"
 class RecuperationProgramme: public Programme {
   private:
     bool directionIn = false;
     short currentRuleIndex = -1;
     byte error = 0;
+    Debugger * debugger;
   public:
+    RecuperationProgramme(Debugger * debugger) {
+      this->debugger = debugger;
+    }
     byte getCode() {
       return 200;
     }
@@ -21,7 +26,7 @@ class RecuperationProgramme: public Programme {
       return sprintf(dest, "Řízené větrání...");
     }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting Recuperation Programme");
+      this->debugger->trace("Starting Recuperation Programme");
     }
     bool handleClick(byte times) {
       return false;

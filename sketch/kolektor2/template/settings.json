@@ -1,4 +1,5 @@
 {
+  "recuperationOn": true,
   "checkRecuperationRpm": true,
   "checkVentilatorRpm": true,
   "hideCo2": false,

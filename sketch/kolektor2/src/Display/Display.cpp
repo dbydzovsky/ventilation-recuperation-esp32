@@ -9,6 +9,7 @@
 #include "../Dependencies/Dependencies.h"
 #include "../Orchestrator/Orchestrator.h"
 #include "../DisplayScreen/ScreenFactory.h"
+#include "../HttpServer/HttpServer.h"
 
 // http://adafruit.github.io/Adafruit-GFX-Library/html/class_adafruit___g_f_x.html
 // https://diyusthad.com/image2cpp
@@ -27,10 +28,9 @@ bool Display::handleHold(int duration_ms, bool finished) {
 	if (!this->actual->hasActiveButton()) {
 	  return false;
 	}
-	if (IS_DEBUG) Serial.print("handleHold,duration: ");
-	if (IS_DEBUG) Serial.print(duration_ms);
-	if (IS_DEBUG) Serial.print(" ,finished");
-	if (IS_DEBUG) Serial.println(finished);
+	char buff[80];
+	sprintf(buff, "handleHold, duration: %d, finished: %s", duration_ms, finished ? "true" : "false");
+	this->deps->debugger->trace(buff);
 	this->last_interaction = millis();
 	if (!this->btnPressDone) {
 		this->isButtonPress = !finished;
@@ -81,8 +81,9 @@ Screen* Display::getActualScreen() {
 }
 
 bool Display::handleClick(byte times) {
-	if (IS_DEBUG) Serial.print("handleClick");
-	if (IS_DEBUG) Serial.println(times);
+	char buff[50];
+	sprintf(buff, "handing click %d", times);
+	this->deps->debugger->trace(buff);
 	this->last_interaction = millis();
 	if (this->_wokeUpFromScreenSaver) {
 	  this->_wokeUpFromScreenSaver = false;
@@ -100,10 +101,6 @@ bool Display::handleClick(byte times) {
 	this->actual->tick(this->screenProps);
 	return true;
 }
-
-void Display::setPass(long pass) {
-	this->screenFactory->debugScreen->setPass(pass);
-}
 void Display::onPressDown() {
 	bool showScreenSaver = this->shouldShowScreenSaver();
 	if (showScreenSaver) {
@@ -115,7 +112,7 @@ void Display::onPressDown() {
 	  return;
 	}
 	if (!showScreenSaver) {
-	  if (IS_DEBUG) Serial.println("onPressDown");
+	  this->deps->debugger->trace("onPressDown");
 	  this->btnPressDone = false;
 	  this->screenFactory->pressButtonScreen->setup(this->screenProps);
 	  this->actual->onPressDown(this->screenProps);	
@@ -125,13 +122,14 @@ void Display::onPressDown() {
 #define LOGO16_GLCD_HEIGHT 16
 #define LOGO16_GLCD_WIDTH  16
 
-Display::Display(Dependencies * deps, Orchestrator * orchestrator){
+Display::Display(Dependencies * deps, Orchestrator * orchestrator, HttpServer *server){
   Adafruit_SSD1306 * display = new Adafruit_SSD1306(OLED_RESET);
   this->d = display;
   this->deps = deps;
   this->orchestrator = orchestrator;
   this->screenFactory = new ScreenFactory();
   this->actual = this->screenFactory->logoScreen;
+  this->screenFactory->debugScreen->setServer(server);
   this->screenProps = new ScreenProps();
   screenProps->d = display;
   screenProps->deps = deps;
@@ -194,7 +192,7 @@ void Display::act(){
   }
   if (this->isButtonPress) {
 	if (millis() - this->last_tick > this->screenFactory->pressButtonScreen->getDelayMs(this->screenProps)) {
-      if (IS_DEBUG) Serial.println("ticking button");
+      this->deps->debugger->trace("ticking button");
 	  this->screenFactory->pressButtonScreen->tick(this->screenProps);
 	}
 	return;

@@ -1,8 +1,10 @@
 #include "Arduino.h"
 #include "Relay.h"
 #include "../Constants/Constants.h"
-Relay::Relay(int pin)
+#include "../Debugger/Debugger.h"
+Relay::Relay(Debugger * debugger, int pin)
 {
+  this->debugger = debugger;
   digitalWrite(pin, LOW);
   pinMode(pin, OUTPUT);
   this->_pin = pin;
@@ -18,10 +20,10 @@ void Relay::act() {
     if (this->_state != this->_should_be_enabled) {
       this->_state = this->_should_be_enabled;
       if (this->_state) {
-        if (IS_DEBUG) Serial.println("Turning relay on.");
+        this->debugger->trace("Turning relay on.");
         digitalWrite(this->_pin, HIGH);
       } else {
-        if (IS_DEBUG) Serial.println("Turning relay off.");
+        this->debugger->trace("Turning relay off.");
         digitalWrite(this->_pin, LOW);
       }
     }

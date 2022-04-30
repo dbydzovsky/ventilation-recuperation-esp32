@@ -56,6 +56,12 @@ export function SettingsPage(props: Props) {
             k ukončení činnost jakékoliv aktivního programu.
         </p>
         <Grid container>
+            <Property values={values}
+                      setValues={setValues}
+                      description={"Pokud je zapojená rekuperační jednotka, pak toto nastavení musí být zapnuté. Pokud není zapojená rekuperační jednotka, pak toto nastavení musí být vypnuté."}
+                      type="boolean"
+                      title={"Zapojená rekuperační jednotka"}
+                      property={"recuperationOn"}/>
             { recuperationEnabled && <Property values={values}
                       setValues={setValues}
                       description={turnOffMotorCheck}

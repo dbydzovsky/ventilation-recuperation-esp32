@@ -4,8 +4,7 @@
 #define DEFAULT_SSID "SolarAirCollectorV2"
 #define DEFAULT_PASSWORD "123456789"
 
-#define VENTILATION_VERSION "2.0.0"
-#define IS_RECUPERATION_ENABLED false
+#define VENTILATION_VERSION "v2.01" // max x.99
 #define IS_DEBUG false
 
 #define RPM_SAMPLING_DURATION 1000

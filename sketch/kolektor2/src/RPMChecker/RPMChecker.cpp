@@ -10,39 +10,51 @@ struct AlarmData {
   bool highRpm = false;
 };
 
-bool save(const char* path, AlarmData data) {
-  if (IS_DEBUG) Serial.print("Going to save file ");
-  if (IS_DEBUG) Serial.println(path);
+bool save(Debugger * debugger, const char* path, AlarmData data) {
+  char buff[50];
+  sprintf(buff, "Going to save file %s", path);
+  debugger->trace(buff);
   StaticJsonDocument<256> jsonDoc;
   JsonObject root = jsonDoc.to<JsonObject>();
   root["blocked"] = data.blocked;
   root["highRpm"] = data.highRpm;
   File aFile = SPIFFS.open(path, "w");
   if (!aFile) {
-    if (IS_DEBUG) Serial.println("Cannot open file for writing");
+    char buff2[80];
+    sprintf(buff2, "ERR Cannot open file for writing %s", path);
+    debugger->debug(buff2);
     return false;
   }
   serializeJson(root, aFile);
   aFile.close();
 }
 
-void read(const char* path, AlarmData *out){ 
-  if (IS_DEBUG) Serial.print("Going to load file ");
-  if (IS_DEBUG) Serial.println(path);
+void read(Debugger * debugger, const char* path, AlarmData *out){ 
+  char buff[50];
+  sprintf(buff, "Going to load file %s", path);
+  debugger->trace(buff);
   DynamicJsonDocument doc(256);
   File aFile = SPIFFS.open(path, "r");
   if (!aFile) {
-    if (IS_DEBUG) Serial.println("Cannot open file for reading");
+    char buff2[80];
+    sprintf(buff2, "ERR Cannot open file for reading %s", path);
+    debugger->debug(buff2);
     return;
   }
   deserializeJson(doc, aFile);
   aFile.close();
   out->blocked = doc["blocked"].as<bool>();
   out->highRpm = doc["highRpm"].as<bool>();
-  if (IS_DEBUG) Serial.print("File read, blocked: ");
-  if (IS_DEBUG) Serial.println(out->blocked);
-  if (IS_DEBUG) Serial.print("high rpm: ");
-  if (IS_DEBUG) Serial.println(out->highRpm);
+  if (out->blocked) {
+    debugger->trace("WARN Blocked");
+  } else {
+    debugger->trace("Not blocked");
+  }
+  if (out->highRpm) {
+    debugger->trace("WARN High RPM!");
+  } else {
+    debugger->trace("Not high RPM");
+  }
 }
 
 RPMChecker::RPMChecker(int pin, const char* filename, Debugger * debugger){
@@ -58,18 +70,18 @@ void RPMChecker::deactivate() {
 void RPMChecker::setup() {
   pinMode(this->_pin, INPUT);
   AlarmData data;
-  read(this->_filename, &data);
+  read(this->debugger, this->_filename, &data);
   if (data.blocked || data.highRpm) {
     this->_stopped = true;
     if (data.blocked) {
       char messageBuf[50];
-      sprintf(messageBuf, "Motor %s is blocked since start", this->_filename);
+      sprintf(messageBuf, "WARN Motor %s is blocked since start", this->_filename);
       this->debugger->debug(messageBuf);
       this->_reason = MOTOR_BLOCKED_REASON;
     }
     if (data.highRpm) {
       char messageBuf[50];
-      sprintf(messageBuf, "Motor %s had unexpected rotation", this->_filename);
+      sprintf(messageBuf, "WARN Motor %s had unexpected rotation", this->_filename);
       this->debugger->debug(messageBuf);
       this->_reason = MOTOR_HIGH_RPM_REASON;
     }
@@ -134,7 +146,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
   if (this->_stopped) {
     if (millis() - this->_stoppedSince > this->_unblockingFansPeriod) {
       AlarmData data;
-      save(this->_filename, data);
+      save(this->debugger, this->_filename, data);
       this->_stopped = false;
     }
     return true;
@@ -150,7 +162,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
     if (this->_rpm > this->_maxRpm) {
       AlarmData data;
       data.highRpm = true;
-      if (save(this->_filename, data)){
+      if (save(this->debugger, this->_filename, data)){
         char messageBuf[50];
         sprintf(messageBuf, "WARN Motor %s has high rotation!", this->_filename);
         this->debugger->debug(messageBuf);
@@ -168,7 +180,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
       if (this->_notExpectedRotations > 15) {
         AlarmData data;
         data.blocked = true;
-        if (save(this->_filename, data)){
+        if (save(this->debugger, this->_filename, data)){
           char messageBuf[50];
           sprintf(messageBuf, "WARN Motor %s is blocked!", this->_filename);
           this->debugger->debug(messageBuf);
@@ -198,7 +210,7 @@ bool RPMChecker::shouldStop() {
 
 bool RPMChecker::resetAlarm() {
   AlarmData data;
-  if (save(this->_filename, data)) {
+  if (save(this->debugger, this->_filename, data)) {
     this->_stopped = false;
     this->_notExpectedRotations = 0;
     return true;

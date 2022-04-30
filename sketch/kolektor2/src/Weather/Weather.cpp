@@ -11,12 +11,12 @@ WeatherForecast::WeatherForecast() {
 bool WeatherForecast::sync(WeatherDeps * deps){ 
   deps->debugger->debug("Syncing weather forecast");
   if (WiFi.status() != WL_CONNECTED) {
-    if (IS_DEBUG) deps->debugger->debug("Wifi is not connected to gather actual forecast!");
+    deps->debugger->trace("Wifi is not connected to gather actual forecast!");
     return false;
   }
   
   if (!deps->httpsLock->readLock()) {
-    if (IS_DEBUG) deps->debugger->debug("Unable to sync forecast. Unable to lock HTTP lock.");
+    deps->debugger->trace("Unable to sync forecast. Unable to lock HTTP lock.");
     return false;
   }
   char url[220] = "";
@@ -25,11 +25,11 @@ bool WeatherForecast::sync(WeatherDeps * deps){
   // HTTPClient httpClientForecast;
   // dynamic_cast<WiFiClient&>(secureClient), 
   HTTPClient * httpClientForecast = deps->httpClient;
-  if (IS_DEBUG) Serial.println(url);
+  
   httpClientForecast->begin(url);
   this->last_retrival = millis();
   this->lastStatusCode = httpClientForecast->GET();
-  if (IS_DEBUG) Serial.println(this->last_success);
+  
   if (this->lastStatusCode >= 200 && this->lastStatusCode < 300) {
     int contentLength = httpClientForecast->getSize();
     if (contentLength == -1) {
@@ -87,7 +87,7 @@ bool WeatherForecast::hasValidForecast(){
 }
 void WeatherForecast::act(WeatherDeps * deps) {
   if ((this->lastStatusCode == -100) || (millis() - this->last_retrival > this->syncForecastInterval)) {
-    if (IS_DEBUG) Serial.println("It is time to sync forecast");
+    deps->debugger->trace("It is time to sync forecast");
     this->sync(deps);
   }
   if (this->hasValidForecast()) {

@@ -12,21 +12,23 @@
 #include "../Weather/Weather.h"
 #include "../Settings/Settings.h"
 #include "../Programme/Programme.h"
+#include "../HttpServer/HttpServer.h"
 
 
-class DebugScreen: public PasswordScreen {
+class DebugScreen: public ServerAwareScreen {
   private:
-    bool showpass = false;
+    bool showOTAscreen = false;
     long pass = 0;
     unsigned long opened_since;
+    HttpServer * server;
   public:
     void setup(ScreenProps * deps){
       this->opened_since = millis();
-      this->showpass = false;
-      if (IS_DEBUG) Serial.println("Debug screen setup");
+      this->showOTAscreen = false;
+      deps->deps->debugger->trace("Debug screen setup");
     }
-    void setPass(long pass) {
-      this->pass = pass;
+    void setServer(HttpServer * server) {
+      this->server = server;
     }
     bool isFinished(ScreenProps * props) {
       return millis() - this->opened_since > KEEP_SCREEN_LONG;
@@ -35,13 +37,13 @@ class DebugScreen: public PasswordScreen {
       
     };
     void tick(ScreenProps * props){ 
-      if (this->showpass) {
+      if (this->showOTAscreen) {
         props->d->clearDisplay(); 
         props->d->setTextSize(1);
         props->d->setCursor(0,12);
-        props->d->print("uploader");
+        props->d->print("  OTA  ");
         props->d->setCursor(0,30);
-        props->d->print(this->pass);
+        props->d->print("available");
         props->d->display();
         return;
       }
@@ -49,7 +51,7 @@ class DebugScreen: public PasswordScreen {
       props->d->setTextSize(2);
       props->d->setTextColor(WHITE);
       props->d->setCursor(0,0);
-      props->d->print("v2.0");
+      props->d->print(VENTILATION_VERSION);
       props->d->setTextSize(1);
       props->d->setCursor(0, 16);
       props->d->print(ESP.getFreeHeap());
@@ -89,7 +91,8 @@ class DebugScreen: public PasswordScreen {
     }
     bool handleClick(ScreenProps * deps, byte times){
       if (times > 3) {
-        this->showpass = true;
+        this->server->addOTA();
+        this->showOTAscreen = true;
         return true;
       }
       return false;

@@ -6,6 +6,7 @@
 #include "../Constants/Constants.h"
 #include "../Weather/Weather.h"
 #include <WiFiClientSecure.h>
+#include "../Debugger/Debugger.h"
 
 #define temperatureDownTolerationProgramme 2
 #define co2DownTolerationProgramme 100
@@ -55,7 +56,7 @@ class ConfigurableProgramme: public Programme {
 
 class ProgrammeFactory {
   public:
-    ProgrammeFactory();
+    ProgrammeFactory(Debugger * debugger);
     Programme *Disabled;
     Programme *Recuperation;
     Programme *Summer;

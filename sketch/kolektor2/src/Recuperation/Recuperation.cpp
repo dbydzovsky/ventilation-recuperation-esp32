@@ -24,8 +24,6 @@ void Recuperation::setPower(byte power, byte mode) {
       this->_directionIn = mode == RECUPERATION_MODE_INHALE;
       this->_last_direction_change == millis();
     }
-    if (IS_DEBUG) Serial.printf("Setting recuperation power to: %d, mode to: %d", power, this->_mode);
-    if (IS_DEBUG) Serial.println("");
     this->_mode = mode;
     if (power <= 0 || power > 100) {
       this->_power = 0;

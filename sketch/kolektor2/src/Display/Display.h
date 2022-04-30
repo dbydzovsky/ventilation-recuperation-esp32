@@ -14,20 +14,21 @@
 #include "../Dependencies/Dependencies.h"
 #include "../Orchestrator/Orchestrator.h"
 #include "../DisplayScreen/ScreenFactory.h"
+#include "../HttpServer/HttpServer.h"
 
 #define KEEP_DISPLAY_BRIGHT_FOR 6000
 #define SHOW_SCREEN_SAVER_AFTER 60000
 
 class Display {
   public:
-    Display(Dependencies * deps, Orchestrator *orchestrator);
+    Display(Dependencies * deps, Orchestrator *orchestrator, HttpServer *server);
     void setup();
     void act();
     bool handleHold(int durationMillis, bool finished);
     bool handleClick(byte times);
+
     void onPressDown();
     void wifiConnecting();
-    void setPass(long pass);
   private:
     bool _reinitScreen = false;
     int _historyUpdateIndex = 0;

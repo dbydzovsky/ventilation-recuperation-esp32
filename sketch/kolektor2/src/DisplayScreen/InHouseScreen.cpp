@@ -60,8 +60,7 @@ class InHouseScreen: public Screen {
       return false;
     }
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Disabling...");
-	  return true;
+	    return true;
     }
 
     void onPressDown(ScreenProps * deps) {

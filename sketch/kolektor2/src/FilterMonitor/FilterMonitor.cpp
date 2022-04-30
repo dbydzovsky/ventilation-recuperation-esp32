@@ -16,35 +16,38 @@
 #define recuperation_filename "/recuperation.json"
 
 
-bool save(const char* path, FilterData data) {
-  if (IS_DEBUG) Serial.print("Going to save file ");
-  if (IS_DEBUG) Serial.println(path);
+bool save(Debugger * debugger, const char* path, FilterData data) {
+  char buff[50];
+  sprintf(buff, "Going to save file %s", path);
+  debugger->trace(buff);
   StaticJsonDocument<256> jsonDoc;
   JsonObject root = jsonDoc.to<JsonObject>();
   root["minutes"] = data.minutes;
   File aFile = SPIFFS.open(path, "w");
   if (!aFile) {
-    if (IS_DEBUG) Serial.println("Cannot open file for writing");
+    debugger->trace("ERR Cannot open file for writing");
     return false;
   }
   serializeJson(root, aFile);
   aFile.close();
 }
 
-void read(const char* path, FilterData *out){ 
-  if (IS_DEBUG) Serial.print("Going to load file ");
-  if (IS_DEBUG) Serial.println(path);
+void read(Debugger * debugger, const char* path, FilterData *out){ 
+  char buff[50];
+  sprintf(buff, "Going to load file %s", path);
+  debugger->trace(buff);
   DynamicJsonDocument doc(256);
   File aFile = SPIFFS.open(path, "r");
   if (!aFile) {
-    if (IS_DEBUG) Serial.println("Cannot open file for reading");
+    debugger->trace("ERR Cannot open file for reading");
     return;
   }
   deserializeJson(doc, aFile);
   aFile.close();
   out->minutes = doc["minutes"].as<long>();
-  if (IS_DEBUG) Serial.print("File read, content minutes: ");
-  if (IS_DEBUG) Serial.println(out->minutes);
+  char buff2[50];
+  sprintf(buff2, "File read, content minutes: %d", out->minutes);
+  debugger->trace(buff2);
 }
 
 FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation, Debugger * debugger){
@@ -55,19 +58,19 @@ FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation
 
 void FilterMonitor::setup() {
   FilterData ventilatorData;
-  read(ventilator_filename, &ventilatorData);
+  read(this->debugger, ventilator_filename, &ventilatorData);
   this->_ventilatorMinutes = ventilatorData.minutes;
   
   FilterData recuperationData;
-  read(recuperation_filename, &recuperationData);
+  read(this->debugger ,recuperation_filename, &recuperationData);
   this->_recuperationMinutes = recuperationData.minutes;
 }
 
 bool FilterMonitor::cleared(int filter){
   if (filter == FAN_TYPE_VENTILATOR) {
-    if (IS_DEBUG) Serial.println("Going to clear ventilator");
+    this->debugger->trace("Going to clear ventilator");
     FilterData data;
-    if (save(ventilator_filename, data)) {
+    if (save(this->debugger, ventilator_filename, data)) {
       this->debugger->debug("Ventilator filter cleared.");
       this->_ventilatorMinutes = 0;
       return true;
@@ -76,9 +79,9 @@ bool FilterMonitor::cleared(int filter){
     }
   }
   if (filter == FAN_TYPE_RECUPERATION) {
-    if (IS_DEBUG) Serial.println("Going to clear recuperation");
+    this->debugger->trace("Going to clear recuperation");
     FilterData data;
-    if (save(recuperation_filename, data)) {
+    if (save(this->debugger, recuperation_filename, data)) {
       this->debugger->debug("Recuperation filter cleared.");
       this->_recuperationMinutes = 0;
       return true;
@@ -115,10 +118,10 @@ void FilterMonitor::act(){
       if (millis() - this->_lastPersistence > fanTrackingPersistenceInterval) {
         FilterData ventilatorData;
         ventilatorData.minutes = this->_ventilatorMinutes;
-        save(ventilator_filename, ventilatorData);
+        save(this->debugger, ventilator_filename, ventilatorData);
         FilterData recuperationData;
         recuperationData.minutes = this->_recuperationMinutes;
-        save(recuperation_filename, recuperationData);
+        save(this->debugger, recuperation_filename, recuperationData);
         this->_lastPersistence = millis();
       }
     }

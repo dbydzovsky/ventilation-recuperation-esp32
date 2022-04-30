@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Programme.h"
+#include "../Debugger/Debugger.h"
 #include "DisabledProgramme.cpp"
 #include "SummerProgramme.cpp"
 #include "WinterProgramme.cpp"
@@ -9,13 +10,13 @@
 #include "AutoProgramme.cpp"
 #include "RecuperationProgramme.cpp"
 
-ProgrammeFactory::ProgrammeFactory() {
-    this->Recuperation = new RecuperationProgramme();
-    this->Disabled = new DisabledProgramme();
-    this->Summer = new SummerProgramme(this->Recuperation);
-    this->Winter = new WinterProgramme(this->Recuperation);
-    this->Initial = new InitialWarmingUpProgramme();
-    this->Error = new ErrorProgramme();
-    this->Auto = new AutoProgramme(this);
-    this->Trial = new TrialProgramme();
+ProgrammeFactory::ProgrammeFactory(Debugger * debugger) {
+    this->Recuperation = new RecuperationProgramme(debugger);
+    this->Disabled = new DisabledProgramme(debugger);
+    this->Summer = new SummerProgramme(debugger, this->Recuperation);
+    this->Winter = new WinterProgramme(debugger, this->Recuperation);
+    this->Initial = new InitialWarmingUpProgramme(debugger);
+    this->Error = new ErrorProgramme(debugger);
+    this->Auto = new AutoProgramme(debugger, this);
+    this->Trial = new TrialProgramme(debugger);
 }

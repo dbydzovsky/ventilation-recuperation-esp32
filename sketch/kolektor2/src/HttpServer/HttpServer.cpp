@@ -40,13 +40,12 @@ void notNotFound(AsyncWebServerRequest * request) {
     }
 }
 
-HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter, unsigned long pass){
+HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator,FilterMonitor * filter){
     this->_deps = deps;
     this->_server = server;
     this->_wifiManager = wifiManager;
     this->_orchestrator = orchestrator;
     this->_filter = filter;
-    this->_pass = pass;
 }
 
 
@@ -91,7 +90,7 @@ void HttpServer::setup() {
         root["description"] = description;
         // todo root["restarts"] = restarts;
         root["heap"] = ESP.getFreeHeap();
-        root["recuperationEnabled"] = IS_RECUPERATION_ENABLED;
+        root["recuperationEnabled"] = this->_deps->settings->getSettings()->recuperationOn;
         
         trial["duration"] = trialProgramme->getDuration();
         PowerOutput trialOutput = trialProgramme->getActualSetting();
@@ -301,15 +300,16 @@ void HttpServer::setup() {
     this->_server->addHandler(saveSettingsHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
-    if (IS_DEBUG) {
-        AsyncElegantOTA.begin(this->_server);
-    } else {
-        unsigned long num = this->_pass;
-        char passstr[10];
-        itoa( num, passstr, 10 );
-        AsyncElegantOTA.begin(this->_server, "uploader", passstr);
-    }
+    
+    // 
     this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
+}
+
+void HttpServer::addOTA() {
+    if (!this->_otaAdded) {
+        AsyncElegantOTA.begin(this->_server);
+        this->_otaAdded = true;
+    }
 }

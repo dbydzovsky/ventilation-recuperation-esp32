@@ -15,10 +15,11 @@
 
 class HttpServer {
   public:
-    HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator, FilterMonitor * filter, unsigned long pass);
+    HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiManager *wifiManager, Orchestrator * orchestrator, FilterMonitor * filter);
+    void addOTA();
     void setup();
   private:
-    unsigned long _pass;
+    bool _otaAdded = false;
     Dependencies * _deps;
     AsyncWebServer * _server;
     AsyncWiFiManager * _wifiManager;

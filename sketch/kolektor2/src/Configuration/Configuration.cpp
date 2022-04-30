@@ -148,7 +148,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     this->debugger->debug("WARN Minimum feels like must be between 0 and 1000.");
     return false;
   }
-  if (IS_DEBUG) Serial.println("Parsing monitoring");
+  this->debugger->trace("Parsing monitoring");
   MonitoringData * monitoring = new MonitoringData();
   out->monitoring = monitoring;
   const char* apikey = c["monitoring"]["key"].as<const char*>();
@@ -168,7 +168,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     this->debugger->debug("WARN Max 5 winter rules are allowed.");
     return false;
   }
-  if (IS_DEBUG) Serial.println("Parsing weather key");
+  this->debugger->trace("Parsing weather key");
   const char* weatherApiKey = c["weatherApiKey"].as<const char*>();
   if (strlen(weatherApiKey) > 33) {
     this->debugger->debug("WARN Weather api key must be 33 chars and less.");
@@ -189,7 +189,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     return false;
   }
   strncpy(out->lon, lon, 6);
-  if (IS_DEBUG) Serial.println("Parsing winter rules.");
+  this->debugger->trace("Parsing winter rules.");
   Rules * onRules = new Rules();
   onRules->count = byte(winterOnRulesSize);
   out->winterOnRules = onRules;
@@ -214,7 +214,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
       }
     }
   }
-  if (IS_DEBUG) Serial.println("Parsing summer rules");
+  this->debugger->trace("Parsing summer rules");
   int summerOnRulesSize = c["summerOnRules"].size();
   if (summerOnRulesSize > 5) {
     this->debugger->debug("WARN Max 5 summer rules are allowed.");
@@ -244,7 +244,7 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
       }
     }
   }
-  if (IS_DEBUG) Serial.println("Parsing co2 rules.");
+  this->debugger->trace("Parsing co2 rules.");
   int co2RulesSize = c["co2Rules"].size();
   if (co2RulesSize > 5) {
     this->debugger->debug("WARN Max 5 co2 rules are allowed.");

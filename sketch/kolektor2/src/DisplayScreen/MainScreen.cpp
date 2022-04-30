@@ -81,7 +81,7 @@ static const unsigned char PROGMEM wifi2_icon12x10[] = {
 class MainScreen: public Screen {
   private:
     int index = 0;
-    bool _isProgrem = false;
+    bool _isProblem = false;
     AlarmScreen * alarmScreen = new AlarmScreen();
 
   public:
@@ -91,7 +91,7 @@ class MainScreen: public Screen {
     void setup(ScreenProps * props){
       this->index = 0;
       this->alarmScreen->setup(props);
-      if (IS_DEBUG) Serial.println("Main screen setup");
+      props->deps->debugger->trace("Main screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return false;
@@ -130,7 +130,7 @@ class MainScreen: public Screen {
         } else {
           isProblem = false;
         }
-        this->_isProgrem = isProblem;
+        this->_isProblem = isProblem;
         if (isProblem) {
           this->alarmScreen->tick(props);
           return;
@@ -200,7 +200,13 @@ class MainScreen: public Screen {
       return true;
     }
     bool shouldShowScreenSaver(ScreenProps * deps) {
-      return !this->_isProgrem;
+      if (deps->deps->ventilation->getIntendedPower() != 0) {
+        return false;
+      }
+      if (deps->deps->recuperation->getPower() != 0) {
+        return false;
+      }
+      return !this->_isProblem;
     }
     int getDelayMs(ScreenProps * deps) {
       return 1000;

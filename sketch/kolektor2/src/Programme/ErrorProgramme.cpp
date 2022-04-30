@@ -4,11 +4,17 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 class ErrorProgramme: public Programme {
+  private:
+    Debugger * debugger;
   public:
+    ErrorProgramme (Debugger * debugger) {
+      this->debugger = debugger;
+    }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting Error Programme");
+      this->debugger->trace("Starting Error Programme");
     }
     int getDescription(char dest[80]) {
       strcpy(dest, "Chybná konfigurace");

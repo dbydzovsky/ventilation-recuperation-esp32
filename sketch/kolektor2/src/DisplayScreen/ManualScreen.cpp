@@ -28,7 +28,7 @@ class ManualScreen: public Screen {
     byte index = 0;
   public:
     void setup(ScreenProps * deps){
-      if (IS_DEBUG) Serial.println("Manual screen setup");
+      deps->deps->debugger->trace("Manual screen setup");
       this->index = 0;
     }
     bool isFinished(ScreenProps * props) {
@@ -82,7 +82,7 @@ class ManualScreen: public Screen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      if (IS_DEBUG) Serial.println("Boosting..");
+      props->deps->debugger->trace("Boosting..");
       ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
       trialProgramme->invalidate();
       return true;

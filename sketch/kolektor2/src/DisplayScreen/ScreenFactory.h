@@ -4,6 +4,7 @@
 
 #include "../Dependencies/Dependencies.h"
 #include "../Orchestrator/Orchestrator.h"
+#include "../HttpServer/HttpServer.h"
 #include <Adafruit_SSD1306.h>
 
 struct ScreenProps {
@@ -31,9 +32,9 @@ class HistoryScreen: public Screen {
   public:
     virtual void updateHistory(ScreenProps * props) = 0;
 };
-class PasswordScreen: public Screen {
+class ServerAwareScreen: public Screen {
   public:
-    virtual void setPass(long pass) = 0;
+    virtual void setServer(HttpServer * server) = 0;
 };
 
 class ScreenFactory {
@@ -50,7 +51,7 @@ class ScreenFactory {
     Screen * boostScreen;
     Screen * inHouseScreen;
     Screen * outHouseScreen;
-    PasswordScreen * debugScreen;
+    ServerAwareScreen * debugScreen;
     HistoryScreen * co2History;
     HistoryScreen * tempHistory;
     // Screen * ManualControlScreen;

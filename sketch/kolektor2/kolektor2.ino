@@ -66,10 +66,10 @@ RGBDiode * diode = new RGBDiode(PWM_3_CHANNEL, RED_DIODE_PIN, GREEN_DIODE_PIN, B
 Lock * httpsLock = new Lock();
 Lock * confLock = new Lock();
 Configuration * configuration = new Configuration(debugger);
-ProgrammeFactory * factory = new ProgrammeFactory();
+ProgrammeFactory * factory = new ProgrammeFactory(debugger);
 
-Relay * recuperationRelay = new Relay(RECUPERATION_RELAY_PIN);
-Relay * ventilatorRelay = new Relay(VENTILATOR_RELAY_PIN);
+Relay * recuperationRelay = new Relay(debugger, RECUPERATION_RELAY_PIN);
+Relay * ventilatorRelay = new Relay(debugger, VENTILATOR_RELAY_PIN);
 Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
 Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker, debugger);
 Restarter * restarter = new Restarter();
@@ -96,16 +96,15 @@ Dependencies deps = {
   restarter, filter, debugger
 };
   
-unsigned long passphase = abs(esp_random());
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
-Display * display = new Display(&deps, orchestrator);
-Button * button = new Button(BTN_PIN, display);
-
 DNSServer dns;
 AsyncWebServer server(80);
 AsyncWiFiManager wifiManager(&server, &dns);
-HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter, passphase);
+
+HttpServer * httpServer = new HttpServer(&deps, &server, &wifiManager, orchestrator, filter);
+Display * display = new Display(&deps, orchestrator, httpServer);
+Button * button = new Button(BTN_PIN, display);
 
 long ventilatorTicks = 0;
 void IRAM_ATTR myVentilatorHandler() {
@@ -139,7 +138,6 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
-  display->setPass(passphase);
   settings->setup();
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
@@ -155,7 +153,7 @@ void setup()
   attachRecuperation();
   SettingsData * settingsData = settings->getSettings();
   rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);
-  if (!settingsData->checkRecuperationRpm || !IS_RECUPERATION_ENABLED){ 
+  if (!settingsData->checkRecuperationRpm || !settingsData->recuperationOn){ 
     rpmRecuperationChecker->deactivate();
   } else {
     attachRecuperation();
@@ -207,7 +205,7 @@ void loop() {
   monitoring->act();
   button->act();
   ventilator->act();
-  if (IS_RECUPERATION_ENABLED) {
+  if (settingsData->recuperationOn) {
     recuperation->act();
     recuperationRelay->act();
   }
@@ -223,42 +221,11 @@ void loop() {
       attachVentilator();  
     }
   }
-  if (settingsData->checkRecuperationRpm && IS_RECUPERATION_ENABLED){
+  if (settingsData->checkRecuperationRpm && settingsData->recuperationOn){
     if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
       detachRecuperation();
       recuperationTicks = 0;
       attachRecuperation();  
-    }
-  }
-  if (IS_DEBUG) {
-    if (Serial.available() > 0){ 
-      String command = Serial.readStringUntil(':');
-      if (command == "ti") {
-        float value = Serial.parseFloat();
-        Serial.print("Setting inside temperature with: ");
-        Serial.println(value);
-        sensors->insideTemp->setValue(value);
-      } else if (command == "to") {
-        float value = Serial.parseFloat();
-        Serial.print("Setting outside temperature with: ");
-        Serial.println(value);
-        sensors->outsideTemp->setValue(value);
-      }else if (command == "ho") {
-        float value = Serial.parseFloat();
-        Serial.print("Setting outside humidity with: ");
-        Serial.println(value);
-        sensors->outsideHum->setValue(value);
-      } else if (command == "co2") {
-        float value = Serial.parseFloat();
-        Serial.print("Setting co2 inside with: ");
-        Serial.println(value);
-        sensors->co2Inside->setValue(value);
-      } else if (command == "help" || command == "h") {
-        Serial.println("to (temperature outside): xxxx.xx");
-        Serial.println("ho (humidity outside): xxxx.xx");
-        Serial.println("ti (temperature inside): xxxx.xx");
-        Serial.println("co2 (co2 inside): xxxx.xx");
-      }
     }
   }
 }

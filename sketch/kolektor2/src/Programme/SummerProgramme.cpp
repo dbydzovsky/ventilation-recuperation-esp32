@@ -4,9 +4,11 @@
 #include "../Configuration/Configuration.h"
 #include <WiFiClientSecure.h>
 #include "../Constants/Constants.h"
+#include "../Debugger/Debugger.h"
 
 class SummerProgramme: public Programme {
   private:
+    Debugger * debugger;
     Programme * _recuperation;
     short currentRuleIndex = -1;
     byte error = 1;
@@ -16,11 +18,12 @@ class SummerProgramme: public Programme {
       return 0;
     }
   public:
-    SummerProgramme(Programme * Recuperation) {
+    SummerProgramme(Debugger * debugger, Programme * Recuperation) {
       this->_recuperation = Recuperation;
+      this->debugger = debugger;
     }
     void onStart() {
-      if (IS_DEBUG) Serial.println("Starting Summer Programme");
+      this->debugger->trace("Starting Summer Programme");
     }
     byte getCode() {
       if (this->error != 0) {

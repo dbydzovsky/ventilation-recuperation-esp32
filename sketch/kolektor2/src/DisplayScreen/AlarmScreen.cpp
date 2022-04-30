@@ -42,7 +42,7 @@ class AlarmScreen: public Screen {
   public:
     void setup(ScreenProps * deps){
       this->index = 0;
-	    if (IS_DEBUG) Serial.println("Alarm screen setup");
+	    deps->deps->debugger->trace("Alarm screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return false;
