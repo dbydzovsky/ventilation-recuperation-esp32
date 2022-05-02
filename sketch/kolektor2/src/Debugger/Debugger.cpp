@@ -14,9 +14,28 @@ Debugger::Debugger(TimeProvider * timeProvider) {
 }
 
 void Debugger::trace(const char *message) {
-    
+    if (this->_traceEnabled) {
+        this->debug(message);
+    }
+}
+
+void Debugger::setTrace(bool enabled) {
+    if (enabled != this->_traceEnabled) {
+        if (enabled) {
+            this->debug("Enabling TRACE logging.");
+        } else {
+            this->debug("Disabling TRACE logging.");
+        }
+    }
+    this->_traceEnabled = enabled;
+}
+bool Debugger::isTraceEnabled(){
+    return this->_traceEnabled;
 }
 void Debugger::debug(const char * message) {
+    if (!this->_enabled) {
+        return;
+    }
     if (IS_DEBUG) Serial.println(message);
     if (this->_timeProvider->isTimeSet()) {
         char hourBuffer[3];
@@ -56,20 +75,20 @@ void Debugger::disable() {
 void Debugger::printMessages(Print * output) {
     short actualIndex = this->_index;
     for (int i = 0; i < DEBUGGER_MESSAGES_COUNT; i++) {
-        actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
         if (this->_messages[actualIndex][0] != '\0') {
             output->println(this->_messages[actualIndex]);
         }
+        actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
     }
 }
 
 void Debugger::getMessages(JsonArray * messages) {
     short actualIndex = this->_index;
     for (int i = 0; i < DEBUGGER_MESSAGES_COUNT; i++) {
-        actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
         if (this->_messages[actualIndex][0] != '\0') {
             messages->add(this->_messages[actualIndex]);
         }
+        actualIndex = (actualIndex + 1) % DEBUGGER_MESSAGES_COUNT;
     }
 }
 

@@ -40,6 +40,7 @@ import {MaintenancePage} from "./pages/MaintenancePage";
 import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
+import {UpdatePage} from "./pages/UpdatePage";
 // https://v4.mui.com/components/material-icons/#material-icons
 
 function Routes() {
@@ -58,6 +59,7 @@ function Routes() {
 			<Route exact={true} path="/trial" component={TrialPage} />
 			<Route exact={true} path="/help" component={HelpPage} />
 			<Route exact={true} path="/firmware" component={FirmwarePage} />
+			<Route exact={true} path="/update" component={UpdatePage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
 		</div>
 	);

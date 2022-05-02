@@ -18,6 +18,7 @@ class InHouseScreen: public Screen {
   public:
     void setup(ScreenProps * deps){
 	    this->opened_since = millis();
+      deps->deps->debugger->trace("In house screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return millis() - this->opened_since > KEEP_SCREEN_LONG;
@@ -60,7 +61,7 @@ class InHouseScreen: public Screen {
       return false;
     }
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-	    return true;
+	    return false;
     }
 
     void onPressDown(ScreenProps * deps) {

@@ -49,6 +49,7 @@ class ScreenFactory {
     
     Screen * disableScreen;
     Screen * boostScreen;
+    Screen * restartingScreen;
     Screen * inHouseScreen;
     Screen * outHouseScreen;
     ServerAwareScreen * debugScreen;

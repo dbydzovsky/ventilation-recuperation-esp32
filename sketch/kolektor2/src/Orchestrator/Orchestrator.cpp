@@ -99,16 +99,6 @@ bool Orchestrator::handleHold(int duration_ms, bool finished) {
   }
   if (finished) {
     this->deps->diode->detach();
-    if (duration_ms > enablementTresholdMs) {
-      if (this->deps->conf->dataSet) {
-        this->deps->conf->setInactiveMode();
-        this->assignProgramme();
-      }
-    }
-  } else {
-    if (duration_ms > enablementTresholdMs) {
-      this->deps->diode->configure(&tickingEnablementRed);
-    }
   }
   return finished;
 }

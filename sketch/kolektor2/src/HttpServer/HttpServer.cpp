@@ -213,6 +213,13 @@ void HttpServer::setup() {
             request->send(response);
         }
     });
+    AsyncCallbackJsonWebHandler* traceHandler = new AsyncCallbackJsonWebHandler("/a/trace/", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+        bool traceEnabled = json["trace"].as<bool>();
+        this->_deps->debugger->setTrace(traceEnabled);
+        AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+        setCors(response);
+        request->send(response);    
+    });
     AsyncCallbackJsonWebHandler* alarmHandler = new AsyncCallbackJsonWebHandler("/a/alarm/", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         int fanType = json["filter"].as<int>();
         RPMChecker * checker;
@@ -254,6 +261,7 @@ void HttpServer::setup() {
         JsonObject root = jsonDoc.to<JsonObject>();
         root["version"] = this->_deps->debugger->version(); 
         root["appVersion"] = VENTILATION_VERSION;       
+        root["trace"] = this->_deps->debugger->isTraceEnabled();
         serializeJson(root, *response);
         setCors(response);
         request->send(response);
@@ -276,6 +284,7 @@ void HttpServer::setup() {
         JsonObject root = jsonDoc.to<JsonObject>();
         root["version"] = this->_deps->debugger->version();
         root["appVersion"] = VENTILATION_VERSION;
+        root["trace"] = this->_deps->debugger->isTraceEnabled();
         JsonArray messages = root.createNestedArray("messages");
         this->_deps->debugger->getMessages(&messages);        
         serializeJson(root, *response);
@@ -296,12 +305,11 @@ void HttpServer::setup() {
         }
     });
     this->_server->addHandler(handler);
+    this->_server->addHandler(traceHandler);
     this->_server->addHandler(saveConfigHandler);
     this->_server->addHandler(saveSettingsHandler);
     this->_server->addHandler(filterHandler);
     this->_server->addHandler(alarmHandler);
-    
-    // 
     this->_server->serveStatic("/js/", SPIFFS, "/js/", "max-age=31536000");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();

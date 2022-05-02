@@ -61,6 +61,7 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
   out->hideCo2 = c["hideCo2"].as<bool>();
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
+  out->recuperationOn = c["recuperationOn"].as<bool>();  
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<long>();
   if (out->unblockingFansPeriod < 1000) {
     this->debugger->debug("WARN Invalid unblockingFansPeriod, must not be less than 1000ms");

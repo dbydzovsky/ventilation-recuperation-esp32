@@ -15,12 +15,15 @@ class Debugger {
     Debugger(TimeProvider * timeProvider);
     void enable();
     void disable();
+    void setTrace(bool enabled);
+    bool isTraceEnabled();
     void debug(const char* message);
     void trace(const char* message);
     void printMessages(Print * output);
     void getMessages(JsonArray * messages);
     int version();
   private:
+    bool _traceEnabled = true;
     int _version = random(9999999);
     TimeProvider * _timeProvider;
     short _index = 0;

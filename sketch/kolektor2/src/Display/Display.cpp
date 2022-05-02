@@ -26,11 +26,18 @@ bool Display::shouldShowScreenSaver() {
 
 bool Display::handleHold(int duration_ms, bool finished) {
 	if (!this->actual->hasActiveButton()) {
+	  if (!finished && duration_ms > 3000) {
+		this->_willRestart = true;
+		return false;
+	  } else if (duration_ms > 8000) {
+		this->deps->restarter->restart();
+		return true;
+	  } else if (finished) {
+		this->_willRestart = false;
+		return true;
+	  }
 	  return false;
 	}
-	char buff[80];
-	sprintf(buff, "handleHold, duration: %d, finished: %s", duration_ms, finished ? "true" : "false");
-	this->deps->debugger->trace(buff);
 	this->last_interaction = millis();
 	if (!this->btnPressDone) {
 		this->isButtonPress = !finished;
@@ -90,7 +97,7 @@ bool Display::handleClick(byte times) {
 	} else if (times == 1) {
       this->screenIndex = (this->screenIndex + 1) % SCREEN_COUNT;  
 	} else if (times == 2) {
-	  this->screenIndex = (this->screenIndex - 1) % SCREEN_COUNT;
+	  this->screenIndex = (this->screenIndex + SCREEN_COUNT - 1) % SCREEN_COUNT;
 	} else {
 	  this->actual->handleClick(this->screenProps, times);
 	  return true;
@@ -169,11 +176,15 @@ void Display::act(){
 	this->initialized = true;
   	this->ticker.detach();
   	delay(200);
-  	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+	this->d->clearDisplay();
+  	this->d->display();
 	this->actual->finish();
   }
   if (this->_reinitScreen) {
 	this->_reinitScreen = false; 
+	this->d->clearDisplay();
+  	this->d->display();
 	this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
   }
   if (this->shouldBeDimmed()) {
@@ -181,10 +192,22 @@ void Display::act(){
   } else {
 	  this->d->dim(false);
   }
+  if (this->_willRestart) {
+	if (!this->_restartingScreenInitialized) {
+	  this->_restartingScreenInitialized = true;
+	  this->screenFactory->restartingScreen->setup(this->screenProps);
+	}
+	this->screenFactory->restartingScreen->tick(this->screenProps);
+	return;
+  } else {
+	this->_restartingScreenInitialized = false;
+  }
   if (millis() - this->last_sync > 120000) {
-	this->_historyUpdateIndex = (this->_historyUpdateIndex + 1) % 30;
+	this->_historyUpdateIndex = (this->_historyUpdateIndex + 1) % 10;
 	if (this->_historyUpdateIndex == 0) {
 		this->d->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+		this->d->clearDisplay();
+  		this->d->display();
 	}
 	this->last_sync = millis();
 	this->screenFactory->co2History->updateHistory(this->screenProps);
@@ -227,6 +250,6 @@ void Display::act(){
   if (showScreenSaver) {
 	this->screenFactory->screenSaverScreen->tick(this->screenProps);
   } else {
-	this->actual->tick(this->screenProps);
+  	this->actual->tick(this->screenProps);
   }
 }

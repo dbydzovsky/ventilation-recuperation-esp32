@@ -41,9 +41,9 @@ class DebugScreen: public ServerAwareScreen {
         props->d->clearDisplay(); 
         props->d->setTextSize(1);
         props->d->setCursor(0,12);
-        props->d->print("  OTA  ");
+        props->d->print("    OTA ");
         props->d->setCursor(0,30);
-        props->d->print("available");
+        props->d->print(" available");
         props->d->display();
         return;
       }
@@ -91,6 +91,7 @@ class DebugScreen: public ServerAwareScreen {
     }
     bool handleClick(ScreenProps * deps, byte times){
       if (times > 3) {
+        deps->deps->debugger->debug("Enabling OTA");
         this->server->addOTA();
         this->showOTAscreen = true;
         return true;
@@ -99,7 +100,7 @@ class DebugScreen: public ServerAwareScreen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      return true;
+      return false;
     }
 
     void onPressDown(ScreenProps * deps) {

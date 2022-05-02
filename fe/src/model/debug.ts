@@ -7,6 +7,7 @@ export enum DebugActions{
 export interface DebugVersions {
     version: number
     appVersion: string
+    trace: boolean
 }
 export interface DebugActionType<T, P> {
     type: T;

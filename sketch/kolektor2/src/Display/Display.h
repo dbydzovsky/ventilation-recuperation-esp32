@@ -30,6 +30,8 @@ class Display {
     void onPressDown();
     void wifiConnecting();
   private:
+    bool _willRestart = false;
+    bool _restartingScreenInitialized = false;
     bool _reinitScreen = false;
     int _historyUpdateIndex = 0;
     bool _wokeUpFromScreenSaver = false;

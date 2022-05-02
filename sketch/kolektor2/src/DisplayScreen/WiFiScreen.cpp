@@ -76,6 +76,7 @@ class WifiScreen: public Screen {
     void setup(ScreenProps * deps){
       this->index = 0;
       this->finished = false;
+	  deps->deps->debugger->trace("WiFi screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return this->finished;

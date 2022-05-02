@@ -37,11 +37,13 @@ module.exports = () => {
                 "09:26 Filter needs to be cleaner",
             ],
             version: 0,
-            appVersion: "2.0.0-dev"
+            appVersion: "2.0.0-dev",
+            trace: false
         },
         debugv: {
             version: 0,
-            appVersion: "2.0.0-dev"
+            appVersion: "2.0.0-dev",
+            trace: false
         },
         conf: {
             "mode": 3,

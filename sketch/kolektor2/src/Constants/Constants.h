@@ -17,7 +17,7 @@
 #define averageValuesCount 7
 
 #define INVALID_VALUE -9999
-#define enablementTresholdMs 4000 // 4 seconds
+
 
 #define POWER_OUTPUT_MODE_NONE 0
 #define POWER_OUTPUT_MODE_VENTILATION 1

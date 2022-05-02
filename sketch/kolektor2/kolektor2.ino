@@ -44,7 +44,7 @@ HTTPClient httpClient;
 #define recuperationSignal 33
 #define BTN_PIN 26 // see GPIO_NUM_X when changing
 #define RECUPERATION_RELAY_PIN 19
-#define VENTILATOR_RELAY_PIN 27
+#define VENTILATOR_RELAY_PIN 17
 #define RED_DIODE_PIN 39 // not-used
 #define GREEN_DIODE_PIN 19 // not-used
 #define BLUE_DIODE_PIN 24 // not-used
@@ -176,6 +176,7 @@ void setup()
   recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
   recuperation->setCycleDuration(settingsData->recuperationCycleDuration); 
   diode->setBrightness(settingsData->brightness);
+  debugger->setTrace(false);
 }
 
 unsigned long last_sensor_reading = millis();

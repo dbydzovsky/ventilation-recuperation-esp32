@@ -91,7 +91,7 @@ class AlarmScreen: public Screen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      return true;
+      return false;
     }
 
     void onPressDown(ScreenProps * deps) {

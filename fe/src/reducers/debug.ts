@@ -7,11 +7,13 @@ export interface DebugState {
     messages: DebugMessage[]
     version: number
     appVersion: string
+    trace: boolean
 }
 let initialDebugState: DebugState = {
     messages: [],
     version: -1,
-    appVersion: "-1"
+    appVersion: "-1",
+    trace: false,
 }
 
 export const debugState = createReducer<DebugState>(initialDebugState, {
@@ -19,6 +21,11 @@ export const debugState = createReducer<DebugState>(initialDebugState, {
         return { ...state, messages: payload.payload }
     },
     [DebugActions.SET_VERSION](state: DebugState, payload: DebugActionType<string, DebugVersions>): DebugState {
-        return { ...state, version: payload.payload.version, appVersion: payload.payload.appVersion }
+        return {
+            ...state,
+            version: payload.payload.version,
+            appVersion: payload.payload.appVersion,
+            trace: payload.payload.trace
+        }
     },
 });

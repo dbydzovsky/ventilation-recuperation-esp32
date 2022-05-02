@@ -23,6 +23,7 @@ class Co2HistoryScreen: public HistoryScreen {
   public:
     void setup(ScreenProps * deps){
 	    this->opened_since = millis();
+      deps->deps->debugger->trace("CO2 history screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return millis() - this->opened_since > KEEP_SCREEN_LONG;
@@ -93,7 +94,7 @@ class Co2HistoryScreen: public HistoryScreen {
     }
 
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      return true;
+      return false;
     }
 
     void onPressDown(ScreenProps * deps) {

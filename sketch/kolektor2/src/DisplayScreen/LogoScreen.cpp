@@ -80,6 +80,7 @@ class LogoScreen: public Screen {
     void setup(ScreenProps * deps){
       this->index = 0;
       this->finished = false;
+	  deps->deps->debugger->trace("Logo screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return this->finished;

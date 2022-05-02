@@ -14,6 +14,7 @@
 #include "DebugScreen.cpp"
 #include "OutHouseScreen.cpp"
 #include "ScreenSaverScreen.cpp"
+#include "RestartingScreen.cpp"
 
 ScreenFactory::ScreenFactory() {
 	this->logoScreen = new LogoScreen();
@@ -29,4 +30,5 @@ ScreenFactory::ScreenFactory() {
     this->debugScreen = new DebugScreen();
     this->outHouseScreen = new OutHouseScreen();
     this->screenSaverScreen = new ScreenSaverScreen();
+    this->restartingScreen = new RestartingScreen();
 }

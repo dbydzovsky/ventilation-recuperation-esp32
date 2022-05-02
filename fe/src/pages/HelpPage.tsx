@@ -143,6 +143,10 @@ export function HelpPage() {
                          value={<>
                              Při potvržení tlačítka se aktivuje akce, která přísluší dané obrazovce.
                          </>}/>
+                    <Row label={<><TimerIcon/> Podržet 10s</>}
+                         value={<>
+                             Při podržení tlačíka na obrazovce bez aktivního tlačítka se po 10 vteřinách zařízení restartuje.
+                         </>}/>
                 </Grid>
             </ExpansionPanelDetails>
         </ExpansionPanel>

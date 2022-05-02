@@ -2,8 +2,21 @@ import {LoaderActions} from "../model/loader";
 import {SettingsActions} from "../model/settings";
 import {DebugActions, DebugMessage, DebugVersions} from "../model/debug";
 import {Simulate} from "react-dom/test-utils";
+import {handleResponseWithNotification} from "./notification";
 
 const baseurl = process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
+
+export function setTrace(props: {trace: boolean}) {
+    return async function configure(dispatch: Function) {
+        const body = JSON.stringify(props);
+        let headers = new Headers({
+            "Content-Type": "application/json"
+        })
+        return handleResponseWithNotification(dispatch, "Nastaveno", "Nepodařilo se nastavit", () => {
+            return fetch(baseurl + "/a/trace/", {method: "POST", body, headers})
+        })
+    }
+}
 
 export function getDebugMessagesAsync(props: { onDone: () => void}) {
     return async function getDebugMessages(dispatch: Function, getState: Function) {
@@ -21,6 +34,7 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
             const obj = await response.json();
             const version = Number(obj["version"]);
             const appVersion = obj["appVersion"];
+            const trace = Boolean(obj["trace"]);
             const messages = obj.messages as string[];
             const payload:DebugMessage[] =[];
 
@@ -45,7 +59,7 @@ export function getDebugMessagesAsync(props: { onDone: () => void}) {
                 })
             })
             let versions: DebugVersions = {
-                version, appVersion
+                version, appVersion, trace
             }
             dispatch({type: DebugActions.SET_MESSAGES, payload: payload})
             dispatch({type: DebugActions.SET_VERSION, payload: versions})

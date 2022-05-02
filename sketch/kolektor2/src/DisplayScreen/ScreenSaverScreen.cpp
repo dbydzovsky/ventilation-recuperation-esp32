@@ -25,6 +25,7 @@ class ScreenSaverScreen: public Screen {
     void setup(ScreenProps * deps){
       this->y = SCREEN_HEIGHT / 2;
       this->x = SCREEN_WIDTH / 2;
+      deps->deps->debugger->trace("Screen saver setup");
     }
     bool isFinished(ScreenProps * deps) {
       return false;
@@ -56,10 +57,10 @@ class ScreenSaverScreen: public Screen {
       return 200;
     }
     bool handleClick(ScreenProps * deps, byte times){
-      return true;
+      return false;
     }
     bool handleHold(ScreenProps * props, int duration_ms, bool finished){
-      return true;
+      return false;
     }
 
     void onPressDown(ScreenProps * deps) {

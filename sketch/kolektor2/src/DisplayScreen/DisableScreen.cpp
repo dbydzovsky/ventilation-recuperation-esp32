@@ -38,6 +38,7 @@ class DisableScreen: public Screen {
   public:
     void setup(ScreenProps * deps){
 	    this->opened_since = millis();
+      deps->deps->debugger->trace("Disable screen setup");
     }
     bool isFinished(ScreenProps * deps) {
       return millis() - this->opened_since > KEEP_SCREEN_SHORT;

@@ -82,7 +82,7 @@ class MainScreen: public Screen {
   private:
     int index = 0;
     bool _isProblem = false;
-    AlarmScreen * alarmScreen = new AlarmScreen();
+    AlarmScreen * alarmScreen;
 
   public:
     MainScreen() {
@@ -107,7 +107,6 @@ class MainScreen: public Screen {
         props->deps->filter->report(FAN_TYPE_VENTILATOR, &ventReport);
         FilterReport recReport;
         props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
-        AlarmReport ventilatorAlarmReport;
 
         if (props->deps->recuperationChecker->shouldStop()) {
           this->alarmScreen->setText("", "   Chyba   ", "rekuperace");
