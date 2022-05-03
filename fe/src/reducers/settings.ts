@@ -5,6 +5,9 @@ import {ClearSettingsActions, SettingsAction, SettingsActions, SettingsState} fr
 
 let settingsState: SettingsState = {
     settings: {
+        recuperationOn: true,
+        ventilatorRevolutions: 3,
+        recuperationRevolutions: 2,
         checkRecuperationRpm: true,
         checkVentilatorRpm: true,
         hideCo2: false,

@@ -8,10 +8,13 @@
 //     "profile": { "name": "typicode" }
 // }
 //https://github.com/typicode/json-server
-
+let recuperationEnabled = false;
 module.exports = () => {
     const data = {
         settings: {
+            recuperationOn: recuperationEnabled,
+            ventilatorRevolutions: 3,
+            recuperationRevolutions: 2,
             checkRecuperationRpm: true,
             maxVentilatorTemp: 70,
             "checkVentilatorRpm": true,
@@ -93,7 +96,7 @@ module.exports = () => {
                 needAttention: false
             },
             "mode": 3,
-            "recuperationEnabled": true,
+            "recuperationEnabled": recuperationEnabled,
             "time": "2022/2/6 9:23.24",
             "ventilator": 0,
             "recuperation": -60,

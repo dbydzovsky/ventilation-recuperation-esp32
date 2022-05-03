@@ -53,7 +53,7 @@ export function FirmwarePage() {
         <DebugMessagesPage/>
         <Container>
             <h2>Changelog</h2>
-            <p>2.0 - Úvodní verze</p>
+            <p><b>2.01</b> Úvodní verze</p>
         </Container>
     </>
 }

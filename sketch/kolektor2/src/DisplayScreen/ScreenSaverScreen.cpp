@@ -54,7 +54,7 @@ class ScreenSaverScreen: public Screen {
       return true;
     }
     int getDelayMs(ScreenProps * deps) {
-      return 200;
+      return 500;
     }
     bool handleClick(ScreenProps * deps, byte times){
       return false;

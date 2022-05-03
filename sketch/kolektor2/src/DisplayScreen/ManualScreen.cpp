@@ -62,10 +62,19 @@ class ManualScreen: public Screen {
       int minutes = remains / 60;
       int seconds = remains % 60;
       props->d->print(minutes);
-      props->d->print(" min");
+      props->d->print("m ");
+      float outTemp = props->deps->outsideTemp->getAverage();
+      if (!isnan(outTemp)) {
+        props->d->print((int)outTemp);
+        props->d->print("C");
+      }
       props->d->setCursor(2, 38);
       props->d->print(seconds);
-      props->d->print(" sec");
+      props->d->print("s   ");
+      float airQ = props->deps->co2Inside->getAverage();
+      if (!isnan(airQ)) {
+        props->d->print((int)airQ);
+      }
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

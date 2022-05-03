@@ -4,6 +4,9 @@ export enum SettingsActions{
 }
 
 export interface Settings {
+  recuperationOn: boolean
+  ventilatorRevolutions: number
+  recuperationRevolutions: number
   checkRecuperationRpm: boolean
   checkVentilatorRpm: boolean
   hideCo2: boolean

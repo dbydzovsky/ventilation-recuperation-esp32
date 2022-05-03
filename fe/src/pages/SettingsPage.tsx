@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import {Button, Input, InputLabel, Paper, Select} from "@material-ui/core";
 import Switch from "@material-ui/core/Switch";
 import {msToTime} from "./CurrentStatePage";
+import WarningIcon from "@material-ui/icons/Warning";
 
 export interface Props {
 
@@ -56,81 +57,102 @@ export function SettingsPage(props: Props) {
             k ukončení činnost jakékoliv aktivního programu.
         </p>
         <Grid container>
-            <Property values={values}
-                      setValues={setValues}
-                      description={"Pokud je zapojená rekuperační jednotka, pak toto nastavení musí být zapnuté. Pokud není zapojená rekuperační jednotka, pak toto nastavení musí být vypnuté."}
-                      type="boolean"
-                      title={"Zapojená rekuperační jednotka"}
-                      property={"recuperationOn"}/>
-            { recuperationEnabled && <Property values={values}
-                      setValues={setValues}
-                      description={turnOffMotorCheck}
-                      type="boolean"
-                      title={"Kontrolovat otáčky Rekuperace"}
-                      property={"checkRecuperationRpm"}/> }
-            <Property values={values}
-                      setValues={setValues}
-                      description={turnOffMotorCheck}
-                      type="boolean"
-                      title={"Kontrolovat otáčky Ventilace"}
-                      property={"checkVentilatorRpm"}/>
 
             <Group>
-                <h2>Soukromí</h2>
+                <h2>Rekuperační jednotka</h2>
+                {!recuperationEnabled && <p>
+                    <WarningIcon htmlColor={"orange"}/> Následující nastavení lze měnit pouze pokud je zapojená rekuperační jednotka.
+                </p>}
                 <SingleProperty values={values}
                           setValues={setValues}
-                          description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
+                          disabled={!recuperationEnabled}
+                          description={turnOffMotorCheck}
                           type="boolean"
-                          title={"Schovat hodnoty oxidu uhličitého"}
-                          property={"hideCo2"}/>
+                          title={"Kontrolovat otáčky Rekuperace"}
+                          property={"checkRecuperationRpm"}/>
+                <SingleProperty values={values}
+                          description={maxRpm}
+                            disabled={!recuperationEnabled}
+                          setValues={setValues}
+                          type="number"
+                          title={"Maximální otáčky Rekuperace"}
+                          property={"recuperationMaxRpm"}/>
                 <SingleProperty values={values}
                           setValues={setValues}
-                          description={"Neposílat do monitorovacích služeb údaje o hodnotách vnitřní teploty a vlhkosti."}
-                          type="boolean"
-                          title={"Schovat vnitřní teplotu a vlhkost"}
-                          property={"hideInternalTempHum"}/>
-            </Group>
-            <Property values={values}
-                      setValues={setValues}
-                      type="number"
-                      title={"Maximální provozní teplota ventilátoru"}
-                      description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru."}
-                      property={"maxVentilatorTemp"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      transform={Divide1000Transformation}
-                      type="number"
-                      title={"Perioda odblokování ventilátorů"}
-                      description={"Kolik sekund se má čekat pro další pokus roztočení motoru v případě registrace neočekávaného chování."}
-                      property={"unblockingFansPeriod"}/>
-            <Property values={values}
-                      setValues={setValues}
-                      description={maxRpm}
-                      type="number"
-                      title={"Maximální otáčky Ventilace"}
-                      property={"ventilatorMaxRpm"}/>
-            { recuperationEnabled && <>
-                <Property values={values}
-                      description={maxRpm}
-                      setValues={setValues}
-                      type="number"
-                      title={"Maximální otáčky Rekuperace"}
-                      property={"recuperationMaxRpm"}/>
-                <Property values={values}
-                          setValues={setValues}
+                            disabled={!recuperationEnabled}
                           transform={Divide1000Transformation}
                           description={"Jak dlouho se má čekat na změnu směru otáčení. Nejméně 4 sekundy."}
                           type="number"
                           title={"Změna směru rekuperace"}
                           property={"recuperationWaitForDirectionChange"}/>
-                <Property values={values}
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!recuperationEnabled}
+                                transform={Divide1000Transformation}
+                                description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
+                                type="number"
+                                title={"Rekuperační cyklus"}
+                                property={"recuperationCycleDuration"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!recuperationEnabled}
+                                description={"Počet revolucí pro jednu otáčku rekuperace (1-9). Lze najít v technické dokumentaci ventilátoru."}
+                                type="number"
+                                title={"Počet revolucí"}
+                                property={"recuperationRevolutions"}/>
+            </Group>
+            <Group>
+                <h2>Ventilační jednotka</h2>
+                <SingleProperty values={values}
                           setValues={setValues}
-                          transform={Divide1000Transformation}
-                          description={"Jak dlouho trvá rekuperační cyklus. Nízká hodnota zvyšuje efektivitu tepelného výměníku, nicméně snižuje objem výměny vzduchu, neboť trvá relativně dlouho změnit směr motoru. Příliš vysoká hodnota vymění více vzduchu za cenu vyšších tepelných ztrát. Optimální hodnotu je třeba najít empiricky. Minimálně 40 sekund."}
+                          description={turnOffMotorCheck}
+                          type="boolean"
+                          title={"Kontrolovat otáčky Ventilace"}
+                          property={"checkVentilatorRpm"}/>
+                <SingleProperty values={values}
+                          setValues={setValues}
+                          description={maxRpm}
                           type="number"
-                          title={"Rekuperační cyklus"}
-                          property={"recuperationCycleDuration"}/>
-            </>}
+                          title={"Maximální otáčky Ventilace"}
+                          property={"ventilatorMaxRpm"}/>
+                <SingleProperty values={values}
+                          setValues={setValues}
+                          type="number"
+                          title={"Maximální provozní teplota ventilátoru"}
+                          description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru."}
+                          property={"maxVentilatorTemp"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                description={"Počet revolucí pro jednu otáčku ventilace (1-9). Lze najít v technické dokumentaci ventilátoru."}
+                                type="number"
+                                title={"Počet revolucí"}
+                                property={"ventilatorRevolutions"}/>
+            </Group>
+
+
+            <Group>
+                <h2>Obecné</h2>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                description={"Pokud je zapojená rekuperační jednotka, pak toto nastavení musí být zapnuté. Pokud není zapojená rekuperační jednotka, pak toto nastavení musí být vypnuté."}
+                                type="boolean"
+                                title={"Zapojená rekuperační jednotka"}
+                                property={"recuperationOn"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                title={"Deaktivovaný program"}
+                                transform={Divide1000Transformation}
+                                description={"Doba trvání dočasně vypnutého programu, ve vteřinách."}
+                                type="number"
+                                property={"tempDisableDuration"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                transform={Divide1000Transformation}
+                                type="number"
+                                title={"Perioda odblokování ventilátorů"}
+                                description={"Kolik sekund se má čekat pro další pokus roztočení motoru v případě registrace neočekávaného chování."}
+                                property={"unblockingFansPeriod"}/>
+            </Group>
             <Group>
                 <h2>Výchozí nastavení párty módu</h2>
                 {
@@ -152,13 +174,21 @@ export function SettingsPage(props: Props) {
                                 description={"Doba trvání párty módu v sekundách, nejméně 60 vteřin."}
                                 type={"number"}/>
             </Group>
-            <Property values={values}
-                      setValues={setValues}
-                      title={"Deaktivovaný program"}
-                      transform={Divide1000Transformation}
-                      description={"Doba trvání dočasně vypnutého programu, ve vteřinách."}
-                      type="number"
-                      property={"tempDisableDuration"}/>
+            <Group>
+                <h2>Soukromí</h2>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
+                                type="boolean"
+                                title={"Schovat hodnoty oxidu uhličitého"}
+                                property={"hideCo2"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                description={"Neposílat do monitorovacích služeb údaje o hodnotách vnitřní teploty a vlhkosti."}
+                                type="boolean"
+                                title={"Schovat vnitřní teplotu a vlhkost"}
+                                property={"hideInternalTempHum"}/>
+            </Group>
             {/*<Property values={values}*/}
             {/*          setValues={setValues}*/}
             {/*          description={"Intenzita LED v procentech (0-100)."}*/}
@@ -183,6 +213,7 @@ export interface PropertyProps {
     description?: string
     type: "number" | "boolean"
     transform?: ValueTransformation
+    disabled?: boolean
 }
 
 
@@ -212,8 +243,9 @@ function SingleProperty(props: PropertyProps) {
             <b>{toSentence(props.title)}</b><br/>
             <p>{props.description}</p>
         </InputLabel>
-        {props.type == "boolean" &&
+        {props.type === "boolean" &&
             <Switch
+                disabled={props.disabled}
                 checked={(props.values as any)[props.property] as boolean}
                 onChange={(e, newValue) => {
                     props.setValues({...props.values, [props.property]: Boolean(newValue)})
@@ -227,6 +259,7 @@ function SingleProperty(props: PropertyProps) {
         {props.type == "number" &&
             <Input
                 id={id}
+                disabled={props.disabled}
                 value={transformation.toGui((props.values as any)[props.property] as number)}
                 onChange={(e) => {
                     let value: any = e.target.value

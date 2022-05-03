@@ -15,5 +15,7 @@
   "durationMillis": 300000000,
   "tempDisableDuration": 10800000,
   "brightness": 100,
-  "maxVentilatorTemp": 70
+  "maxVentilatorTemp": 70,
+  "recuperationRevolutions": 2,
+  "ventilatorRevolutions": 3
 }

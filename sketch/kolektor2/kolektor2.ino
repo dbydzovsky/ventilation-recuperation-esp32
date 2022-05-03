@@ -147,17 +147,19 @@ void setup()
   sensors->setup();
   filter->setup();
   rpmVentilatorChecker->setup();
-  rpmVentilatorChecker->setTicksPerRevolution(3);
   rpmRecuperationChecker->setup();
-  rpmRecuperationChecker->setTicksPerRevolution(2);
-  attachRecuperation();
+  
   SettingsData * settingsData = settings->getSettings();
-  rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);
+  
+  rpmRecuperationChecker->setTicksPerRevolution(settingsData->recuperationRevolutions);
   if (!settingsData->checkRecuperationRpm || !settingsData->recuperationOn){ 
     rpmRecuperationChecker->deactivate();
   } else {
     attachRecuperation();
   }
+  
+  rpmVentilatorChecker->setTicksPerRevolution(settingsData->ventilatorRevolutions);
+  rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);  
   if (!settingsData->checkVentilatorRpm){ 
     rpmVentilatorChecker->deactivate();
   } else {

@@ -215,7 +215,6 @@ void Display::act(){
   }
   if (this->isButtonPress) {
 	if (millis() - this->last_tick > this->screenFactory->pressButtonScreen->getDelayMs(this->screenProps)) {
-      this->deps->debugger->trace("ticking button");
 	  this->screenFactory->pressButtonScreen->tick(this->screenProps);
 	}
 	return;

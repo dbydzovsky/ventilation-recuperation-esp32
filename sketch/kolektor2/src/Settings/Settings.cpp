@@ -124,5 +124,13 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     this->debugger->debug("WARN Invalid maxVentilatorTemp. Must be between 0 and 80.");
     return false;
   }
+  out->ventilatorRevolutions = c["ventilatorRevolutions"].as<int>();
+  if (out->ventilatorRevolutions < 1 || out->ventilatorRevolutions > 9) {
+    this->debugger->debug("ventilatorRevolutions is invalid. Must be between 0 and 10.");
+  }
+  out->recuperationRevolutions = c["recuperationRevolutions"].as<int>();
+  if (out->recuperationRevolutions < 1 || out->recuperationRevolutions > 9) {
+    this->debugger->debug("recuperationRevolutions is invalid. Must be between 0 and 10.");
+  }
   return true;
 }

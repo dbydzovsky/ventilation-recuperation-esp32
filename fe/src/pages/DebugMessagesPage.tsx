@@ -54,10 +54,10 @@ export function DebugMessagesPage() {
 
 const useStyles = makeStyles((theme: Theme) => ({
     messages: {
-        // padding: "10px 20px 10px 20px ",
-        // margin: "10px 0px 10px 0px ",
-        // width: "100%",
         display: "grid",
+        [theme.breakpoints.down("sm")]: {
+            fontSize: "0.8em"
+        }
     },
     outerMessages: {
         color: "#ddd",
