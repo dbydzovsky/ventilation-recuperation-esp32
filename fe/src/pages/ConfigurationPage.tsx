@@ -33,7 +33,7 @@ import {Range} from "../components/Range";
 import WarningIcon from "@material-ui/icons/Warning";
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
-
+import UpdateIcon from '@material-ui/icons/Update';
 export const winterOrderValidation = (previous: Rule, actual: Rule) => {
     return previous.tv > (actual.tv - 3);
 }
@@ -348,7 +348,7 @@ export function ConfigurationPage() {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                    <h2><AcUnitIcon/> Nastavení vyhřívacího programu</h2>
+                    <Typography><AcUnitIcon/> Nastavení vyhřívacího programu</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container>
@@ -402,7 +402,7 @@ export function ConfigurationPage() {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                    <h2><WbSunnyIcon/> Nastavení chladícího programu</h2>
+                    <Typography><WbSunnyIcon/> Nastavení chladícího programu</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container>
@@ -482,7 +482,7 @@ export function ConfigurationPage() {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                    <h2><CompareArrowsIcon/> Nastavení řízeného větrání</h2>
+                    <Typography><CompareArrowsIcon/> Nastavení řízeného větrání</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container>
@@ -519,7 +519,8 @@ export function ConfigurationPage() {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                    <h2>Nastavení automatického programu</h2>
+
+                    <Typography><UpdateIcon/> Nastavení automatického programu</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container>

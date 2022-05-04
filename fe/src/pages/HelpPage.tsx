@@ -7,7 +7,6 @@ import TimerIcon from '@material-ui/icons/Timer';
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from "@material-ui/styles";
 import {Theme} from "@material-ui/core/styles";
-import GitHubIcon from "@material-ui/icons/GitHub";
 import {InstallationPage} from "./InstallationPage";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -18,7 +17,8 @@ import PersonPinIcon from "@material-ui/icons/PersonPin";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import WarningIcon from "@material-ui/icons/Warning";
 import {DisplayHelpPart} from "../components/DisplayHelpPart";
-
+import GitHubIcon from '@material-ui/icons/GitHub';
+const githubLink = "https://github.com/dbydzovsky/ventilation-recuperation-esp32";
 enum SignalDiode {
     Red = "red",
     Green = "green",
@@ -257,7 +257,7 @@ export function HelpPage() {
                 <Typography>Zdrojový kód</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <p>Zdrojový kód je veřejný. <a href={"https://github.com/dbydzovsky/ventilation-recuperation-esp32"} target={"_blank"}>Github</a></p>
+                <p><GitHubIcon/>Zdrojový kód je veřejný. <a href={githubLink} target={"_blank"}>{githubLink}</a></p>
             </ExpansionPanelDetails>
         </ExpansionPanel>
     </div>
