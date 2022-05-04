@@ -1,5 +1,6 @@
 import React from 'react'
 import {makeStyles, Theme} from "@material-ui/core/styles";
+import {Images} from "../images/Images";
 
 export interface Props {
 
@@ -7,19 +8,24 @@ export interface Props {
 
 export function DisplayHelpPart(props: Props) {
     const classes = useStyles()
-
     return <div className={classes.root}>
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/mainscreen1.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/mainScreen2.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/alarmScreen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/historyCo2Screen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/tempHistory.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/disableScreen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/party.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/manualScreen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/inhouseScreen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/outscreen.png
-        /media/dbydzovsky/7ED6660772782131/repositories/kolektor2/images/screens/debug.png
+        <ScreenShowcase img={Images.mainscreen1}/>
+        <ScreenShowcase img={Images.mainScreen2}/>
+        <ScreenShowcase img={Images.alarmScreen}/>
+        <ScreenShowcase img={Images.historyCo2Screen}/>
+        <ScreenShowcase img={Images.tempHistory}/>
+        <ScreenShowcase img={Images.disableScreen}/>
+        <ScreenShowcase img={Images.party}/>
+        <ScreenShowcase img={Images.manualScreen}/>
+        <ScreenShowcase img={Images.inhouseScreen}/>
+        <ScreenShowcase img={Images.outscreen}/>
+        <ScreenShowcase img={Images.debug}/>
+    </div>
+}
+
+function ScreenShowcase(props: {img: {src: string}}) {
+    return <div>
+        {props.img.src}
     </div>
 }
 

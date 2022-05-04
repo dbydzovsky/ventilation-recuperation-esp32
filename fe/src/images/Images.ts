@@ -1,9 +1,10 @@
+
 const baseUrl = "https://raw.githubusercontent.com/dbydzovsky/ventilation-recuperation-esp32/main/images/"
 const githubImage = (name: string): string => {
     return baseUrl + name
 }
 const screenImage = (name: string): string => {
-    return baseUrl + name
+    return baseUrl + "screens/" + name
 }
 export const Images = {
     board: {src: githubImage("board.png")},
