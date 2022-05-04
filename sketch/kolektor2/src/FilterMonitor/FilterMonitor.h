@@ -26,9 +26,12 @@ class FilterMonitor {
     bool cleared(int filter);
     void report(byte filter, FilterReport * report);
     void act();
+    void persist();
     void setup();
   private:
     Debugger * debugger;
+    bool _ventilatorChanged = false;
+    bool _recuperationChanged = false;
     long _ventilatorMinutes = 0;
     long _recuperationMinutes = 0;
     unsigned long _lastTracking = millis();

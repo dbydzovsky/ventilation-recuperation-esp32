@@ -5,7 +5,7 @@ import {RootState} from "../reducers";
 import {getSettings, saveSettings} from "../actions/settings";
 import {Settings} from "../model/settings";
 import Grid from "@material-ui/core/Grid";
-import {Button, Input, InputLabel, Paper, Select} from "@material-ui/core";
+import {Button, Container, Input, InputLabel, Paper, Select} from "@material-ui/core";
 import Switch from "@material-ui/core/Switch";
 import {msToTime} from "./CurrentStatePage";
 import WarningIcon from "@material-ui/icons/Warning";
@@ -50,7 +50,7 @@ export function SettingsPage(props: Props) {
         return <div>Loading..</div>
     }
 
-    return <div className={classes.paper}>
+    return <Container>
         <h1>Pokročilé nastavení</h1>
         <p>Pomocí následujících nastavení lze ladit zařízení pro konkrétní použití.
             Nutno zmínit, že jakákoliv změna provede automatický restart zařízení a tak dojde
@@ -119,7 +119,7 @@ export function SettingsPage(props: Props) {
                           setValues={setValues}
                           type="number"
                           title={"Maximální provozní teplota ventilátoru"}
-                          description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru."}
+                          description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru. Je povolené tuto hodnotu překročit po dobu 1 minuty."}
                           property={"maxVentilatorTemp"}/>
                 <SingleProperty values={values}
                                 setValues={setValues}
@@ -178,7 +178,7 @@ export function SettingsPage(props: Props) {
                 <h2>Soukromí</h2>
                 <SingleProperty values={values}
                                 setValues={setValues}
-                                description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
+                                description={"Neposílat do monitorovacích služeb údaje o CO<sub>2</sub> čídlu."}
                                 type="boolean"
                                 title={"Schovat hodnoty oxidu uhličitého"}
                                 property={"hideCo2"}/>
@@ -200,9 +200,11 @@ export function SettingsPage(props: Props) {
                 }}>
                     Uložit nové nastavení
                 </Button>
+                <br/>
+                <br/>
             </Grid>
         </Grid>
-    </div>
+    </Container>
 }
 
 export interface PropertyProps {
@@ -285,8 +287,11 @@ export function Property(props: PropertyProps) {
 const useStyles = makeStyles((theme: Theme) => {
     return {
         paper: {
-            margin: 20,
-            padding: 20
+            padding: theme.spacing(2),
+            marginBottom: theme.spacing(2),
+            [theme.breakpoints.up("md")]: {
+                margin: theme.spacing(2)
+            },
         },
         label: {
         },

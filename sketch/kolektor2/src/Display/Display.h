@@ -47,7 +47,7 @@ class Display {
     Orchestrator * orchestrator;
     Adafruit_SSD1306 * d;
     Dependencies * deps;
-
+    unsigned long last_reinit = millis();
     unsigned long last_interaction = millis();
     unsigned long last_tick;
     unsigned long last_sync = millis();

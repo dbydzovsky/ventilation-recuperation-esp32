@@ -7,7 +7,7 @@ export interface SensorProps {
     icon: any,
     obj: Sensor,
     unit: string,
-    label: string,
+    label: any,
     transform?: (val: number) => number,
     precission?: number
 }

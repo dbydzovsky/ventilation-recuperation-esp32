@@ -16,6 +16,8 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import {Input, InputAdornment, InputLabel, Paper} from "@material-ui/core";
 import PersonPinIcon from "@material-ui/icons/PersonPin";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import WarningIcon from "@material-ui/icons/Warning";
+import {DisplayHelpPart} from "../components/DisplayHelpPart";
 
 enum SignalDiode {
     Red = "red",
@@ -118,10 +120,11 @@ export function HelpPage() {
                 <Typography>Display</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                Display zobrazuje aktuální hodnoty čidel. Umožňuje také zapnutí tzv. "párty" módu, popř. ventilaci a rekuperaci na chvíli deaktivaci.
-                Retrospektivně také ukazuje hodnoty CO2 a vnější teploty.
-
-
+                <div>
+                    <p>Display zobrazuje aktuální hodnoty čidel. Umožňuje také zapnutí tzv. "párty" módu, popř. ventilaci a rekuperaci na chvíli deaktivaci.
+                    Retrospektivně také ukazuje hodnoty CO<sub>2</sub> a vnější teploty.</p>
+                    <DisplayHelpPart/>
+                </div>
             </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel>
@@ -148,6 +151,27 @@ export function HelpPage() {
                              Při podržení tlačíka na obrazovce bez aktivního tlačítka se po 10 vteřinách zařízení restartuje.
                          </>}/>
                 </Grid>
+            </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon/>}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>Čidlo CO<sub>2</sub></Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+                <p>
+                    Zařízení obsahuje čidlo s názvem MH-Z19B, jehož rozpětí hodnot je od
+                    0 až 5000 PPM (Parts Per Million).
+                    Toto čidlo je nastavené pro automatickou kalibraci, která se provádí každých 24
+                    hodin od zapnutí zařízení. Nejmenší naměřená hodnota za posledních 24 hodin se
+                    nastaví jako reprezentativních 400 PPM.
+
+                    Toto nastavení je vhodné do vnitřních prostor s občasným větráním.
+                </p>
             </ExpansionPanelDetails>
         </ExpansionPanel>
 

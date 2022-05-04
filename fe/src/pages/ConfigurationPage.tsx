@@ -489,9 +489,9 @@ export function ConfigurationPage() {
                         <Grid item xs={12} sm={12} md={12}>
 
                             <p>
-                                V přirozeném prostředí je koncentrace CO2 kolem 400 ppm (parts per million, tj. počet částic na milion),
+                                V přirozeném prostředí je koncentrace CO<sub>2</sub> kolem 400 ppm (parts per million, tj. počet částic na milion),
                                 v průmyslových oblastech je hodnota o něco vyšší.
-                                Přibližně 20% populace začíná negativně reagovat již při koncentraci CO2 kolem 1000 ppm.
+                                Přibližně 20% populace začíná negativně reagovat již při koncentraci CO<sub>2</sub> kolem 1000 ppm.
                                 Pro regulační systémy bývá často tato hodnota nastavena jako limitní pro ovládání výkonu vzduchotechnických
                                 jednotek nebo výměny vzduchu v místnosti.
                             </p>
@@ -499,7 +499,7 @@ export function ConfigurationPage() {
                         <Grid item xs={12} sm={12} md={12}>
                             <TurnOnOffRules header={"Pravidla pro sepnutí rekuperace (max 5, od nejnižší hodnoty PPM):"}
                                             adornment={"PPM"}
-                                            placeholder={"Co2"}
+                                            placeholder={"CO<sub>2</sub>"}
                                             newDefault={800}
                                             requiredDifference={50}
                                             valueValidator={co2Validator}

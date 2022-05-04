@@ -84,9 +84,8 @@ export function InstallationPage(props: Props) {
                 <Wires title={"Display Konektor"} desc={["SCL", "GND", "27 (reserved)", "32 (reserved)", "25 (reserved)", "5V", "3.3V", "SDA"]}/>
             </Grid>
             <Grid item xs={12} md={6}  className={"hideOnPrint"}>
-                <Wires title={"Sensor Konektor"} desc={["SCL", "GND", "36 - RX - co2", "5 - TX - co2", "26 - Button", "5V", "3.3V", "SDA"]}/>
+                <Wires title={"Sensor Konektor"} desc={["SCL", "GND", "36 - RX - CO2", "5 - TX - CO2", "26 - Button", "5V", "3.3V", "SDA"]}/>
             </Grid>
-
         </Grid>
     </div>
 }

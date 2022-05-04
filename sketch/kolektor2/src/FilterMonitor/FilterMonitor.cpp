@@ -8,7 +8,7 @@
 
 #include "SPIFFS.h"
 
-#define fanTrackingPersistenceInterval 21600000 // once per 6 hours
+#define fanTrackingPersistenceInterval 3600000 // once per 1 hour
 #define filterVentilatorDaysWithoutCleaning 60 // 2months
 #define filterRecuperationDaysWithoutCleaning 90 // 3months
 
@@ -17,8 +17,8 @@
 
 
 bool save(Debugger * debugger, const char* path, FilterData data) {
-  char buff[50];
-  sprintf(buff, "Going to save file %s", path);
+  char buff[90];
+  sprintf(buff, "Going to save filter %s with minutes %d", path, data.minutes);
   debugger->trace(buff);
   StaticJsonDocument<256> jsonDoc;
   JsonObject root = jsonDoc.to<JsonObject>();
@@ -73,6 +73,7 @@ bool FilterMonitor::cleared(int filter){
     if (save(this->debugger, ventilator_filename, data)) {
       this->debugger->debug("Ventilator filter cleared.");
       this->_ventilatorMinutes = 0;
+      this->_ventilatorChanged = false;
       return true;
     } else {
       this->debugger->debug("WARN Unable to clear Ventilator filter.");
@@ -84,6 +85,7 @@ bool FilterMonitor::cleared(int filter){
     if (save(this->debugger, recuperation_filename, data)) {
       this->debugger->debug("Recuperation filter cleared.");
       this->_recuperationMinutes = 0;
+      this->_recuperationChanged = false;
       return true;
     } else {
       this->debugger->debug("WARN Unable to clear Ventilator filter.");
@@ -105,24 +107,39 @@ void FilterMonitor::report(byte filter, FilterReport * report) {
   }
 }
 
+void FilterMonitor::persist() {
+  FilterReport ventilatorReport;
+  this->report(FAN_TYPE_VENTILATOR, &ventilatorReport);
+  if (!ventilatorReport.needCleaning && this->_ventilatorChanged) {
+    FilterData ventilatorData;
+    ventilatorData.minutes = this->_ventilatorMinutes;
+    save(this->debugger, ventilator_filename, ventilatorData);
+    this->_ventilatorChanged = false;
+  }
+  FilterReport recupertionReport;
+  this->report(FAN_TYPE_RECUPERATION, &recupertionReport);
+  if (!recupertionReport.needCleaning && this->_recuperationChanged) {
+    FilterData recuperationData;
+    recuperationData.minutes = this->_recuperationMinutes;
+    save(this->debugger, recuperation_filename, recuperationData);
+    this->_recuperationChanged = false;
+  }
+  this->_lastPersistence = millis();
+}
 void FilterMonitor::act(){ 
     if (millis() - this->_lastTracking > 60000) {
       this->_lastTracking = millis();
       short ventilatorPower = this->_ventilator->getPower();
       if (ventilatorPower != 0) {
+        this->_ventilatorChanged = true;
         this->_ventilatorMinutes += max(1, (int)(ventilatorPower/25));
       };
       if (this->_recuperation->getPower() != 0) {
+        this->_recuperationChanged = true;
         this->_recuperationMinutes += 1;
       }
       if (millis() - this->_lastPersistence > fanTrackingPersistenceInterval) {
-        FilterData ventilatorData;
-        ventilatorData.minutes = this->_ventilatorMinutes;
-        save(this->debugger, ventilator_filename, ventilatorData);
-        FilterData recuperationData;
-        recuperationData.minutes = this->_recuperationMinutes;
-        save(this->debugger, recuperation_filename, recuperationData);
-        this->_lastPersistence = millis();
+        this->persist();
       }
     }
 }

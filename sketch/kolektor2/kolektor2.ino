@@ -72,7 +72,7 @@ Relay * recuperationRelay = new Relay(debugger, RECUPERATION_RELAY_PIN);
 Relay * ventilatorRelay = new Relay(debugger, VENTILATOR_RELAY_PIN);
 Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
 Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker, debugger);
-Restarter * restarter = new Restarter();
+
 Settings * settings = new Settings(debugger);
 WeatherForecast * forecast = new WeatherForecast();
 
@@ -87,6 +87,7 @@ Average * insideHum = new Average(sensors->insideHum);
 Average * co2Inside = new Average(sensors->co2Inside);
 
 FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger);
+Restarter * restarter = new Restarter(filter);
 Dependencies deps = { 
   ventilator, recuperation, confLock, httpsLock,
   factory, diode, configuration, 

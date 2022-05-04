@@ -19,7 +19,7 @@ export function TempCo2SensorComp(props: {hum: Sensor, temp: Sensor, co2: Sensor
         <b>{props.label}</b> <i>(Rosný bod: {dewPoint} °C)</i>
         <SensorValue icon={<WhatshotIcon/>} obj={props.temp} unit={"°C"} label={"Teplota"} />
         <SensorValue icon={<OpacityIcon/>} obj={props.hum} precission={0} unit={"%"} label={"Vlhkost"}/>
-        <SensorValue icon={<PersonIcon/>} obj={props.co2} unit={"PPM"} label={"CO2"} />
+        <SensorValue icon={<PersonIcon/>} obj={props.co2} unit={"PPM"} label={<>CO<sub>2</sub></>} />
     </div>
 }
 const useStyles = makeStyles({

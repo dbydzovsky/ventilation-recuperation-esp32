@@ -175,7 +175,7 @@ bool RPMChecker::act(long ticks, short currentPower) {
       this->_stoppedSince = millis();
       this->_reason = MOTOR_HIGH_RPM_REASON;
     }
-    if (currentPower > 0 && this->_rpm < 1000) {
+    if (currentPower > 0 && this->_rpm < 800) {
       this->_notExpectedRotations++;
       if (this->_notExpectedRotations > 15) {
         AlarmData data;

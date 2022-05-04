@@ -108,11 +108,16 @@ bool Display::handleClick(byte times) {
 	this->actual->tick(this->screenProps);
 	return true;
 }
+#define MINIMUM_BETWEEN_REINIT 30000
 void Display::onPressDown() {
 	bool showScreenSaver = this->shouldShowScreenSaver();
 	if (showScreenSaver) {
 	  this->_reinitScreen = true;
 	  this->_wokeUpFromScreenSaver = true;
+	}
+	if (millis() - this->last_reinit > MINIMUM_BETWEEN_REINIT) {
+	  this->last_reinit = millis();
+	  this->_reinitScreen = true;
 	}
 	this->last_interaction = millis();
 	if (!this->actual->hasActiveButton()) {
