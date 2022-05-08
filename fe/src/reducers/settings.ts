@@ -23,6 +23,10 @@ let settingsState: SettingsState = {
         durationMillis: 300000,
         tempDisableDuration: 10800000,
         brightness: 100,
+        recuperationMhz: 25000,
+        ventilationMhz: 25000,
+        ventilationRelayPin: 0,
+        recuperationRelayPin: 0
     },
     counter: 1,
     connected: true,

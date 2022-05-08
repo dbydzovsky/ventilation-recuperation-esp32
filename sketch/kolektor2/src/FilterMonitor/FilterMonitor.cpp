@@ -132,7 +132,7 @@ void FilterMonitor::act(){
       short ventilatorPower = this->_ventilator->getPower();
       if (ventilatorPower != 0) {
         this->_ventilatorChanged = true;
-        this->_ventilatorMinutes += max(1, (int)(ventilatorPower/25));
+        this->_ventilatorMinutes += 1;
       };
       if (this->_recuperation->getPower() != 0) {
         this->_recuperationChanged = true;

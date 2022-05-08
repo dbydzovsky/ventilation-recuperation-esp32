@@ -37,6 +37,10 @@ struct SettingsData {
   int maxVentilatorTemp = 70;
   int ventilatorRevolutions = 2;
   int recuperationRevolutions = 2;
+  int ventilationMhz = 25000;
+  int recuperationMhz = 25000;
+  int ventilationRelayPin = 17;
+  int recuperationRelayPin = 19;
 };
 
 class Settings {

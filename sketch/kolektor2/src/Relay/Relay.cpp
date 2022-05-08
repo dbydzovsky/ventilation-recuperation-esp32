@@ -2,9 +2,12 @@
 #include "Relay.h"
 #include "../Constants/Constants.h"
 #include "../Debugger/Debugger.h"
-Relay::Relay(Debugger * debugger, int pin)
+Relay::Relay(Debugger * debugger)
 {
   this->debugger = debugger;
+}
+
+void Relay::setPin(int pin) {
   digitalWrite(pin, LOW);
   pinMode(pin, OUTPUT);
   this->_pin = pin;

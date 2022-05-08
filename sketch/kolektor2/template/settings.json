@@ -17,5 +17,9 @@
   "brightness": 100,
   "maxVentilatorTemp": 70,
   "recuperationRevolutions": 2,
-  "ventilatorRevolutions": 3
+  "ventilatorRevolutions": 3,
+  "ventilationMhz": 25000,
+  "recuperationMhz": 25000,
+  "ventilationRelayPin": 17,
+  "recuperationRelayPin": 19
 }

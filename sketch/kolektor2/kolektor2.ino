@@ -6,7 +6,7 @@
 #include <ESPAsyncWebServer.h>     //Local WebServer used to serve the configuration portal
 #include <ESPAsyncWiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <MHZ19_uart.h> // https://github.com/nara256/mhz19_uart
-  
+
 #include "src/PwmControl/PwmControl.h"
 #include "src/Relay/Relay.h"
 #include "src/DewPoint/DewPoint.h"
@@ -43,8 +43,6 @@ HTTPClient httpClient;
 #define PWM_recuperation_PIN 18
 #define recuperationSignal 33
 #define BTN_PIN 26 // see GPIO_NUM_X when changing
-#define RECUPERATION_RELAY_PIN 19
-#define VENTILATOR_RELAY_PIN 17
 #define RED_DIODE_PIN 39 // not-used
 #define GREEN_DIODE_PIN 19 // not-used
 #define BLUE_DIODE_PIN 24 // not-used
@@ -68,15 +66,15 @@ Lock * confLock = new Lock();
 Configuration * configuration = new Configuration(debugger);
 ProgrammeFactory * factory = new ProgrammeFactory(debugger);
 
-Relay * recuperationRelay = new Relay(debugger, RECUPERATION_RELAY_PIN);
-Relay * ventilatorRelay = new Relay(debugger, VENTILATOR_RELAY_PIN);
+Relay * recuperationRelay = new Relay(debugger);
+Relay * ventilatorRelay = new Relay(debugger);
 Recuperation * recuperation = new Recuperation(recuperationRelay, pwmRecuperation, rpmRecuperationChecker);
 Ventilator * ventilator = new Ventilator(ventilatorRelay, pwmVent, rpmVentilatorChecker, debugger);
 
 Settings * settings = new Settings(debugger);
 WeatherForecast * forecast = new WeatherForecast();
 
-  
+
 MHZ19_uart mhz19;
 
 Sensors * sensors = new Sensors(&mhz19);
@@ -88,15 +86,15 @@ Average * co2Inside = new Average(sensors->co2Inside);
 
 FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger);
 Restarter * restarter = new Restarter(filter);
-Dependencies deps = { 
+Dependencies deps = {
   ventilator, recuperation, confLock, httpsLock,
-  factory, diode, configuration, 
-  outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPointOut, dewPointIn, 
+  factory, diode, configuration,
+  outsideTemp, outsideHum, insideTemp, insideHum, co2Inside, dewPointOut, dewPointIn,
   forecast, timeProvider, &httpClient,
   rpmVentilatorChecker, rpmRecuperationChecker, settings,
   restarter, filter, debugger
 };
-  
+
 Orchestrator * orchestrator = new Orchestrator(&deps);
 Monitoring * monitoring = new Monitoring(orchestrator, &deps);
 DNSServer dns;
@@ -149,36 +147,44 @@ void setup()
   filter->setup();
   rpmVentilatorChecker->setup();
   rpmRecuperationChecker->setup();
-  
+
   SettingsData * settingsData = settings->getSettings();
-  
+
+  pwmVent->setHz(settingsData->ventilationMhz);
+  pwmVent->setup();
+  pwmRecuperation->setHz(settingsData->recuperationMhz);
+  pwmRecuperation->setup();
+  recuperationRelay->setPin(settingsData->recuperationRelayPin);
+  ventilatorRelay->setPin(settingsData->ventilationRelayPin);
+
   rpmRecuperationChecker->setTicksPerRevolution(settingsData->recuperationRevolutions);
-  if (!settingsData->checkRecuperationRpm || !settingsData->recuperationOn){ 
+  if (!settingsData->checkRecuperationRpm || !settingsData->recuperationOn) {
     rpmRecuperationChecker->deactivate();
   } else {
     attachRecuperation();
   }
-  
+
   rpmVentilatorChecker->setTicksPerRevolution(settingsData->ventilatorRevolutions);
-  rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);  
-  if (!settingsData->checkVentilatorRpm){ 
+  rpmVentilatorChecker->setMaxTemperature(settingsData->maxVentilatorTemp);
+  if (!settingsData->checkVentilatorRpm) {
     rpmVentilatorChecker->deactivate();
   } else {
-    attachVentilator();  
+    attachVentilator();
   }
   if (settingsData->hideCo2) {
     monitoring->hideCo2();
   }
   if (settingsData->hideInternalTempHum) {
-    monitoring->hideInternalTempHum();  
+    monitoring->hideInternalTempHum();
   }
   rpmRecuperationChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
   rpmRecuperationChecker->setMaxRpm(settingsData->recuperationMaxRpm);
   rpmVentilatorChecker->setUnblockingFansPeriod(settingsData->unblockingFansPeriod);
   rpmVentilatorChecker->setMaxRpm(settingsData->ventilatorMaxRpm);
   recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
-  recuperation->setCycleDuration(settingsData->recuperationCycleDuration); 
+  recuperation->setCycleDuration(settingsData->recuperationCycleDuration);
   diode->setBrightness(settingsData->brightness);
+ 
   debugger->setTrace(false);
 }
 
@@ -218,18 +224,18 @@ void loop() {
   orchestrator->act();
   filter->act();
   rpmVentilatorChecker->actMaxTemp(outsideTemp->getAverage(), ventilator->getIntendedPower());
-  if (settingsData->checkVentilatorRpm){
+  if (settingsData->checkVentilatorRpm) {
     if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
       detachVentilator();
       ventilatorTicks = 0;
-      attachVentilator();  
+      attachVentilator();
     }
   }
-  if (settingsData->checkRecuperationRpm && settingsData->recuperationOn){
+  if (settingsData->checkRecuperationRpm && settingsData->recuperationOn) {
     if (rpmRecuperationChecker->act(recuperationTicks, recuperation->getActualPower())) {
       detachRecuperation();
       recuperationTicks = 0;
-      attachRecuperation();  
+      attachRecuperation();
     }
   }
 }

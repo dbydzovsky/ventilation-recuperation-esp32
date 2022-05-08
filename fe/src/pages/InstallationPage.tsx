@@ -39,6 +39,28 @@ export function InstallationPage(props: Props) {
                 Pokud nastane problém, bude zde k dispozici chybová ladící zpráva, kterou je vhodné
                 zarchivovat.
             </p>
+            <p>
+                Ventilátor lze použít 12V nebo 24V (Tj. celé zařízení je nutné zapojit na 12V).
+                Je důležité nepřekročit hodnotu proudu 2A, neboť
+                PCB je stavěná právě na tento maximální proud.
+                Tj. při použítí větráku 12V je povolený maximální výkon 24W.
+                Je nutné odběr nepřekročit, jinak hrozí
+                poškození či zníčení zdroje (tj. součet maximální spotřeby všech komponent nesmí
+                překročit povolený odběr).
+                <b>Při použití 12V zdrojového napětí musí být maximální výkon 24W.</b>
+                <b>Při použití 24V zdrojového napětí musí být maximální výkon 48W.</b>
+            </p>
+            <p>
+                Komunikační linka PWM do větráku má 3.3V a je na přímo projená s řídicí jednotkou.
+                Její maximální odběr je tak dle specifikace ESP32 20-40 mA.
+                Při instalaci lze nastavit frekvenci pwm, a to 20MHz nebo 25MHz.
+                Resolution pwm je nastavené na 8.
+            </p>
+            <p>
+                Komunikační linka pro čtení rychlosti otáček (Signal Input) je propojené galvanicky, nepřímo, přes
+                optočlen. Komunikační linka pro čtení otáček je připojena ke zdroji napětí (tj. 12V nebo 24V).
+                Větrák tak musí být schopen vyčítat otáčky tímto vyšším napětím.
+            </p>
             <Grid item xs={12} className={"showOnPrint"}>
                 <table>
                     {properties.map( obj => {

@@ -66,6 +66,7 @@ module.exports = () => {
         },
         t: {},
         s: {
+            "ota": true,
             "trial": {
                 "enabled": true,
                 "duration": 60000,

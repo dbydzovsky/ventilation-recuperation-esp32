@@ -2,13 +2,13 @@
 import {
 	AppBar,
 	Divider,
-	Drawer as DrawerMui,
+	Drawer as DrawerMui, FormControlLabel, FormGroup,
 	Hidden,
 	IconButton,
 	List,
 	ListItem,
 	ListItemIcon,
-	ListItemText,
+	ListItemText, Switch,
 	Toolbar,
 	Typography,
 	useMediaQuery
@@ -165,7 +165,7 @@ function Drawer(props: { toggle: () => void }) {
 	);
 }
 
-function App() {
+function App(props: {toggleMode: () => void}) {
 	const classes = useStyles();
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const isMobile = useMediaQuery((theme: Theme) =>
@@ -200,7 +200,17 @@ function App() {
 								<VentilatorIcon percentage={1}/>
 								{!isMobile && <div className={classes.titleName}>Solární vzduchový kolektor: </div>}
 								<div className={classes.titleName}>{name}</div>
+
 							</Typography>
+							{!isMobile && <>
+								<span style={{flex: "1 1 auto"}}></span>
+								<FormGroup>
+									<FormControlLabel control={
+										<Switch onChange={props.toggleMode}/>
+									} label="Dark/Light mode" />
+								</FormGroup>
+							</>
+							}
 						</Toolbar>
 					</AppBar>
 					<Hidden mdUp>
@@ -217,6 +227,13 @@ function App() {
 							}}
 						>
 							<Drawer toggle={handleDrawerToggle} />
+							{ isMobile && <>
+								<FormGroup>
+									<FormControlLabel control={
+										<Switch onChange={props.toggleMode}/>
+									} label="Dark/Light mode" />
+								</FormGroup>
+							</>}
 						</DrawerMui>
 					</Hidden>
 					<Hidden smDown>

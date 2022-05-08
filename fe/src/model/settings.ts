@@ -21,7 +21,11 @@ export interface Settings {
   ventilatorPower: number,
   durationMillis: number,
   tempDisableDuration: number,
-  brightness: number
+  brightness: number,
+  recuperationMhz: number,
+  ventilationMhz: number,
+  ventilationRelayPin: 0,
+  recuperationRelayPin: 0
 }
 
 export interface SettingsState {

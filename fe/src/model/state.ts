@@ -59,7 +59,8 @@ export interface CurrentState {
   co2Inside?: Sensor,
   restarts?: number,
   heap: number,
-  description: string
+  description: string,
+  ota: boolean
 }
 
 interface StateActionType<T, P> {

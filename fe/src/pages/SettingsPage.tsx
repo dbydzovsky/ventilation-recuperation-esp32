@@ -5,7 +5,7 @@ import {RootState} from "../reducers";
 import {getSettings, saveSettings} from "../actions/settings";
 import {Settings} from "../model/settings";
 import Grid from "@material-ui/core/Grid";
-import {Button, Container, Input, InputLabel, Paper, Select} from "@material-ui/core";
+import {Button, Container, FormControl, Input, InputLabel, MenuItem, Paper, Select} from "@material-ui/core";
 import Switch from "@material-ui/core/Switch";
 import {msToTime} from "./CurrentStatePage";
 import WarningIcon from "@material-ui/icons/Warning";
@@ -40,6 +40,7 @@ export function SettingsPage(props: Props) {
     const classes = useStyles()
     const state = useSelector((state: RootState) => state.settings);
     const recuperationEnabled = useSelector((state: RootState) => state.state.recuperationEnabled);
+    const otaEnabled = useSelector((state: RootState) => state.state.ota);
     const dispatch = useDispatch();
     const [values, setValues] = React.useState({...state.settings} as Settings);
     useEffect(() => {
@@ -93,13 +94,6 @@ export function SettingsPage(props: Props) {
                                 type="number"
                                 title={"Rekuperační cyklus"}
                                 property={"recuperationCycleDuration"}/>
-                <SingleProperty values={values}
-                                setValues={setValues}
-                                disabled={!recuperationEnabled}
-                                description={"Počet revolucí pro jednu otáčku rekuperace (1-9). Lze najít v technické dokumentaci ventilátoru."}
-                                type="number"
-                                title={"Počet revolucí"}
-                                property={"recuperationRevolutions"}/>
             </Group>
             <Group>
                 <h2>Ventilační jednotka</h2>
@@ -121,23 +115,11 @@ export function SettingsPage(props: Props) {
                           title={"Maximální provozní teplota ventilátoru"}
                           description={"Toto nastavení pomáhá kontrolovat maximální provozní teplotu ventilátoru, aby nehrozilo případné přehřátí motoru. Je povolené tuto hodnotu překročit po dobu 1 minuty."}
                           property={"maxVentilatorTemp"}/>
-                <SingleProperty values={values}
-                                setValues={setValues}
-                                description={"Počet revolucí pro jednu otáčku ventilace (1-9). Lze najít v technické dokumentaci ventilátoru."}
-                                type="number"
-                                title={"Počet revolucí"}
-                                property={"ventilatorRevolutions"}/>
             </Group>
 
 
             <Group>
                 <h2>Obecné</h2>
-                <SingleProperty values={values}
-                                setValues={setValues}
-                                description={"Pokud je zapojená rekuperační jednotka, pak toto nastavení musí být zapnuté. Pokud není zapojená rekuperační jednotka, pak toto nastavení musí být vypnuté."}
-                                type="boolean"
-                                title={"Zapojená rekuperační jednotka"}
-                                property={"recuperationOn"}/>
                 <SingleProperty values={values}
                                 setValues={setValues}
                                 title={"Deaktivovaný program"}
@@ -178,7 +160,7 @@ export function SettingsPage(props: Props) {
                 <h2>Soukromí</h2>
                 <SingleProperty values={values}
                                 setValues={setValues}
-                                description={"Neposílat do monitorovacích služeb údaje o CO<sub>2</sub> čídlu."}
+                                description={"Neposílat do monitorovacích služeb údaje o CO2 čídlu."}
                                 type="boolean"
                                 title={"Schovat hodnoty oxidu uhličitého"}
                                 property={"hideCo2"}/>
@@ -188,6 +170,72 @@ export function SettingsPage(props: Props) {
                                 type="boolean"
                                 title={"Schovat vnitřní teplotu a vlhkost"}
                                 property={"hideInternalTempHum"}/>
+            </Group>
+
+            <Group>
+                <h2>Instalace ventilační jednotky</h2>
+                {!otaEnabled && <p>
+                    <WarningIcon htmlColor={"orange"}/> Následující instalační nastavení nelze měnit.
+                </p>}
+
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Hodnota Hz pwm, která slouží k ovládání otáček ventilátoru."}
+                                type="combo"
+                                title={"pwm Hz ventilační jednotky"}
+                                property={"ventilationMhz"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Počet revolucí pro jednu otáčku ventilace (1-9). Lze najít v technické dokumentaci ventilátoru."}
+                                type="number"
+                                title={"Počet revolucí"}
+                                property={"ventilatorRevolutions"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Pin, kterým se ovládá relay ventilační jednotky. Při spuštění rekuperace je na tomto pinu 3.3 Voltů. Při vypnuté rekuperaci 0 Voltů. (Max. 10mA)"}
+                                type="combo"
+                                allowedValues={[17, 19]}
+                                title={"Relay Pin pro ventilační jednotku"}
+                                property={"ventilationRelayPin"}/>
+            </Group>
+            <Group>
+                <h2>Instalace rekuperační jednotky</h2>
+                {!otaEnabled && <p>
+                    <WarningIcon htmlColor={"orange"}/> Následující instalační nastavení nelze měnit.
+                </p>}
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Pokud je zapojená rekuperační jednotka, pak toto nastavení musí být zapnuté. Pokud není zapojená rekuperační jednotka, pak toto nastavení musí být vypnuté."}
+                                type="boolean"
+                                title={"Zapojená rekuperační jednotka"}
+                                property={"recuperationOn"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Hodnota Hz pwm, která slouží k ovládání otáček rekuperace."}
+                                type="combo"
+                                allowedValues={[20000, 25000]}
+                                title={"pwm Hz rekuperační jednotky"}
+                                property={"recuperationMhz"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Počet revolucí pro jednu otáčku rekuperace (1-9). Lze najít v technické dokumentaci ventilátoru."}
+                                type="number"
+                                title={"Počet revolucí"}
+                                property={"recuperationRevolutions"}/>
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                description={"Pin, kterým se ovládá relay rekuperační jednotky. Při spuštění rekuperace je na tomto pinu 3.3 Voltů. Při vypnuté rekuperaci 0 Voltů. (Max. 10mA)"}
+                                type="combo"
+                                allowedValues={[17, 19]}
+                                title={"Relay Pin pro rekuperační jednotku"}
+                                property={"recuperationRelayPin"}/>
             </Group>
             {/*<Property values={values}*/}
             {/*          setValues={setValues}*/}
@@ -213,7 +261,8 @@ export interface PropertyProps {
     setValues: Dispatch<SetStateAction<Settings>>
     property: string
     description?: string
-    type: "number" | "boolean"
+    allowedValues?: any[]
+    type: "number" | "boolean" | "combo"
     transform?: ValueTransformation
     disabled?: boolean
 }
@@ -240,6 +289,7 @@ function SingleProperty(props: PropertyProps) {
     if (props.transform) {
         transformation = props.transform
     }
+    let transformedValue = transformation.toGui((props.values as any)[props.property] as number);
     return <div className={classes.item}>
         <InputLabel htmlFor={id} className={classes.label}>
             <b>{toSentence(props.title)}</b><br/>
@@ -262,7 +312,7 @@ function SingleProperty(props: PropertyProps) {
             <Input
                 id={id}
                 disabled={props.disabled}
-                value={transformation.toGui((props.values as any)[props.property] as number)}
+                value={transformedValue}
                 onChange={(e) => {
                     let value: any = e.target.value
                     // if (props.type == "number") {
@@ -275,7 +325,28 @@ function SingleProperty(props: PropertyProps) {
                 placeholder={props.property}
             />
         }
-    </div>
+        {props.type == "combo" && <>
+            <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">{props.title}</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={transformedValue}
+                    disabled={props.disabled}
+                    label="Age"
+                    onChange={(e) => {
+                        let value: any = e.target.value
+                        props.setValues({...props.values, [props.property]: transformation.fromGui(value)})
+                    }}
+                >
+                    {props.allowedValues?.map((it) => {
+                        return <MenuItem value={it} key={it}>{it}</MenuItem>
+                    })}
+                </Select>
+            </FormControl>
+        </>}
+
+            </div>
 }
 
 export function Property(props: PropertyProps) {

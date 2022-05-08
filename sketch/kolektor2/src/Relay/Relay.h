@@ -5,8 +5,9 @@
 
 class Relay {
   public:
-    Relay(Debugger * debugger, int pin);
+    Relay(Debugger * debugger);
     void act();
+    void setPin(int pin);
     void enable();
     void disable();
     void setCooldown(int cooldown);

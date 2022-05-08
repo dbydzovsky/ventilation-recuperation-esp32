@@ -132,5 +132,21 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   if (out->recuperationRevolutions < 1 || out->recuperationRevolutions > 9) {
     this->debugger->debug("recuperationRevolutions is invalid. Must be between 0 and 10.");
   }
+  out->recuperationMhz = c["recuperationMhz"].as<int>();
+  if (out->recuperationMhz != 20000 || out->recuperationMhz != 25000) {
+    this->debugger->debug("recuperationMhz is invalid. Must be 20khz or 25khz.");
+  }
+  out->ventilationMhz = c["ventilationMhz"].as<int>();
+  if (out->ventilationMhz != 20000 || out->ventilationMhz != 25000) {
+    this->debugger->debug("ventilationMhz is invalid. Must be 20khz or 25khz.");
+  }
+  out->ventilationRelayPin = c["ventilationRelayPin"].as<int>();
+  if (out->ventilationRelayPin != 17 || out->ventilationRelayPin != 19) {
+    this->debugger->debug("ventilationRelayPin is invalid. Must be 17 or 19.");
+  }
+  out->recuperationRelayPin = c["recuperationRelayPin"].as<int>();
+  if (out->recuperationRelayPin != 17 || out->recuperationRelayPin != 19) {
+    this->debugger->debug("recuperationRelayPin is invalid. Must be 17 or 19.");
+  }
   return true;
 }
