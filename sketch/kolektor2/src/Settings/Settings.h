@@ -49,7 +49,9 @@ class Settings {
     void setup();
     SettingsData* getSettings();
     bool save(JsonVariant &json);
+    bool isValid();
   private:
+    bool _isValid = false;
     Debugger * debugger;
     SettingsData * data = {};
     bool validate(DynamicJsonDocument doc, SettingsData *out);

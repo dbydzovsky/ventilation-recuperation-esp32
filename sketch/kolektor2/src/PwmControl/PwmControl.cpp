@@ -5,6 +5,7 @@
 PwmControl::PwmControl(int channel, int pin)
 {
   pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
   this->_pin = pin;
   this->_channel = channel;
 }

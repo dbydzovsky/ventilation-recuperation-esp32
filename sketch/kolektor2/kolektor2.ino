@@ -137,16 +137,16 @@ void setup()
   Serial.begin(9600);
   SPIFFS.begin();
   delay(2000);
+  int spiffsLoaded = SPIFFS.begin();
+  do {
+    delay(2000);
+    Serial.println("Cannot load SPIFFS");
+    spiffsLoaded = SPIFFS.begin();
+  } while (!spiffsLoaded);
   settings->setup();
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
-  configuration->setup();
-  display->wifiConnecting();
-  httpServer->setup();
-  sensors->setup();
-  filter->setup();
-  rpmVentilatorChecker->setup();
-  rpmRecuperationChecker->setup();
+
 
   SettingsData * settingsData = settings->getSettings();
 
@@ -156,6 +156,14 @@ void setup()
   pwmRecuperation->setup();
   recuperationRelay->setPin(settingsData->recuperationRelayPin);
   ventilatorRelay->setPin(settingsData->ventilationRelayPin);
+
+  configuration->setup();
+  display->wifiConnecting();
+  httpServer->setup();
+  sensors->setup();
+  filter->setup();
+  rpmVentilatorChecker->setup();
+  rpmRecuperationChecker->setup();
 
   rpmRecuperationChecker->setTicksPerRevolution(settingsData->recuperationRevolutions);
   if (!settingsData->checkRecuperationRpm || !settingsData->recuperationOn) {
@@ -214,7 +222,9 @@ void loop() {
   }
   monitoring->act();
   button->act();
-  ventilator->act();
+  if (settings->isValid()) {
+    ventilator->act();  
+  }
   if (settingsData->recuperationOn) {
     recuperation->act();
     recuperationRelay->act();
@@ -238,4 +248,6 @@ void loop() {
       attachRecuperation();
     }
   }
+  rpmVentilatorChecker->setSettingsValid(settings->isValid());
+  rpmRecuperationChecker->setSettingsValid(settings->isValid());
 }

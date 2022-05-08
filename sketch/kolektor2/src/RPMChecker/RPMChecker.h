@@ -34,10 +34,12 @@ class RPMChecker {
     bool actMaxTemp(int actualTemp, short currentPower);
     bool shouldStop();
     bool resetAlarm();
+    void setSettingsValid(bool valid);
     void setMaxTemperature(int maxTemp);
     int getRpm();
     void report(AlarmReport * out);
   private:
+    bool _settingsValid = false;
     bool _checkMaxTemp = false;
     bool _overtempInitialized = false;
     unsigned long _overTempSince;

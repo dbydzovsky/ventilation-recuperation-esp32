@@ -14,7 +14,6 @@ Recuperation::Recuperation(Relay * relay, PwmControl *control, RPMChecker * chec
   this->_mode = RECUPERATION_MODE_RECYCLE;
   this->_power = 0;
   this->_checker = checker;
-  this->_control->setDutyCycle(DISABLED_FAN_DUTY);
 }
 
 void Recuperation::setPower(byte power, byte mode) {
@@ -61,7 +60,7 @@ void Recuperation::setDurationChangeWait(int duration) {
 
 void Recuperation::act() {
   if (this->_power <= 0 || this->_power > 100 || this->_checker->shouldStop()) {
-    this->_control->setDutyCycle(125);
+    this->_control->setDutyCycle(DISABLED_FAN_DUTY);
     this->_relay->disable();
     this->_changingDirection = false;
     return;

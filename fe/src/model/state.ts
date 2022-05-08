@@ -61,6 +61,7 @@ export interface CurrentState {
   heap: number,
   description: string,
   ota: boolean
+  settingsValid: boolean
 }
 
 interface StateActionType<T, P> {

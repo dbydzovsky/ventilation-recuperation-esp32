@@ -19,6 +19,7 @@ void Settings::setup() {
       this->debugger->debug("ERR Cannot load settings.json, because some of it value is not valid.");
       this->data = new SettingsData();
     } else {
+      this->_isValid = true;
       this->debugger->debug("Settings JSON validated.");
       this->data = data;
     }
@@ -31,7 +32,9 @@ void Settings::setup() {
 SettingsData * Settings::getSettings() {
   return this->data;
 }
-
+bool Settings::isValid() {
+  return this->_isValid;
+}
 bool Settings::loadJson(DynamicJsonDocument *doc) {
   File settingsFile = SPIFFS.open("/settings.json", "r");
   if (!settingsFile) {
@@ -51,6 +54,7 @@ bool Settings::save(JsonVariant &json) {
   if (!settingsFile) {
     return false;
   }
+  this->_isValid = true;
   serializeJson(json, settingsFile);
   settingsFile.close();
   return true;
@@ -127,26 +131,40 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->ventilatorRevolutions = c["ventilatorRevolutions"].as<int>();
   if (out->ventilatorRevolutions < 1 || out->ventilatorRevolutions > 9) {
     this->debugger->debug("ventilatorRevolutions is invalid. Must be between 0 and 10.");
+    return false;
   }
   out->recuperationRevolutions = c["recuperationRevolutions"].as<int>();
   if (out->recuperationRevolutions < 1 || out->recuperationRevolutions > 9) {
     this->debugger->debug("recuperationRevolutions is invalid. Must be between 0 and 10.");
+    return false;
   }
   out->recuperationMhz = c["recuperationMhz"].as<int>();
-  if (out->recuperationMhz != 20000 || out->recuperationMhz != 25000) {
-    this->debugger->debug("recuperationMhz is invalid. Must be 20khz or 25khz.");
+  if (out->recuperationMhz != 20000 && out->recuperationMhz != 25000) {
+    char buff[90];
+    sprintf(buff, "recuperationMhz is invalid. Must be 20khz or 25khz, but is %d", out->recuperationMhz);
+    this->debugger->debug(buff);
+    return false;
   }
   out->ventilationMhz = c["ventilationMhz"].as<int>();
-  if (out->ventilationMhz != 20000 || out->ventilationMhz != 25000) {
-    this->debugger->debug("ventilationMhz is invalid. Must be 20khz or 25khz.");
+  if (out->ventilationMhz != 20000 && out->ventilationMhz != 25000) {
+    char buff[90];
+    sprintf(buff, "ventilationMhz is invalid. Must be 20khz or 25khz, but is %d", out->ventilationMhz);
+    this->debugger->debug(buff);
+    return false;
   }
   out->ventilationRelayPin = c["ventilationRelayPin"].as<int>();
-  if (out->ventilationRelayPin != 17 || out->ventilationRelayPin != 19) {
-    this->debugger->debug("ventilationRelayPin is invalid. Must be 17 or 19.");
+  if (out->ventilationRelayPin != 17 && out->ventilationRelayPin != 19) {
+    char buff[90];
+    sprintf(buff, "ventilationRelayPin is invalid. Must be 17 or 19, but is %d", out->ventilationRelayPin);
+    this->debugger->debug(buff);
+    return false;
   }
   out->recuperationRelayPin = c["recuperationRelayPin"].as<int>();
-  if (out->recuperationRelayPin != 17 || out->recuperationRelayPin != 19) {
-    this->debugger->debug("recuperationRelayPin is invalid. Must be 17 or 19.");
+  if (out->recuperationRelayPin != 17 && out->recuperationRelayPin != 19) {
+    char buff[90];
+    sprintf(buff, "recuperationRelayPin is invalid. Must be 17 or 19, but is %d", out->recuperationRelayPin);
+    this->debugger->debug(buff);
+    return false;
   }
   return true;
 }

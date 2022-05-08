@@ -30,14 +30,15 @@ void Ventilator::act() {
     this->_control->setDutyCycle(0);
     return;
   }
-  if (this->_power != 0) {
+  if (this->_power > 0 && this->_power <= 100) {
     this->_relay->enable();
+    short duty = map(this->_power, 0, 100, 30, 254);
+    this->_control->setDutyCycle((byte) duty);
+  } else {
+    this->_relay->disable();
+    this->_control->setDutyCycle(0);
+    return;
   }
-  short duty = 0;
-  if (this->_power > 0) {
-    duty = map(this->_power, 0, 100, 30, 254);
-  }
-  this->_control->setDutyCycle((byte) duty);
 }
 
 void Ventilator::setPower(byte power) {

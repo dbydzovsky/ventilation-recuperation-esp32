@@ -207,7 +207,7 @@ function App(props: {toggleMode: () => void}) {
 								<FormGroup>
 									<FormControlLabel control={
 										<Switch onChange={props.toggleMode}/>
-									} label="Dark/Light mode" />
+									} label="Dark mode" />
 								</FormGroup>
 							</>
 							}
@@ -231,7 +231,7 @@ function App(props: {toggleMode: () => void}) {
 								<FormGroup>
 									<FormControlLabel control={
 										<Switch onChange={props.toggleMode}/>
-									} label="Dark/Light mode" />
+									} label="Dark mode" />
 								</FormGroup>
 							</>}
 						</DrawerMui>

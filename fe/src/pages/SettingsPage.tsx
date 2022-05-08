@@ -183,6 +183,7 @@ export function SettingsPage(props: Props) {
                                 disabled={!otaEnabled}
                                 description={"Hodnota Hz pwm, která slouží k ovládání otáček ventilátoru."}
                                 type="combo"
+                                allowedValues={[20000, 25000]}
                                 title={"pwm Hz ventilační jednotky"}
                                 property={"ventilationMhz"}/>
                 <SingleProperty values={values}

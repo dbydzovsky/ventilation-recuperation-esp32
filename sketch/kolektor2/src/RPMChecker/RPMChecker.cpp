@@ -99,6 +99,10 @@ void RPMChecker::setTicksPerRevolution(short ticksPerRevolution) {
   this->_ticksPerRevolution = ticksPerRevolution;
 }
 
+void RPMChecker::setSettingsValid(bool valid) {
+  this->_settingsValid = valid;
+}
+
 int RPMChecker::getRpm() {
   return this->_rpm;
 }
@@ -202,6 +206,9 @@ bool RPMChecker::act(long ticks, short currentPower) {
 }
 
 bool RPMChecker::shouldStop() {
+  if (!this->_settingsValid) {
+    return true;
+  }
   if (this->_activated) {
     return this->_stopped || this->_overheated;
   }

@@ -91,6 +91,7 @@ void HttpServer::setup() {
         // todo root["restarts"] = restarts;
         root["heap"] = ESP.getFreeHeap();
         root["ota"] = this->_otaAdded;
+        root["settingsValid"] = this->_deps->settings->isValid();
         root["recuperationEnabled"] = this->_deps->settings->getSettings()->recuperationOn;
         
         trial["duration"] = trialProgramme->getDuration();
