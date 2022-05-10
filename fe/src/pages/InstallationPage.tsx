@@ -47,6 +47,11 @@ export function InstallationPage(props: Props) {
                 Je nutné odběr nepřekročit, jinak hrozí
                 poškození či zníčení zdroje (tj. součet maximální spotřeby všech komponent nesmí
                 překročit povolený odběr).
+
+                <b>NEBLOKUJTE přívod vzduchu ventilátoru.</b> V závislosti na odporu vzduchu
+                je možné, že se zvýší odběr ventilátoru a překročí tak povolený odběr, což
+                může poškodit zařízení.
+
                 <b>Při použití 12V zdrojového napětí musí být maximální výkon 24W.</b>
                 <b>Při použití 24V zdrojového napětí musí být maximální výkon 48W.</b>
             </p>
