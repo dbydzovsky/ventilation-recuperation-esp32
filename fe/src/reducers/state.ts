@@ -5,7 +5,8 @@ import {Mode} from "../model/configuration";
 let initialState: CurrentState = {
     time: "",
     ota: false,
-    settingsValid: false,
+    settingsValid: true,
+    configValid: true,
     alive: 0,
     mode: Mode.INACTIVE,
     restarts: 0,

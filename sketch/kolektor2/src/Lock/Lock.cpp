@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "Lock.h"
 
-
 bool Lock::readLock() {
   this->_reads++;
   if (this->_writing) {
@@ -26,22 +25,6 @@ bool Lock::writeLock() {
       delay(1);
     }
     return true;
-  }
-  return false;
-}
-
-void Lock::writeLockInfinite() {
-  while(!this->writeLock()) {}
-}
-
-bool Lock::writeLock(unsigned long timeoutMs) {
-  
-  unsigned long started = millis();
-  while (millis() - started < timeoutMs) {
-    if (this->writeLock()) {
-      return true;
-    }
-    delay(1);
   }
   return false;
 }

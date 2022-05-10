@@ -54,6 +54,7 @@ export function CurrentStatePanel() {
     const dispatch = useDispatch();
     const currentState = useSelector((state: RootState) => state.state);
     const settingsValid = currentState.settingsValid;
+    const configValid = currentState.configValid;
     const recuperationEnabled = currentState.recuperationEnabled;
     const cleaningNeeded = (recuperationEnabled && currentState.filterRecuperation.needCleaning) || currentState.filterVentilator.needCleaning;
     const connectionState = useSelector((state: RootState) => state.errorState).state;
@@ -68,7 +69,8 @@ export function CurrentStatePanel() {
     let recuperationPower = currentState.recuperation === undefined ? 0 : currentState.recuperation
     return <div className={classes.header}>
         {cleaningNeeded && <p style={{textAlign: "center", color: "orange"}}><WarningIcon htmlColor={"orange"}/>Je třeba vyčistit filtr</p>}
-        {!settingsValid && <p style={{textAlign: "center", color: "orange"}}><WarningIcon htmlColor={"orange"}/>Zjištěno neplatné nastavení</p>}
+        {!settingsValid && <p style={{textAlign: "center", color: "orange"}}><WarningIcon htmlColor={"orange"}/>Zjištěno neplatné pokročilé nastavení</p>}
+        {!configValid && <p style={{textAlign: "center", color: "orange"}}><WarningIcon htmlColor={"orange"}/>Zjištěno neplatné nastavení</p>}
         <ConnectionStatePanel/>
         { connectionState == ConnectionState.Unitiliazed && "Loading.." }
         { connectionState != ConnectionState.Unitiliazed && currentState.mode == Mode.INACTIVE && <div className={classes.turnedOff}><NotInterestedIcon/> Neaktivní (vypnuto)</div>}

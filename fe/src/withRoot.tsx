@@ -2,7 +2,7 @@ import {CssBaseline, Switch, useMediaQuery} from "@material-ui/core";
 import {createMuiTheme} from "@material-ui/core/styles";
 import {ThemeProvider} from "@material-ui/styles";
 import * as React from "react";
-import useCookie from "./util/useCookie";
+import {useLocalStorage} from "./util/useLocalStorage";
 
 // A theme with custom primary and secondary color.
 // It's optional.
@@ -11,7 +11,7 @@ export function withRoot(Component: any) {
 	function WithRoot(props: object) {
 		const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 		const initialMode = prefersDarkMode ? 'dark' : 'light';
-		const [mode, setMode] = useCookie("ventilation.uimode", initialMode);
+		const [mode, setMode] = useLocalStorage("ventilation.uimode", initialMode);
 		let theme = React.useMemo(() => {
 			return createMuiTheme({
 				palette: {

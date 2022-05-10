@@ -70,7 +70,7 @@ void HttpServer::setup() {
         if (this->_deps->conf->dataSet && this->_deps->confLock->readLock()) {
             mode = this->_deps->conf->getData()->mode;
             trial["enabled"] = trialProgramme->isValid(this->_deps->conf->getData());
-            this->_deps->confLock->readLock();
+            this->_deps->confLock->readUnlock();
         }
         root["mode"] = mode;
         if (this->_deps->timeProvider->isTimeSet()) {
@@ -92,6 +92,7 @@ void HttpServer::setup() {
         root["heap"] = ESP.getFreeHeap();
         root["ota"] = this->_otaAdded;
         root["settingsValid"] = this->_deps->settings->isValid();
+        root["configValid"] = this->_deps->conf->isValid();
         root["recuperationEnabled"] = this->_deps->settings->getSettings()->recuperationOn;
         
         trial["duration"] = trialProgramme->getDuration();

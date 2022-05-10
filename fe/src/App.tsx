@@ -69,6 +69,8 @@ function Drawer(props: { toggle: () => void }) {
 	const classes = useStyles();
 	const cleaningNeeded  = useSelector((state: RootState) => state.state.filterVentilator.needCleaning || (state.state.recuperationEnabled && state.state.filterRecuperation.needCleaning));
 	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || (state.state.recuperationEnabled && state.state.alarmRecuperation.needAttention));
+	const settingsValid = useSelector((state: RootState) => state.state.settingsValid);
+	const configValid = useSelector((state: RootState) => state.state.configValid);
 	const onClick= (path: string) => {
 		props.toggle();
 		history.push(path);
@@ -93,7 +95,7 @@ function Drawer(props: { toggle: () => void }) {
 			<List>
 				<ListItem button onClick={() => onClick("/configuration")}>
 					<ListItemIcon>
-						<SettingsIcon />
+						{(!configValid) && <WarningIcon htmlColor={"orange"}/> || <SettingsIcon />}
 					</ListItemIcon>
 					<ListItemText primary="Nastavení" />
 				</ListItem>
@@ -129,7 +131,7 @@ function Drawer(props: { toggle: () => void }) {
 			<List>
 				<ListItem button onClick={() => onClick("/advanced")}>
 					<ListItemIcon>
-						<SettingsEthernetIcon />
+						{(!settingsValid) && <WarningIcon htmlColor={"orange"}/> || <SettingsEthernetIcon />}
 					</ListItemIcon>
 					<ListItemText primary="Pokročilé" />
 				</ListItem>

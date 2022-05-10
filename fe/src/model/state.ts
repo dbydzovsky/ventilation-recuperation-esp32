@@ -62,6 +62,7 @@ export interface CurrentState {
   description: string,
   ota: boolean
   settingsValid: boolean
+  configValid: boolean
 }
 
 interface StateActionType<T, P> {

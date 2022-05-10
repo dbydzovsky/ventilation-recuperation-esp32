@@ -13,8 +13,6 @@ class Lock {
     bool readLock();
     void readUnlock();
     bool writeLock();
-    bool writeLock(unsigned long timeoutMs);
-    void writeLockInfinite();
     void writeUnlock();
   private:
     byte _reads = 0;

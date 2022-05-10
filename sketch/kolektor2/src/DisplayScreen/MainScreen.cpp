@@ -81,7 +81,6 @@ static const unsigned char PROGMEM wifi2_icon12x10[] = {
 class MainScreen: public Screen {
   private:
     int index = 0;
-    bool _isProblem = false;
     AlarmScreen * alarmScreen;
 
   public:
@@ -99,15 +98,11 @@ class MainScreen: public Screen {
     void finish() {
 
     }
-    void tick(ScreenProps * props){
-      this->index = (this->index +1) % MAX_INDEX;
-      bool isProblem = true;
-      if (this->index > 5) {
+    bool hasError(ScreenProps * props) {
         FilterReport ventReport;
         props->deps->filter->report(FAN_TYPE_VENTILATOR, &ventReport);
         FilterReport recReport;
         props->deps->filter->report(FAN_TYPE_RECUPERATION, &recReport);
-
         if (props->deps->recuperationChecker->shouldStop()) {
           this->alarmScreen->setText("", "   Chyba   ", "rekuperace");
         } else if (props->deps->ventilatorChecker->shouldStop()) {
@@ -127,10 +122,15 @@ class MainScreen: public Screen {
         } else if (ventReport.needCleaning) {
           this->alarmScreen->setText("  Vycistit ", "   FILTR   ", " ventilace");
         } else {
-          isProblem = false;
+          return false;
         }
-        this->_isProblem = isProblem;
-        if (isProblem) {
+        return true;
+    }
+
+    void tick(ScreenProps * props){
+      this->index = (this->index +1) % MAX_INDEX;
+      if (this->index > 5) {
+        if (this->hasError(props)) {
           this->alarmScreen->tick(props);
           return;
         }
@@ -205,7 +205,7 @@ class MainScreen: public Screen {
       if (deps->deps->recuperation->getPower() != 0) {
         return false;
       }
-      return !this->_isProblem;
+      return !this->hasError(deps);
     }
     int getDelayMs(ScreenProps * deps) {
       return 1000;

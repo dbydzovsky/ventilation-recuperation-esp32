@@ -27,6 +27,7 @@ void Settings::setup() {
     this->debugger->debug("ERR Settings file cannot be loaded, using default.");
     this->data = new SettingsData();
   }
+  this->_permittedAll = false;
 }
 
 SettingsData * Settings::getSettings() {

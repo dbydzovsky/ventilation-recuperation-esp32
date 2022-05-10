@@ -52,10 +52,10 @@ class Settings {
     bool isValid();
     void permitAll(bool permission);
   private:
-    bool _permittedAll = false; 
+    bool _permittedAll = true; 
     bool _isValid = false;
     Debugger * debugger;
-    SettingsData * data = {};
+    SettingsData * data = new SettingsData();
     bool checkAccess(int a, int b);
     bool validate(DynamicJsonDocument doc, SettingsData *out);
     bool loadJson(DynamicJsonDocument *doc);
