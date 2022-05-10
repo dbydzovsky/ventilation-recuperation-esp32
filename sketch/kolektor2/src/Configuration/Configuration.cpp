@@ -10,6 +10,9 @@
 Configuration::Configuration(Debugger * debugger) {
   this->debugger = debugger;
 }
+bool Configuration::isValid() {
+  return this->_isValid;
+}
 void Configuration::setInactiveMode() {
   this->changeProperty("mo", INACTIVE_MODE);
 }
@@ -51,6 +54,7 @@ void Configuration::setup() {
       this->debugger->debug("ERR Cannot load config.json");
       return;
     }
+    this->_isValid = true;
     this->debugger->debug("Json Validated, saving..");
     this->data = data;
     this->dataSet = true;
@@ -92,10 +96,19 @@ bool Configuration::saveJson(DynamicJsonDocument doc) {
       delete oldData->winterOnRules->rules[i];
     }
     delete oldData->winterOnRules;
+    for (int i = 0; i < oldData->summerOnRules->count; i++) {
+      delete oldData->summerOnRules->rules[i];
+    }
+    delete oldData->summerOnRules;
+    for (int i = 0; i < oldData->co2Rules->count; i++) {
+      delete oldData->co2Rules->rules[i];
+    }
+    delete oldData->co2Rules;
     delete oldData->monitoring;
     delete oldData;
     interrupts();
   }
+  this->_isValid = true;
   return true;
 }
 

@@ -165,7 +165,7 @@ function Drawer(props: { toggle: () => void }) {
 	);
 }
 
-function App(props: {toggleMode: () => void}) {
+function App(props: {isLight: boolean, toggleMode: () => void}) {
 	const classes = useStyles();
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const isMobile = useMediaQuery((theme: Theme) =>
@@ -206,7 +206,7 @@ function App(props: {toggleMode: () => void}) {
 								<span style={{flex: "1 1 auto"}}></span>
 								<FormGroup>
 									<FormControlLabel control={
-										<Switch onChange={props.toggleMode}/>
+										<Switch defaultChecked={!props.isLight} onChange={props.toggleMode}/>
 									} label="Dark mode" />
 								</FormGroup>
 							</>

@@ -18,11 +18,11 @@
 // RECUPERATION_MAX_RPM 6000
 
 struct SettingsData {
-  bool recuperationOn = true;
+  bool recuperationOn = false;
   bool checkRecuperationRpm = true;
   bool checkVentilatorRpm = true;
-  bool hideCo2 = false;
-  bool hideInternalTempHum = false;
+  bool hideCo2 = true;
+  bool hideInternalTempHum = true;
   int unblockingFansPeriod = 172800000;  // 2 days
   int ventilatorMaxRpm = 7600;
   int recuperationMaxRpm = 6000;
@@ -50,10 +50,13 @@ class Settings {
     SettingsData* getSettings();
     bool save(JsonVariant &json);
     bool isValid();
+    void permitAll(bool permission);
   private:
+    bool _permittedAll = false; 
     bool _isValid = false;
     Debugger * debugger;
     SettingsData * data = {};
+    bool checkAccess(int a, int b);
     bool validate(DynamicJsonDocument doc, SettingsData *out);
     bool loadJson(DynamicJsonDocument *doc);
 };

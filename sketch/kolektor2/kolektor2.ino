@@ -84,7 +84,7 @@ Average * insideTemp = new Average(sensors->insideTemp);
 Average * insideHum = new Average(sensors->insideHum);
 Average * co2Inside = new Average(sensors->co2Inside);
 
-FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger);
+FilterMonitor * filter = new FilterMonitor(ventilator, recuperation, debugger, settings);
 Restarter * restarter = new Restarter(filter);
 Dependencies deps = {
   ventilator, recuperation, confLock, httpsLock,
@@ -222,9 +222,7 @@ void loop() {
   }
   monitoring->act();
   button->act();
-  if (settings->isValid()) {
-    ventilator->act();  
-  }
+  ventilator->act();
   if (settingsData->recuperationOn) {
     recuperation->act();
     recuperationRelay->act();
@@ -248,6 +246,6 @@ void loop() {
       attachRecuperation();
     }
   }
-  rpmVentilatorChecker->setSettingsValid(settings->isValid());
-  rpmRecuperationChecker->setSettingsValid(settings->isValid());
+  rpmVentilatorChecker->setSettingsValid(settings->isValid() && configuration->isValid());
+  rpmRecuperationChecker->setSettingsValid(settings->isValid() && configuration->isValid());
 }

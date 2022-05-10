@@ -7,6 +7,7 @@
 #include "../Weather/Weather.h"
 #include <WiFiClientSecure.h>
 #include "../Debugger/Debugger.h"
+#include "../Settings/Settings.h"
 
 #define temperatureDownTolerationProgramme 2
 #define co2DownTolerationProgramme 100
@@ -23,6 +24,7 @@ typedef struct {
   WeatherForecast * forecast;
   WeatherDeps * weatherDeps;
   bool isTimeSet;
+  Settings * settings;
 } ProgrammeContext;
 
 struct PowerOutput {

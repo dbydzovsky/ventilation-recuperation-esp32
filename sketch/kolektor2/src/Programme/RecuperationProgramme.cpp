@@ -38,6 +38,9 @@ class RecuperationProgramme: public Programme {
       diode->configure(&tickingRecuperation);
     }
     void getPower(ProgrammeContext * context, PowerOutput * out) {
+      if (!context->settings->getSettings()->recuperationOn) {
+        return;
+      }
       if (out->mode == POWER_OUTPUT_MODE_VENTILATION) {
         out->mode = POWER_OUTPUT_MODE_BOTH;
       } else {

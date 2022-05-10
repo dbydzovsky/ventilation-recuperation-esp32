@@ -45,6 +45,10 @@ bool Settings::loadJson(DynamicJsonDocument *doc) {
   return true;
 }
 
+void Settings::permitAll(bool permission){ 
+  this->_permittedAll = permission;
+}
+
 bool Settings::save(JsonVariant &json) {
   SettingsData * newData = new SettingsData();
   if (!this->validate(json, newData)) {
@@ -60,12 +64,23 @@ bool Settings::save(JsonVariant &json) {
   return true;
 }
 
+bool Settings::checkAccess(int a, int b) {
+  if (this->_permittedAll) {
+    return true;
+  }
+  return a == b;
+}
+
 bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkRecuperationRpm = c["checkRecuperationRpm"].as<bool>();
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
   out->hideCo2 = c["hideCo2"].as<bool>();
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
-  out->recuperationOn = c["recuperationOn"].as<bool>();  
+  out->recuperationOn = c["recuperationOn"].as<bool>();
+  if (!this->checkAccess(out->recuperationOn, this->data->recuperationOn)) {
+    this->debugger->debug("WARN cannot change recuperationOn due to missing permissions.");
+    return false;
+  }
   out->unblockingFansPeriod = c["unblockingFansPeriod"].as<long>();
   if (out->unblockingFansPeriod < 1000) {
     this->debugger->debug("WARN Invalid unblockingFansPeriod, must not be less than 1000ms");
@@ -133,9 +148,17 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     this->debugger->debug("ventilatorRevolutions is invalid. Must be between 0 and 10.");
     return false;
   }
+  if (!this->checkAccess(out->ventilatorRevolutions, this->data->ventilatorRevolutions)) {
+    this->debugger->debug("WARN cannot change ventilatorRevolutions due to missing permissions.");
+    return false;
+  }
   out->recuperationRevolutions = c["recuperationRevolutions"].as<int>();
   if (out->recuperationRevolutions < 1 || out->recuperationRevolutions > 9) {
     this->debugger->debug("recuperationRevolutions is invalid. Must be between 0 and 10.");
+    return false;
+  }
+  if (!this->checkAccess(out->recuperationRevolutions, this->data->recuperationRevolutions)) {
+    this->debugger->debug("WARN cannot change recuperationRevolutions due to missing permissions.");
     return false;
   }
   out->recuperationMhz = c["recuperationMhz"].as<int>();
@@ -145,11 +168,19 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     this->debugger->debug(buff);
     return false;
   }
+  if (!this->checkAccess(out->recuperationMhz, this->data->recuperationMhz)) {
+    this->debugger->debug("WARN cannot change recuperationMhz due to missing permissions.");
+    return false;
+  }
   out->ventilationMhz = c["ventilationMhz"].as<int>();
   if (out->ventilationMhz != 20000 && out->ventilationMhz != 25000) {
     char buff[90];
     sprintf(buff, "ventilationMhz is invalid. Must be 20khz or 25khz, but is %d", out->ventilationMhz);
     this->debugger->debug(buff);
+    return false;
+  }
+  if (!this->checkAccess(out->ventilationMhz, this->data->ventilationMhz)) {
+    this->debugger->debug("WARN cannot change ventilationMhz due to missing permissions.");
     return false;
   }
   out->ventilationRelayPin = c["ventilationRelayPin"].as<int>();
@@ -159,11 +190,19 @@ bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
     this->debugger->debug(buff);
     return false;
   }
+  if (!this->checkAccess(out->ventilationRelayPin, this->data->ventilationRelayPin)) {
+    this->debugger->debug("WARN cannot change ventilationRelayPin due to missing permissions.");
+    return false;
+  }
   out->recuperationRelayPin = c["recuperationRelayPin"].as<int>();
   if (out->recuperationRelayPin != 17 && out->recuperationRelayPin != 19) {
     char buff[90];
     sprintf(buff, "recuperationRelayPin is invalid. Must be 17 or 19, but is %d", out->recuperationRelayPin);
     this->debugger->debug(buff);
+    return false;
+  }
+  if (!this->checkAccess(out->recuperationRelayPin, this->data->recuperationRelayPin)) {
+    this->debugger->debug("WARN cannot change ventilationRelayPin due to missing permissions.");
     return false;
   }
   return true;

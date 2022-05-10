@@ -137,6 +137,7 @@ void Orchestrator::act() {
   context.isTimeSet = this->deps->timeProvider->isTimeSet();
   context.data = data;
   context.forecast = this->deps->forecast;
+  context.settings = this->deps->settings;
   WeatherDeps weatherDeps = {data, this->deps->timeProvider, this->deps->httpClient, this->deps->httpLock, this->deps->debugger};
   context.weatherDeps = &weatherDeps;
   PowerOutput out;

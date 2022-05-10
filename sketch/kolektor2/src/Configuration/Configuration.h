@@ -60,7 +60,9 @@ class Configuration {
     ConfigurationData* getData();
     bool save(JsonVariant &json);
     bool dataSet = false;
+    bool isValid();
   private:
+    bool _isValid = false;
     Debugger * debugger;
     ConfigurationData * data = {};
     bool isOverlapping(short a, short b, short c, short d);

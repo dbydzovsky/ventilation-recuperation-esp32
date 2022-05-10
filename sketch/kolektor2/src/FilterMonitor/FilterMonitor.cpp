@@ -5,7 +5,7 @@
 #include "../Ventilator/Ventilator.h"
 #include "../Constants/Constants.h"
 #include "../Debugger/Debugger.h"
-
+#include "../Settings/Settings.h"
 #include "SPIFFS.h"
 
 #define fanTrackingPersistenceInterval 3600000 // once per 1 hour
@@ -50,20 +50,22 @@ void read(Debugger * debugger, const char* path, FilterData *out){
   debugger->trace(buff2);
 }
 
-FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation, Debugger * debugger){
+FilterMonitor::FilterMonitor(Ventilator * ventilator, Recuperation *recuperation, Debugger * debugger, Settings * settings){
   this->_recuperation = recuperation;
   this->_ventilator = ventilator;
   this->debugger = debugger;
+  this->_settings = settings;
 }
 
 void FilterMonitor::setup() {
   FilterData ventilatorData;
   read(this->debugger, ventilator_filename, &ventilatorData);
   this->_ventilatorMinutes = ventilatorData.minutes;
-  
-  FilterData recuperationData;
-  read(this->debugger ,recuperation_filename, &recuperationData);
-  this->_recuperationMinutes = recuperationData.minutes;
+  if (this->_settings->getSettings()->recuperationOn) {
+    FilterData recuperationData;
+    read(this->debugger ,recuperation_filename, &recuperationData);
+    this->_recuperationMinutes = recuperationData.minutes;
+  }
 }
 
 bool FilterMonitor::cleared(int filter){
@@ -79,7 +81,7 @@ bool FilterMonitor::cleared(int filter){
       this->debugger->debug("WARN Unable to clear Ventilator filter.");
     }
   }
-  if (filter == FAN_TYPE_RECUPERATION) {
+  if (filter == FAN_TYPE_RECUPERATION && this->_settings->getSettings()->recuperationOn) {
     this->debugger->trace("Going to clear recuperation");
     FilterData data;
     if (save(this->debugger, recuperation_filename, data)) {
@@ -91,6 +93,7 @@ bool FilterMonitor::cleared(int filter){
       this->debugger->debug("WARN Unable to clear Ventilator filter.");
     }
   }
+  this->debugger->debug("WARN Invalid type of filter to be cleaned");
   return false;
 }
 
@@ -100,7 +103,7 @@ void FilterMonitor::report(byte filter, FilterReport * report) {
     report->remainMinutes = liveMinutesTotal - this->_ventilatorMinutes;
     report->needCleaning = report->remainMinutes <= 0;
   }
-  if (filter == FAN_TYPE_RECUPERATION) {
+  if (filter == FAN_TYPE_RECUPERATION && this->_settings->getSettings()->recuperationOn) {
     long liveMinutesTotal = filterRecuperationDaysWithoutCleaning * 24 * 60;
     report->remainMinutes = liveMinutesTotal - this->_recuperationMinutes;
     report->needCleaning = report->remainMinutes <= 0;
@@ -116,13 +119,15 @@ void FilterMonitor::persist() {
     save(this->debugger, ventilator_filename, ventilatorData);
     this->_ventilatorChanged = false;
   }
-  FilterReport recupertionReport;
-  this->report(FAN_TYPE_RECUPERATION, &recupertionReport);
-  if (!recupertionReport.needCleaning && this->_recuperationChanged) {
-    FilterData recuperationData;
-    recuperationData.minutes = this->_recuperationMinutes;
-    save(this->debugger, recuperation_filename, recuperationData);
-    this->_recuperationChanged = false;
+  if (this->_settings->getSettings()->recuperationOn) {
+    FilterReport recupertionReport;
+    this->report(FAN_TYPE_RECUPERATION, &recupertionReport);
+    if (!recupertionReport.needCleaning && this->_recuperationChanged) {
+      FilterData recuperationData;
+      recuperationData.minutes = this->_recuperationMinutes;
+      save(this->debugger, recuperation_filename, recuperationData);
+      this->_recuperationChanged = false;
+    }
   }
   this->_lastPersistence = millis();
 }
@@ -134,9 +139,11 @@ void FilterMonitor::act(){
         this->_ventilatorChanged = true;
         this->_ventilatorMinutes += 1;
       };
-      if (this->_recuperation->getPower() != 0) {
-        this->_recuperationChanged = true;
-        this->_recuperationMinutes += 1;
+      if (this->_settings->getSettings()->recuperationOn) {
+        if (this->_recuperation->getPower() != 0) {
+          this->_recuperationChanged = true;
+          this->_recuperationMinutes += 1;
+        }
       }
       if (millis() - this->_lastPersistence > fanTrackingPersistenceInterval) {
         this->persist();

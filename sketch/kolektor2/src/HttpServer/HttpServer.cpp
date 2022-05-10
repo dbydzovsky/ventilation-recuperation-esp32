@@ -246,13 +246,20 @@ void HttpServer::setup() {
         }
     });
     AsyncCallbackJsonWebHandler* saveConfigHandler = new AsyncCallbackJsonWebHandler("/a/conf", [this](AsyncWebServerRequest * request, JsonVariant & json) {
-        // todo lock?
-        if (this->_deps->conf->save(json)) {
-            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
-            setCors(response);
-            request->send(response);
+        if (this->_deps->confLock->writeLock()) {
+            bool result = this->_deps->conf->save(json);
+            this->_deps->confLock->writeUnlock();
+            if (result) {
+                AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+                setCors(response);
+                request->send(response);
+            } else {
+                AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'Could not parse JSON or not valid values'}");
+                setCors(response);
+                request->send(response);
+            }
         } else {
-            AsyncWebServerResponse *response = request->beginResponse(400, "application/json", "{'msg':'Could not parse JSON or not valid values'}");
+            AsyncWebServerResponse *response = request->beginResponse(429, "application/json", "{'msg':'Try again later'}");
             setCors(response);
             request->send(response);
         }
@@ -295,6 +302,7 @@ void HttpServer::setup() {
     });
 
     AsyncCallbackJsonWebHandler* saveSettingsHandler = new AsyncCallbackJsonWebHandler("/a/settings", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+        this->_deps->settings->permitAll(this->_otaAdded);
         if (this->_deps->settings->save(json)) {
             AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
             setCors(response);
