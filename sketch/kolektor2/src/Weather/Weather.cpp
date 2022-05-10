@@ -93,8 +93,8 @@ void WeatherForecast::act(WeatherDeps * deps) {
   if (this->hasValidForecast()) {
     if (this->feelsLikeTomorrow > deps->data->minimumFeelsLike) {
       this->shouldCool = true;
+      return;
     }
-    return;
   } else {
     unsigned long since_last_success = millis() - this->last_success;
     if (since_last_success > this->syncForecastTolerateLastSuccessFor) {
