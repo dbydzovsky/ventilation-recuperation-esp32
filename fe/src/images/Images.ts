@@ -25,4 +25,7 @@ export const Images = {
     outscreen: {src: screenImage("outscreen.png")},
     party: {src: screenImage("party.png")},
     tempHistory: {src: screenImage("tempHistory.png")},
+    design: {src: githubImage("design.png")},
+    design2: {src: githubImage("design2.png")},
+    design3: {src: githubImage("design3.png")},
 }

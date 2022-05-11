@@ -66,6 +66,11 @@ export function InstallationPage(props: Props) {
                 optočlen. Komunikační linka pro čtení otáček je připojena ke zdroji napětí (tj. 12V nebo 24V).
                 Větrák tak musí být schopen vyčítat otáčky tímto vyšším napětím.
             </p>
+            <p>
+                Celková délka komunikačních kabelů by měla být co nejkratší, zároveň kratší než 5m.
+                V případě příliš dlouhého kabelu může dojít k poruchám čtení ze sensorů a
+                často nefunkčnímu displayi. Jako komunikační protokol se použítá I2C.
+            </p>
             <Grid item xs={12} className={"showOnPrint"}>
                 <table>
                     {properties.map( obj => {
@@ -96,7 +101,18 @@ export function InstallationPage(props: Props) {
             <Grid item xs={12} className="hideOnPrint">
                 <img className={classes.image} width={700} src={Images.board2.src}/>
             </Grid>
-
+            <Grid item xs={12}>
+                <h2>Návrh</h2>
+            </Grid>
+            <Grid item xs={12} className="hideOnPrint">
+                <img  className={classes.image} width={700} src={Images.design.src}/>
+            </Grid>
+            <Grid item xs={12} className="hideOnPrint">
+                <img className={classes.image} width={700} src={Images.design2.src}/>
+            </Grid>
+            <Grid item xs={12} className="hideOnPrint">
+                <img className={classes.image} width={700} src={Images.design3.src}/>
+            </Grid>
             <Grid item xs={12}>
                 <h1>RJ45 kabely</h1>
                 <p>RJ45 kabely musí používat standard RJ45-A</p>
