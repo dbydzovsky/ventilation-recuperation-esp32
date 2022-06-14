@@ -94,7 +94,7 @@ void HttpServer::setup() {
         root["settingsValid"] = this->_deps->settings->isValid();
         root["configValid"] = this->_deps->conf->isValid();
         root["recuperationEnabled"] = this->_deps->settings->getSettings()->recuperationOn;
-        
+        root["testingMode"] = this->_deps->settings->getSettings()->testingMode;
         trial["duration"] = trialProgramme->getDuration();
         PowerOutput trialOutput = trialProgramme->getActualSetting();
         trial["mode"] = trialOutput.mode; 
@@ -175,9 +175,36 @@ void HttpServer::setup() {
             AsyncWebServerResponse *response = request->beginResponse(503, "application/json", "{'msg':'Settings file is not present'}");
             setCors(response);
             request->send(response);
-        }
-        
+        } 
     });
+    if (this->_deps->settings->getSettings()->testingMode) {
+        AsyncCallbackJsonWebHandler* testingHandler = new AsyncCallbackJsonWebHandler("/a/testing", [this](AsyncWebServerRequest * request, JsonVariant & json) {
+            if (json["tempOut"].is<float>()) {
+                float tempOut = json["tempOut"].as<float>();
+                this->_deps->outsideTemp->setActual(tempOut);
+            }
+            if (json["humOut"].is<float>()) {
+                float humOut = json["humOut"].as<float>();
+                this->_deps->outsideHum->setActual(humOut);
+            }
+            if (json["tempIn"].is<float>()) {
+                float tempIn = json["tempIn"].as<float>();
+                this->_deps->insideTemp->setActual(tempIn);
+            }
+            if (json["humIn"].is<float>()) {
+                float humIn = json["humIn"].as<float>();
+                this->_deps->insideHum->setActual(humIn);
+            }
+            if (json["co2"].is<float>()) {
+                float co2 = json["co2"].as<float>();
+                this->_deps->co2Inside->setActual(co2);
+            }
+            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{'msg':'done'}");
+            setCors(response);
+            request->send(response);
+        });
+        this->_server->addHandler(testingHandler);
+    }
     AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/a/t", [this](AsyncWebServerRequest * request, JsonVariant & json) {
         if (json["on"].as<int>() == 1) {
             byte ventilatorPower = json["ventilator"].as<byte>();

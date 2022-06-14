@@ -160,6 +160,9 @@ void setup()
   configuration->setup();
   display->wifiConnecting();
   httpServer->setup();
+  if (settingsData->testingMode) {
+    sensors->setTesting(); 
+  }
   sensors->setup();
   filter->setup();
   rpmVentilatorChecker->setup();

@@ -75,6 +75,11 @@ bool Settings::checkAccess(int a, int b) {
 bool Settings::validate(DynamicJsonDocument c, SettingsData *out) {
   out->checkRecuperationRpm = c["checkRecuperationRpm"].as<bool>();
   out->checkVentilatorRpm = c["checkVentilatorRpm"].as<bool>();
+  out->testingMode = c["testingMode"].as<bool>();
+  if (!this->checkAccess(out->testingMode, this->data->testingMode)) {
+    this->debugger->debug("WARN testing mode cannot be changed due to missing perm.");
+    return false;
+  }
   out->hideCo2 = c["hideCo2"].as<bool>();
   out->hideInternalTempHum = c["hideInternalTempHum"].as<bool>();  
   out->recuperationOn = c["recuperationOn"].as<bool>();

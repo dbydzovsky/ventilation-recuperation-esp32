@@ -41,8 +41,9 @@ import {SettingsLoader, SettingsPage} from "./pages/SettingsPage";
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import {UpdatePage} from "./pages/UpdatePage";
+import {TestingPage} from "./pages/TestingPage";
 // https://v4.mui.com/components/material-icons/#material-icons
-
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 function Routes() {
 	const classes = useStyles();
 
@@ -60,6 +61,7 @@ function Routes() {
 			<Route exact={true} path="/help" component={HelpPage} />
 			<Route exact={true} path="/firmware" component={FirmwarePage} />
 			<Route exact={true} path="/update" component={UpdatePage} />
+			<Route exact={true} path="/testing" component={TestingPage} />
 			{/*<Route exact={true} path="/scheme" component={SchemePage} />*/}
 		</div>
 	);
@@ -71,6 +73,7 @@ function Drawer(props: { toggle: () => void }) {
 	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || (state.state.recuperationEnabled && state.state.alarmRecuperation.needAttention));
 	const settingsValid = useSelector((state: RootState) => state.state.settingsValid);
 	const configValid = useSelector((state: RootState) => state.state.configValid);
+	const testingMode = useSelector((state: RootState) => state.state.configValid);
 	const onClick= (path: string) => {
 		props.toggle();
 		history.push(path);
@@ -146,6 +149,17 @@ function Drawer(props: { toggle: () => void }) {
 				</ListItem>
 			</List>
 			<Divider />
+			{testingMode && <>
+				<List>
+					<ListItem button onClick={() => onClick("/testing")}>
+						<ListItemIcon>
+							<PlayArrowIcon />
+						</ListItemIcon>
+						<ListItemText primary="Testing" />
+					</ListItem>
+				</List>
+				<Divider />
+			</>}
 			{/*<List>*/}
 			{/*	<ListItem button onClick={() => history.push("/scheme")}>*/}
 			{/*		<ListItemIcon>*/}

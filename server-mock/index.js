@@ -9,10 +9,12 @@
 // }
 //https://github.com/typicode/json-server
 let recuperationEnabled = false;
+let testingMode = true;
 module.exports = () => {
     const data = {
         settings: {
             recuperationOn: recuperationEnabled,
+            testingMode: testingMode,
             ventilatorRevolutions: 3,
             recuperationRevolutions: 2,
             checkRecuperationRpm: true,

@@ -4,6 +4,7 @@ export enum SettingsActions{
 }
 
 export interface Settings {
+  testingMode: boolean
   recuperationOn: boolean
   ventilatorRevolutions: number
   recuperationRevolutions: number

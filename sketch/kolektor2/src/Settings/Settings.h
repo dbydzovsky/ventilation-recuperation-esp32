@@ -18,6 +18,7 @@
 // RECUPERATION_MAX_RPM 6000
 
 struct SettingsData {
+  bool testingMode = false;
   bool recuperationOn = false;
   bool checkRecuperationRpm = true;
   bool checkVentilatorRpm = true;

@@ -11,7 +11,7 @@ float average (int * values, float len) {
   return sum / len;
 }
 
-Average::Average(Source *source) {
+Average::Average(Testable *source) {
   this->source = source;
 }
 
@@ -79,6 +79,7 @@ void Average::setActual(float newValue) {
   }
   this->actual = (int) (newValue * 100);
   this->avg = (int) average(this->values, averageValuesCount);
+  this->source->setValue(newValue);
 }
 
 unsigned int Average::getErrors() {

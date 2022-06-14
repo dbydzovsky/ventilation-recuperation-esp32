@@ -59,10 +59,6 @@ class Co2Sensor: public Source {
     int getToleration() {
       return 1000;
     };
-
-    void setValue(float newVal) {
-      
-    }
 };
 
 class TempInsideSensor: public Source {
@@ -89,9 +85,6 @@ class TempInsideSensor: public Source {
     int getToleration() {
       return 5;
     };
-    void setValue(float newVal) {
-      
-    }
 };
 
 class HumInsideSensor: public Source {
@@ -117,9 +110,6 @@ class HumInsideSensor: public Source {
     int getToleration() {
       return 30;
     };
-    void setValue(float newVal) {
-      
-    }
 };
 class TempOutsideSensor: public Source {
   private:
@@ -138,9 +128,6 @@ class TempOutsideSensor: public Source {
     int getToleration() {
       return 10;
     };
-    void setValue(float newVal) {
-      
-    }
 };
 
 class HumOutsideSensor: public Source {
@@ -160,49 +147,79 @@ class HumOutsideSensor: public Source {
     int getToleration() {
       return 15;
     };
-    void setValue(float newVal) {
-
-    }
 };
 
-class TestingSensor: public Source {
+class TestingSensor: public Testable {
   private:
     float _value = 0;
+    int _randomInc = 0;
+    int _min = 0;
+    int _max = 0;
+    Source * _decorated;
+    bool _isTesting = false;
   public:
-    TestingSensor(float initial) {
+    TestingSensor(Source * decorated, float initial, int randomInc, int min, int max) {
       this->_value = initial;
+      this->_randomInc = randomInc * 2;
+      this->_decorated = decorated;
+      this->_min = min;
+      this->_max = max;
+    }
+    void setTesting() {
+      this->_isTesting = true;
     }
     void setup() {
-      
+      if (!this->_isTesting) {
+        this->_decorated->setup();
+      }
+    }
+    void setValue(float val) {
+      this->_value = val;
     }
     float getValue() {
+      if (!this->_isTesting) {
+        return this->_decorated->getValue();
+      }
+      bool change = (rand() % 100) > 70;
+      if (change) {
+        int changeVal = (rand() % this->_randomInc) - (this->_randomInc / 2);
+        float newVal = this->_value + changeVal;
+        if (newVal > this->_min && newVal < this->_max) {
+          this->_value = newVal;
+        } 
+      }
       return this->_value;
     };
     int getToleration() {
-      return 3000;
+      if (!this->_isTesting) {
+        return 3000;
+      }
+      return this->_decorated->getToleration();
     };
-    void setValue(float newVal) {
-      this->_value = newVal;
-    } 
 };
 
 Sensors::Sensors(MHZ19_uart * mhz19) {
   Adafruit_SHT31 * sht31 = new Adafruit_SHT31();
   uFire_SHT20 * sht20 = new uFire_SHT20();
-
-  this->insideTemp = new TempInsideSensor(sht31);
-  //this->insideTemp = new TestingSensor(20);
-  this->insideHum = new HumInsideSensor(sht31);
-  // this->insideHum = new TestingSensor(60);
-  //this->co2Inside = new TestingSensor(1000);
-  this->co2Inside = new Co2Sensor(mhz19);
-  // this->outsideHum = new TestingSensor(5);
-  // this->outsideTemp = new TestingSensor(20);
-  // this->outsideTemp = this->insideTemp;
-  
+  Source * insideTempSource = new TempInsideSensor(sht31);
+  this->insideTemp = new TestingSensor(insideTempSource, 20, 4, 18, 26);
+  Source * insideHumSource = new HumInsideSensor(sht31);
+  this->insideHum = new TestingSensor(insideHumSource, 60, 6, 40, 60);
+  Source * co2Source = new Co2Sensor(mhz19);
+  this->co2Inside = new TestingSensor(co2Source, 1000, 60, 400, 5000);
   OutsideSensor * outside = new OutsideSensor(sht20);
-  this->outsideHum = new HumOutsideSensor(outside);
-  this->outsideTemp = new TempOutsideSensor(outside);
+  Source * outsideHumSource= new HumOutsideSensor(outside);
+  this->outsideHum = new TestingSensor(outsideHumSource, 60, 6, 0, 100);
+  Source * outsideTempSource = new TempOutsideSensor(outside);
+  this->outsideTemp = new TestingSensor(outsideTempSource, 20, 2, -50, 130);
+}
+
+void Sensors::setTesting(){ 
+  this->outsideTemp->setTesting();
+  this->outsideHum->setTesting();
+  this->insideTemp->setTesting();
+  this->insideHum->setTesting();
+  this->co2Inside->setTesting();
 }
 
 void Sensors::setup() {

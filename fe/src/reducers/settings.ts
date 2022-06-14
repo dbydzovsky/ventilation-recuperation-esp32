@@ -1,10 +1,9 @@
 import createReducer from "./createReducer";
-import {CurrentState, StateAction} from "../model/state";
-import {ConfigurationActions, ConfigurationState} from "../model/configuration";
 import {ClearSettingsActions, SettingsAction, SettingsActions, SettingsState} from "../model/settings";
 
 let settingsState: SettingsState = {
     settings: {
+        testingMode: false,
         recuperationOn: true,
         ventilatorRevolutions: 3,
         recuperationRevolutions: 2,

@@ -3,6 +3,7 @@ import {CurrentState, StateAction, StateActions} from "../model/state";
 import {Mode} from "../model/configuration";
 
 let initialState: CurrentState = {
+    testingMode: false,
     time: "",
     ota: false,
     settingsValid: true,

@@ -11,7 +11,7 @@
 
 class Average {
   public:
-    Average(Source * source);
+    Average(Testable * source);
     void setActual(float newValue);
     unsigned int getErrors();
     byte getWarnings();
@@ -21,7 +21,7 @@ class Average {
     void doReading();
     bool isInitialized();
   private:
-    Source *source;
+    Testable *source;
     int values[7] = {0, 0, 0, 0, 0, 0, 0};
     int avg = 0;
     int actual = 0;

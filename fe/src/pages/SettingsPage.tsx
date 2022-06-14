@@ -177,7 +177,12 @@ export function SettingsPage(props: Props) {
                 {!otaEnabled && <p>
                     <WarningIcon htmlColor={"orange"}/> Následující instalační nastavení nelze měnit.
                 </p>}
-
+                <SingleProperty values={values}
+                                setValues={setValues}
+                                disabled={!otaEnabled}
+                                type="boolean"
+                                title={"Testovací mód"}
+                                property={"testingMode"}/>
                 <SingleProperty values={values}
                                 setValues={setValues}
                                 disabled={!otaEnabled}
