@@ -73,7 +73,7 @@ function Drawer(props: { toggle: () => void }) {
 	const alarmAttentionNeeded  = useSelector((state: RootState) => state.state.alarmVentilator.needAttention || (state.state.recuperationEnabled && state.state.alarmRecuperation.needAttention));
 	const settingsValid = useSelector((state: RootState) => state.state.settingsValid);
 	const configValid = useSelector((state: RootState) => state.state.configValid);
-	const testingMode = useSelector((state: RootState) => state.state.configValid);
+	const testingMode = useSelector((state: RootState) => state.state.testingMode);
 	const onClick= (path: string) => {
 		props.toggle();
 		history.push(path);
