@@ -64,6 +64,21 @@ static const unsigned char PROGMEM nocon_icon12x10[] =
 	0b00000000, 0b00000000, //
 };
 
+
+static const unsigned char PROGMEM warning_icon12x10[] =
+{
+	0b00000010, 0b00000000, //        #      
+	0b00000101, 0b00000000, //       # #     
+	0b00001101, 0b10000000, //      ## ##    
+	0b00001000, 0b10000000, //      #   #    
+	0b00010010, 0b01000000, //     #  #  #  
+	0b00110010, 0b01100000, //    ##  #  ##  
+	0b01100000, 0b00110000, //   ##       ## 
+	0b01100010, 0b00110000, //   ##   #   ## 
+	0b01111111, 0b11110000, //   ########### 
+	0b00000000, 0b00000000, //
+};
+
 static const unsigned char PROGMEM wifi2_icon12x10[] = {
 	0b00011111, 0b10000000, //    ######       
 	0b00111111, 0b11000000, //   ########      
@@ -129,8 +144,9 @@ class MainScreen: public Screen {
 
     void tick(ScreenProps * props){
       this->index = (this->index +1) % MAX_INDEX;
+      bool hasError = this->hasError(props);
       if (this->index > 5) {
-        if (this->hasError(props)) {
+        if (hasError) {
           this->alarmScreen->tick(props);
           return;
         }
@@ -140,6 +156,9 @@ class MainScreen: public Screen {
         props->d->drawBitmap(52, 0, wifi2_icon12x10, 12, 10, WHITE);
       } else {  
         props->d->drawBitmap(52, 0, nocon_icon12x10, 12, 10, WHITE);
+      }
+      if (hasError) {
+        props->d->drawBitmap(40, 0, warning_icon12x10, 12, 10, WHITE);
       }
 
       props->d->setTextSize(1);

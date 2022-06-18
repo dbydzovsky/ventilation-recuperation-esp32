@@ -12,6 +12,7 @@
 #include "TempHistoryScreen.cpp"
 #include "InHouseScreen.cpp"
 #include "DebugScreen.cpp"
+#include "ConnectionScreen.cpp"
 #include "OutHouseScreen.cpp"
 #include "ScreenSaverScreen.cpp"
 #include "RestartingScreen.cpp"
@@ -31,4 +32,5 @@ ScreenFactory::ScreenFactory() {
     this->outHouseScreen = new OutHouseScreen();
     this->screenSaverScreen = new ScreenSaverScreen();
     this->restartingScreen = new RestartingScreen();
+    this->connectionScreen = new ConnectionScreen();
 }

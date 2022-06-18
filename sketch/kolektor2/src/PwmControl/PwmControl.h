@@ -7,11 +7,12 @@
 
 class PwmControl {
   public:
-    PwmControl(int channel, int pin);
+    PwmControl(int channel, int pin, int initialDuty);
     void setHz(int hz);
     void setup();
     void setDutyCycle(byte dutyCycle);
   private:
+    int _initialDuty = 0;
     int _channel;
     int _pin;
     int _hz = 25000;

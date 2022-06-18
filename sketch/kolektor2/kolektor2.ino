@@ -58,8 +58,8 @@ DewPoint * dewPointIn = new DewPoint();
 #define PWM_1_CHANNEL 1
 #define PWM_2_CHANNEL 2
 #define PWM_3_CHANNEL 3
-PwmControl * pwmVent = new PwmControl(PWM_1_CHANNEL, PWM_ventilator_PIN);
-PwmControl * pwmRecuperation = new PwmControl(PWM_2_CHANNEL, PWM_recuperation_PIN);
+PwmControl * pwmVent = new PwmControl(PWM_1_CHANNEL, PWM_ventilator_PIN, 0);
+PwmControl * pwmRecuperation = new PwmControl(PWM_2_CHANNEL, PWM_recuperation_PIN, 125); // DISABLED_FAN_DUTY
 RGBDiode * diode = new RGBDiode(PWM_3_CHANNEL, RED_DIODE_PIN, GREEN_DIODE_PIN, BLUE_DIODE_PIN);
 Lock * httpsLock = new Lock();
 Lock * confLock = new Lock();
@@ -146,7 +146,6 @@ void setup()
   settings->setup();
   httpClient.setReuse(true);
   digitalWrite(stateDiode, LOW);
-
 
   SettingsData * settingsData = settings->getSettings();
 

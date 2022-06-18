@@ -52,6 +52,7 @@ class ScreenFactory {
     Screen * restartingScreen;
     Screen * inHouseScreen;
     Screen * outHouseScreen;
+    Screen * connectionScreen;
     ServerAwareScreen * debugScreen;
     HistoryScreen * co2History;
     HistoryScreen * tempHistory;

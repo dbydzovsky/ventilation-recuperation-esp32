@@ -62,7 +62,7 @@ Screen* Display::getDefaultScreen() {
   return this->screenFactory->mainScreen;
 }
 
-#define SCREEN_COUNT 8
+#define SCREEN_COUNT 9
 
 Screen* Display::getActualScreen() {
   if (this->deps->factory->Trial->isValid(this->deps->conf->getData())) {
@@ -81,6 +81,8 @@ Screen* Display::getActualScreen() {
   } else if (this->screenIndex == 6) {
 	return this->screenFactory->outHouseScreen;
   } else if (this->screenIndex == 7) {
+	return this->screenFactory->connectionScreen;
+  } else if (this->screenIndex == 8) {
 	return this->screenFactory->debugScreen;
   } else {
 	return this->getDefaultScreen();
