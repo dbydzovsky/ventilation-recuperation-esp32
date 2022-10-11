@@ -4,7 +4,7 @@
 #define DEFAULT_SSID "SolarAirCollectorV2"
 #define DEFAULT_PASSWORD "123456789"
 
-#define VENTILATION_VERSION "v2.07" // max vx.99, sx.99 for snapshot
+#define VENTILATION_VERSION "s2.08" // max vx.99, sx.99 for snapshot
 #define IS_DEBUG false
 
 #define RPM_SAMPLING_DURATION 1000
