@@ -50,9 +50,9 @@ class SummerProgramme: public Programme {
       } else if (this->error == 115) {
         strcpy(dest, "Není k dispozici předpověď počasí.");
         return 34;
-      } else if (this->error == 115) {
-        strcpy(dest, "Není k dispozici předpověď počasí.");
-        return 34;
+      } else if (this->error == 116) {
+        strcpy(dest, "Není k dispozici aktuální čas.");
+        return 35;
       } else {
         strcpy(dest, "Chladící mód.");
         return 13;
@@ -98,6 +98,12 @@ class SummerProgramme: public Programme {
         this->markError(113);
         return;
       }
+      if (!context->isTimeSet) {
+        this->markError(116);
+        return;
+      };
+      int actualMinutes = hour() * 60 + minute();
+      bool isSilentMode = actualMinutes < context->data->silentModeTill;
       
       Rules * rules = context->data->summerOnRules;
       for (short i = (rules->count - 1); i >= 0 ; i--) {
@@ -109,6 +115,14 @@ class SummerProgramme: public Programme {
           out->ventilatorPower = percentage;
           if (percentage == 0) {
             this->_recuperation->getPower(context, out);
+          } else {
+            if (isSilentMode) {
+              out->mode = POWER_OUTPUT_MODE_RECUPERATION;
+              out->recuperationPower = 100;
+              out->recuperationMode = RECUPERATION_MODE_INHALE;
+            } else {
+              out->ventilatorPower = percentage;
+            }
           }
           return;
         }
@@ -119,6 +133,14 @@ class SummerProgramme: public Programme {
             out->ventilatorPower = percentage;
             if (percentage == 0) {
               this->_recuperation->getPower(context, out);
+            } else {
+              if (isSilentMode) {
+                out->mode = POWER_OUTPUT_MODE_RECUPERATION;
+                out->recuperationPower = 100;
+                out->recuperationMode = RECUPERATION_MODE_INHALE;
+              } else {
+                out->ventilatorPower = percentage;
+              }
             }
             return;
           }

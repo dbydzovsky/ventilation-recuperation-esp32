@@ -20,6 +20,7 @@ export enum Mode {
 }
 
 export interface Configuration {
+  silentModeTill: number;
   name: string
   mode: Mode
   winterMaxInsideTemp: number

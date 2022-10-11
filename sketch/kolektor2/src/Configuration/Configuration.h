@@ -50,6 +50,7 @@ struct ConfigurationData {
   char weatherApiKey[33] = "";
   char lat[6] = "";
   char lon[6] = "";
+  short silentModeTill = 1380; // 23PM in minutes, 1440 max
 };
 
 class Configuration {

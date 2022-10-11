@@ -53,6 +53,10 @@ export function FirmwarePage() {
         <DebugMessagesPage/>
         <Container>
             <h2>Changelog</h2>
+            <p><b>2.07</b> <ul>
+                <li>Možnost dočasně vypnout při podržení tlačítka na hlavní obrazovce</li>
+                <li>Nastavení časového úseku pro chladící režim v tichém režimu</li>
+            </ul></p>
             <p><b>2.06</b> <ul>
                 <li>Zobrazení IP adresy a hostname na display</li>
                 <li>FIX: Rekuperace zapnutá při připojování k WiFi</li>

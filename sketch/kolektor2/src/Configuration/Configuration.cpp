@@ -118,6 +118,16 @@ bool Configuration::validate(DynamicJsonDocument c, ConfigurationData *out) {
     this->debugger->debug("WARN Name property is too long");
     return false;
   }
+  if (c.containsKey("silentModeTill")) {
+    out->silentModeTill = c["silentModeTill"].as<short>();
+    if (out->silentModeTill < 0 || out->silentModeTill >= 1440) {
+      this->debugger->debug("WARN silentModeTill must be between 0 and 1440.");
+      return false;
+    }
+  } else {
+    this->debugger->debug("silentModeTill setting to default value 1350.");
+    out->silentModeTill = 1350;
+  }
   strncpy(out->name, name, 30);
   out->mode = c["mode"].as<byte>();
   out->autoWinterStart = c["autoWinterStart"].as<short>();

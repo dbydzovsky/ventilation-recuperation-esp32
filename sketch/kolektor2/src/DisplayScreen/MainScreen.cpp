@@ -232,12 +232,18 @@ class MainScreen: public Screen {
     bool handleClick(ScreenProps * deps, byte times) {
       return true;
     }
-    bool handleHold(ScreenProps * deps, int duration_ms, bool finished) {
-      return false;
+    bool handleHold(ScreenProps * props, int duration_ms, bool finished) {
+      ConfigurableProgramme * trialProgramme = props->deps->factory->Trial;
+      PowerOutput output;
+      SettingsData * settings = props->deps->settings->getSettings();
+      trialProgramme->setPower(output, settings->tempDisableDuration);
+      props->deps->debugger->debug("Starting Trial programme (Disabled)");
+      props->orchestrator->setProgramme(dynamic_cast<Programme*>(trialProgramme));
+      return true;
     }
     void onPressDown(ScreenProps * deps) {
     }
     bool hasActiveButton() {
-      return false;
+      return true;
     }
 };

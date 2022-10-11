@@ -208,7 +208,7 @@ void loop() {
   delay(10);
   display->act();
   restarter->act();
-
+  
   if (millis() - co2_last_sensor_reading > averageCo2ReadingInterval) {
     co2_last_sensor_reading = millis();
     co2Inside->doReading();

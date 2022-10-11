@@ -21,6 +21,7 @@ class ScreenSaverScreen: public Screen {
     int16_t y = SCREEN_HEIGHT / 2;
     int xspeed = 2;
     int yspeed = 2;
+    bool fill = false;
   public:
     void setup(ScreenProps * deps){
       this->y = SCREEN_HEIGHT / 2;
@@ -37,14 +38,21 @@ class ScreenSaverScreen: public Screen {
 	    props->d->clearDisplay();
       this->x = this->x + this->xspeed;
       this->y = this->y + this->yspeed;
+
       if (this->x > (SCREEN_WIDTH - BALL_R) || this->x < (0 + BALL_R)) {
         this->xspeed = this->xspeed * -1;
+        this->fill = !this->fill;
       }
       if (this->y > (SCREEN_HEIGHT - BALL_R) || this->y < (0 + BALL_R)) {
         this->yspeed = this->yspeed * -1;
+        this->fill = !this->fill;
       }
-      // drawCircle / fillCircle
-      props->d->drawCircle(this->x, this->y, BALL_R, WHITE);
+      if (this->fill) {
+        props->d->fillCircle(this->x, this->y, BALL_R, WHITE);
+      } else {
+        props->d->drawCircle(this->x, this->y, BALL_R, WHITE);
+      }
+      
       props->d->display();
     }
     bool canBeDimmed(ScreenProps * deps) {

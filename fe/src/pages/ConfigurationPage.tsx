@@ -34,6 +34,7 @@ import WarningIcon from "@material-ui/icons/Warning";
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import UpdateIcon from '@material-ui/icons/Update';
+import MusicOffIcon from '@material-ui/icons/MusicOff';
 export const winterOrderValidation = (previous: Rule, actual: Rule) => {
     return previous.tv > (actual.tv - 3);
 }
@@ -61,6 +62,34 @@ export function co2Validator(input:string|number): boolean {
         return false
     }
 }
+export function isNumber(val: string): boolean {
+    return /^\d+$/.test(val);
+}
+export function transformDayTime(val: string): number {
+    const semicolonIndex = val.indexOf(":");
+    if (semicolonIndex < 0) {
+        if (!isNumber(val)) return -1;
+        return Number(val) * 60;
+    } else {
+        const parts = val.split(":");
+        if (parts.length > 2) return -1;
+        if (!isNumber(parts[0]) || !isNumber(parts[1])) return -1;
+        return Number(parts[0]) * 60 + Number(parts[1]);
+    }
+}
+export function displayDayTime(inputMinutes: number): string {
+    if (!inputMinutes) return 0 + "";
+    const hours = Math.floor(inputMinutes / 60);
+    const minutes = inputMinutes % 60;
+    return hours + ":" + minutes;
+}
+
+export function dayTimeValidator(input: string): boolean {
+    if (input.length > 5) return false;
+    const result = transformDayTime(input)
+    return result >= 0 && result < 1440; // between 16:00 and 23:59
+}
+
 export function temperatureValidator(input: string | number) {
     if (input === "0") {
         return true
@@ -115,6 +144,7 @@ export function ConfigurationPage() {
         dispatch(getConfiguration);
     }, [reloadCounter]);
     let initial: Configuration = {
+        silentModeTill: 1280,
         autoSummerStart: 100,
         autoSummerEnd: 200,
         autoWinterStart: 250,
@@ -145,6 +175,7 @@ export function ConfigurationPage() {
     }
     const nameInvalid = !values.name || values.name.length > 20 || !isASCII(values.name);
     const maxInsideTemperatureInvalid = values.winterMaxInsideTemp < 0 || values.winterMaxInsideTemp > 1000;
+    const silentModeTillError = values.silentModeTill < 960 && values.silentModeTill > 1440;
     let winterRulesInvalid = values.winterOnRules && values.winterOnRules.some((item, index) => {
         return values.winterOnRules.filter((_, i) => {
             return i < index;
@@ -182,7 +213,7 @@ export function ConfigurationPage() {
         return (w1 != 0 && ((c - a) % m) < w0) || (w0 != 0 && ((a - c) % m) < w1);
     }
     const winterSummerOverlaps = isOverlapping(values.autoWinterStart, values.autoWinterEnd, values.autoSummerStart, values.autoSummerEnd)
-    const anyInvalid = maxInsideTemperatureInvalid || rulesInvalid || nameInvalid || winterSummerOverlaps;
+    const anyInvalid = silentModeTillError || maxInsideTemperatureInvalid || rulesInvalid || nameInvalid || winterSummerOverlaps;
     const handleMonitoringChange = (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
         let monitoring = {...values.monitoring, [prop]: event.target.value}
         setValues({...values, monitoring: monitoring});
@@ -435,6 +466,24 @@ export function ConfigurationPage() {
                                     startAdornment={<InputAdornment position="start">°C</InputAdornment>}
                                 />
 
+                            </Paper>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper className={classes.properties}>
+                                <InputLabel className={classes.label}>
+                                    <MusicOffIcon/>
+                                    Do kolika hodin večer je zapnutý tichý režim (např.: mezi 16:00 a 23:59):
+                                </InputLabel>
+                                <Input
+                                    error={silentModeTillError}
+                                    id="standard-adornment-silent-mode-till"
+                                    type={"text"}
+                                    value={displayDayTime(values.silentModeTill) }
+                                    className={classes.input}
+                                    onChange={handleChange('silentModeTill', dayTimeValidator, transformDayTime)}
+                                    startAdornment={<InputAdornment position="start">Hodin</InputAdornment>}
+                                />
                             </Paper>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
