@@ -112,7 +112,6 @@ class SummerProgramme: public Programme {
           this->currentRuleIndex = i;
           byte percentage = rule->percentage;
           this->error = 0;
-          out->ventilatorPower = percentage;
           if (percentage == 0) {
             this->_recuperation->getPower(context, out);
           } else {
@@ -130,7 +129,6 @@ class SummerProgramme: public Programme {
           if (context->tempOutside < (((float) rule->targetValue) + temperatureDownTolerationProgramme)) {
             byte percentage = rule->percentage;
             this->error = 0;
-            out->ventilatorPower = percentage;
             if (percentage == 0) {
               this->_recuperation->getPower(context, out);
             } else {
