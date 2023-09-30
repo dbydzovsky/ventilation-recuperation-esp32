@@ -86,10 +86,10 @@ class AutoProgramme: public Programme {
         strcpy(dest, "Čas není synchronizovaný");
         return 31;
       } else {
-        char nested[40] = "";
-        int written = this->actual->getDescription(nested);
-        strcat(dest, "Auto mod: ");
-        strcat(dest, nested);
+        //char nested[40] = "";
+        int written = this->actual->getDescription(dest);
+        //strcat(dest, "Auto mod: ");
+        // strcat(dest, nested);
         return 80;
       }
     }

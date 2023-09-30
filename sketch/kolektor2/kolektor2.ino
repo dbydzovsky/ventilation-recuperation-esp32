@@ -1,12 +1,18 @@
 #include "SPIFFS.h"
 #include <HTTPClient.h>
 
-#include "AsyncJson.h"
+#include "AsyncJson.h" // ArduinoJson by Arduino
 #include <WiFiUdp.h>
 #include <ESPAsyncWebServer.h>     //Local WebServer used to serve the configuration portal
 #include <ESPAsyncWiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
-#include <MHZ19_uart.h> // https://github.com/nara256/mhz19_uart
-
+// or ESPAsyncWiFiManager.h https://github.com/alanswx/ESPAsyncWiFiManager
+#include <MHZ19_uart.h> // download and install https://github.com/nara256/mhz19_uart
+// download and install timelib https://github.com/PaulStoffregen/Time
+// Adafruit_SSD1306 by Adafruit
+// Adafruit_SHT31 by Adafruit
+// https://github.com/me-no-dev/AsyncTCP/archive/master.zip
+// https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip
+// https://github.com/ayushsharma82/AsyncElegantOTA
 #include "src/PwmControl/PwmControl.h"
 #include "src/Relay/Relay.h"
 #include "src/DewPoint/DewPoint.h"
@@ -160,7 +166,7 @@ void setup()
   display->wifiConnecting();
   httpServer->setup();
   if (settingsData->testingMode) {
-    sensors->setTesting(); 
+    sensors->setTesting();
   }
   sensors->setup();
   filter->setup();
@@ -194,7 +200,7 @@ void setup()
   recuperation->setDurationChangeWait(settingsData->recuperationWaitForDirectionChange);
   recuperation->setCycleDuration(settingsData->recuperationCycleDuration);
   diode->setBrightness(settingsData->brightness);
- 
+
   debugger->setTrace(false);
 }
 
@@ -202,13 +208,19 @@ unsigned long last_sensor_reading = millis();
 #define averageReadingInterval 2000
 unsigned long co2_last_sensor_reading = millis();
 #define averageCo2ReadingInterval 5000
-
+bool last = false;
 void loop() {
+  if (last)  {
+    digitalWrite(stateDiode, HIGH);
+  } else {
+    digitalWrite(stateDiode, LOW);
+  }
+  last = !last;
   SettingsData * settingsData = settings->getSettings();
   delay(10);
   display->act();
   restarter->act();
-  
+
   if (millis() - co2_last_sensor_reading > averageCo2ReadingInterval) {
     co2_last_sensor_reading = millis();
     co2Inside->doReading();
@@ -233,7 +245,9 @@ void loop() {
   dns.processNextRequest();
   orchestrator->act();
   filter->act();
+  
   rpmVentilatorChecker->actMaxTemp(outsideTemp->getAverage(), ventilator->getIntendedPower());
+  
   if (settingsData->checkVentilatorRpm) {
     if (rpmVentilatorChecker->act(ventilatorTicks, ventilator->getPower())) {
       detachVentilator();
@@ -248,6 +262,7 @@ void loop() {
       attachRecuperation();
     }
   }
+  
   rpmVentilatorChecker->setSettingsValid(settings->isValid() && configuration->isValid());
   rpmRecuperationChecker->setSettingsValid(settings->isValid() && configuration->isValid());
 }

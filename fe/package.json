@@ -22,7 +22,8 @@
 	"scripts": {
 		"dev": "react-scripts start",
 		"start": "react-scripts start",
-		"build": "react-app-rewired build && npx gulp && rm -rf ../sketch/kolektor2/data/js && cp -r ./build/js ../sketch/kolektor2/data && rm ../sketch/kolektor2/data/js/*.LICENSE.txt && cp ./build/index.html ../sketch/kolektor2/data/index.html"
+		"build": "react-app-rewired build && npx gulp && rm -rf ../sketch/kolektor2/data/js && cp -r ./build/js ../sketch/kolektor2/data && rm ../sketch/kolektor2/data/js/*.LICENSE.txt && cp ./build/index.html ../sketch/kolektor2/data/index.html",
+		"winBuild": "react-app-rewired build && npx gulp && rmdir /s /q ../sketch/kolektor2/data/js && xcopy /e /i /y .\build/js ../sketch/kolektor2/data && del /q ../sketch/kolektor2/data/js/*.LICENSE.txt && copy ./build/index.html ../sketch/kolektor2/data/index.html"
 	},
 	"browserslist": [
 		">0.2%",

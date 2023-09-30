@@ -48,7 +48,6 @@ HttpServer::HttpServer(Dependencies * deps, AsyncWebServer * server,AsyncWiFiMan
     this->_filter = filter;
 }
 
-
 void HttpServer::setup() {
     if (this->_deps->conf->dataSet && this->_deps->confLock->readLock()) {
         WiFi.hostname(this->_deps->conf->getData()->name);
@@ -85,7 +84,7 @@ void HttpServer::setup() {
         root["recuperation"] = this->_deps->recuperation->getPower();
         root["recuperationRPM"] = this->_deps->recuperationChecker->getRpm();
         root["alive"] = millis();
-        char description[80] = "";
+        char description[80] = "\0";
         this->_orchestrator->getProgrammeName(description);
         root["description"] = description;
         // todo root["restarts"] = restarts;
