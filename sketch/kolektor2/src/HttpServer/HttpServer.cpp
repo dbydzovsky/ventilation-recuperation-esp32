@@ -351,6 +351,8 @@ void HttpServer::setup() {
     this->_server->serveStatic("/", SPIFFS, "/");
     this->_server->onNotFound(notNotFound);
     this->_server->begin();
+    AsyncElegantOTA.begin(this->_server);
+    this->_otaAdded = true;
 }
 
 void HttpServer::addOTA() {
